@@ -10,14 +10,12 @@ import { setCookie } from "@/utils/Cookie";
 const formStyle: CSSProperties = {
     width: 400,
     padding: 30,
-    paddingBottom: 0
+    paddingBottom: 0,
+    background: "#1f1f1f",
+    borderRadius: 10
 }
 
-export default function() {
-    const {
-        token: { colorBgElevated, borderRadiusLG },
-    } = theme.useToken();
-
+export default function RegisterPage() {
     const [isLoading, setLoading] = useState(false);
     const {replace} = useRouter();
 
@@ -38,7 +36,7 @@ export default function() {
             wrapperCol={{span: 30}}
             autoComplete="off"
             onFinish={onFormSubmitted}
-            style={{ ...formStyle, background: colorBgElevated, borderRadius: borderRadiusLG }}
+            style={{ ...formStyle }}
         >
             <h1 style={{textAlign: "center", marginBottom: 30}}>Створити акаунт</h1>
 

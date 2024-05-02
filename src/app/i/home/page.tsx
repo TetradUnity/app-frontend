@@ -2,7 +2,7 @@
 
 import { Typography } from "antd"
 
-export default function() {
+export default function HomePage() {
     return (
         <div>
             <h1>Головна сторінка</h1>

@@ -14,7 +14,7 @@ const navButtons: MenuItemType[] = [
   {label: "Акаунт", key: "account", icon: <UserOutlined />},
 ];
 
-export default function({
+export default function ILayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -24,11 +24,6 @@ export default function({
 
   const pathname = usePathname();
 
-  const {
-    token: { colorBgContainer, borderRadius },
-  } = theme.useToken();
-
-  
   const onSelectedItem = ({key}: {key : string}) => {
     router.push("/i/" + key);
   }
@@ -41,7 +36,7 @@ export default function({
           </Sider>
 
           <Content style={{margin: "15px 16px"}}>
-            <div style={{background: colorBgContainer, borderRadius: borderRadius, padding: 24, minHeight: 360}}>
+            <div style={{background: "#141414", borderRadius: 10, padding: 24, minHeight: 360}}>
               {children}
             </div>
           </Content>

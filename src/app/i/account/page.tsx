@@ -6,7 +6,7 @@ import { useMainStore } from "@/stores/mainStore";
 import { deleteCookie } from "@/utils/Cookie";
 import { useRouter } from "next/navigation";
 
-export default function() {
+export default function AccountPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
 
     const store = useMainStore();
@@ -29,7 +29,7 @@ export default function() {
     return (
         <div>
             <h1>Акаунт</h1>
-            <p style={{marginBottom: 15}}>В цьому розділі можна робити дії пов'язані з акаунтом.</p>
+            <p style={{marginBottom: 15}}>В цьому розділі можна робити дії повязані з акаунтом.</p>
 
             <Divider orientation="right" orientationMargin={0}>Вихід</Divider>
 

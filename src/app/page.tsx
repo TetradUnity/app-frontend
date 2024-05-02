@@ -4,7 +4,7 @@ import { Button, Flex } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
 
-export default function() {
+export default function LandPage() {
   return (
     <Content>
       <Flex style={{padding: 20}} vertical justify="center" align="center" gap={20}>
