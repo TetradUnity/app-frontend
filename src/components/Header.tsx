@@ -1,6 +1,5 @@
 'use client'
 
-import { theme } from "antd";
 import { Header } from "antd/es/layout/layout";
 
 export default function AppHeader() {

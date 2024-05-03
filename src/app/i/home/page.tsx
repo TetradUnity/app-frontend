@@ -1,12 +1,11 @@
 'use client'
 
-import { Typography } from "antd"
+import StudentHomePage from "@/components/i/students/StudentHomePage";
+import TeacherHomePage from "@/components/i/teacher/TeacherHomePage";
+import { useAccountStore } from "@/stores/accountStore"
 
 export default function HomePage() {
-    return (
-        <div>
-            <h1>Головна сторінка</h1>
-            <p>Вміст.</p>
-        </div>
-    )
+    const role = useAccountStore(state => state.role);
+
+    return role == "student" ? <StudentHomePage /> : <TeacherHomePage />;
 }

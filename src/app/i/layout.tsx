@@ -1,18 +1,14 @@
 'use client'
 import { useState } from "react";
 
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
-import { Content, Footer } from "antd/es/layout/layout";
-import { MenuItemType } from "antd/es/menu/hooks/useItems";
-import {HomeOutlined, UserOutlined} from "@ant-design/icons";
+import { Content } from "antd/es/layout/layout";
 
 import { usePathname, useRouter } from "next/navigation";
-
-const navButtons: MenuItemType[] = [
-  {label: "Головна", key: "home", icon: <HomeOutlined />},
-  {label: "Акаунт", key: "account", icon: <UserOutlined />},
-];
+import { useAccountStore } from "@/stores/accountStore";
+import { studentSiderItems } from "@/components/i/students/StudentSiderItems";
+import { teacherSiderItems } from "@/components/i/teacher/TeacherSiderItems";
 
 export default function ILayout({
   children,
@@ -24,10 +20,12 @@ export default function ILayout({
 
   const pathname = usePathname();
 
+  const userRole = useAccountStore(state => state.role);
+  const navButtons = userRole == "student" ? studentSiderItems : teacherSiderItems;
+
   const onSelectedItem = ({key}: {key : string}) => {
     router.push("/i/" + key);
   }
-
 
   return (
       <Layout>

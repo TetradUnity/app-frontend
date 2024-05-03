@@ -2,18 +2,15 @@
 
 import { Button, Divider, Modal } from "antd"
 
-import { useMainStore } from "@/stores/mainStore";
 import { deleteCookie } from "@/utils/Cookie";
 import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
 
-    const store = useMainStore();
     const {replace} = useRouter();
 
     const logout = () => {
-        store.setClicks(100);
         modal.confirm({
             title: "Вихід з облікового запису",
             content: "Ви впевнені в цьому?",
