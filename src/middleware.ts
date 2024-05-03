@@ -6,19 +6,15 @@ const notAuthorizedUrls = ['/', '/login', '/register']
 export function middleware(request: NextRequest) {
     if (notAuthorizedUrls.includes(request.nextUrl.pathname)) {
         if (cookies().get("AUTH_TOKEN")) {
-            return NextResponse.redirect(new URL('/i/home', request.url))
+            return NextResponse.redirect(new URL('/home', request.url))
         }
         return NextResponse.next();
-    }
-
-    if (request.nextUrl.pathname.startsWith("/i/")) {
+    } else {
         if (!cookies().get("AUTH_TOKEN")) {
             return NextResponse.redirect(new URL('/', request.url))
         }
         return NextResponse.next();
     }
-
-    return NextResponse.next();
 }
 
 export const config = {
