@@ -14,7 +14,7 @@ export default function BaseLayout({
             token: {
                 "colorPrimary": "#ab7ae0",
                 "colorInfo": "#ab7ae0",
-                "colorBgBase": "#000000",
+                "colorBgBase": "#101010",
                 "fontSize": 17,
             },
             hashed: false
