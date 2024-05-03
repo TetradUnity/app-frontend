@@ -1,8 +1,8 @@
 'use client'
 
+import { AuthTokensService } from "@/services/auth-token.service";
 import { Button, Divider, Modal } from "antd"
 
-import { deleteCookie } from "@/utils/Cookie";
 import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
@@ -17,7 +17,7 @@ export default function AccountPage() {
             okText: "Так",
             cancelText: "Ні.",
             onOk: () => {
-                deleteCookie("AUTH_TOKEN");
+                AuthTokensService.deleteAuthToken();
                 replace("/");
             }
         });

@@ -5,7 +5,7 @@ import { Content } from "antd/es/layout/layout";
 import { CSSProperties, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/utils/Cookie";
+import { AuthTokensService } from "@/services/auth-token.service";
 
 const formStyle: CSSProperties = {
     width: 400,
@@ -22,8 +22,8 @@ export default function LoginPage() {
     const onFormSubmitted = () => {
         setLoading(true);
         setTimeout(() => {
-            setCookie("AUTH_TOKEN", "dfjhvbfhdvbhfdhbvj", 365);
-            replace("/i/home");
+            AuthTokensService.setAuthToken("dfjhvbfhdvbhfdhbvj");
+            replace("/home");
         }, 1000);
     }
 
