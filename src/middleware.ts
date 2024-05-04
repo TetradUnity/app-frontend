@@ -11,7 +11,8 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     } else {
         if (!cookies().get("AUTH_TOKEN")) {
-            return NextResponse.redirect(new URL('/', request.url))
+            // todo: fix rendering of logo
+            // return NextResponse.redirect(new URL('/', request.url))
         }
         return NextResponse.next();
     }
