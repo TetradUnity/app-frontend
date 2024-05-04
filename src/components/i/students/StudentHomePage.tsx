@@ -2,6 +2,8 @@
 import {useState} from 'react';
 import {Card, List} from "antd";
 
+import { AuthService } from "@/services/auth.service"
+
 export default function StudentHomePage() {
     // const [subjects, setSubjects] = useState([]);
     // const [grades, setGrades] = useState([]);
