@@ -2,8 +2,34 @@
 
 import {Header} from "antd/es/layout/layout";
 import Link from "next/link";
-import {Image, Space} from "antd";
+import {Avatar, Dropdown, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";
+import {CaretDownOutlined, UserOutlined} from "@ant-design/icons";
+
+const items: MenuProps['items'] = [
+    {
+        label: <a href="/subjects">Subjects</a>,
+        key: '0',
+    },
+    {
+        label: <a href="/grades">Grades</a>,
+        key: '1',
+    },
+    {
+        label: <a href="/achievements">Achievements</a>,
+        key: '2',
+    },
+    {
+        label: <a href="/account/settings">Settings</a>,
+        key: '3',
+    },
+    {
+        label: <a onClick={() => {
+            AuthTokensService.deleteAuthToken()
+        }} href="/">Logout</a>,
+        key: '4',
+    },
+]
 
 export default function AppHeader() {
     // todo: auto updating on login/logout
@@ -24,8 +50,22 @@ export default function AppHeader() {
                     <h1>APPLICATION</h1>
                 </Space>
             </Link>
-            {isLoggedIn ? <Link href="/account">Account</Link> : <Link href="/login">Sign in</Link>}
 
+
+            {isLoggedIn ?
+                <Space align="baseline">
+                    <Dropdown menu={{items}} trigger={["click"]}>
+                        <CaretDownOutlined />
+                    </Dropdown>
+                    <Link href="/account">
+                        <Space>
+                            <span>Account</span>
+                            <Avatar shape="square" size={40} icon={<UserOutlined/>}/>
+                        </Space>
+                    </Link>
+
+                </Space>
+                : <Link href="/login">Sign in</Link>}
         </Header>
     )
 }
