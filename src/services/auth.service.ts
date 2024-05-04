@@ -2,7 +2,7 @@
 
 import { API_URL, catchApiError } from "@/api";
 import { IResponse } from "@/types/api.types";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios from "axios";
 
 export const AuthService = {
     async login(email: string, password: string): Promise<IResponse> {

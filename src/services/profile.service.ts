@@ -1,51 +1,24 @@
 'use client'
 
 import { API_URL, catchApiError } from "@/api";
-import { IResponse } from "@/types/api.types";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import { IProfileResponse } from "@/types/api.types";
+import axios from "axios";
 
-export const AuthService = {
-    async login(email: string, password: string): Promise<IResponse> {
+export const ProfileService = {
+    async getProfile(userId?: number): Promise<IProfileResponse> {
         try {
-            const response = await axios.post(API_URL + "/authorization/login", {
-                email, password
-            });
-
-            // response.data.accessToken
-            // response.data.refreshToken
-
-            return {
-                success: true
-            }
-        } catch (error) {
-            return catchApiError(error);
-        }
-    },
-
-    async createUser(email: string, first_name: string, last_name: string, password: string): Promise<IResponse> {
-        try {
-            const response = await axios.post(API_URL + "/authorization/create-user", {
-                email, first_name, last_name, password
+            const response = await axios.get(API_URL + "/profile", {
+                params: {
+                    userId
+                }
             });
 
             return {
-                success: true
+                success: true,
+                data: response.data
             }
-        } catch (error) {
-            return catchApiError(error);
-        }
-    },
-
-
-    async refreshToken(): Promise<IResponse> {
-        try {
-            const response = await axios.post(API_URL + "/authorization/refresh-authorized");
-
-            return {
-                success: true
-            }
-        } catch (error) {
-            return catchApiError(error);
+        } catch (e) {
+            return catchApiError(e);
         }
     }
 };
