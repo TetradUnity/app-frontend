@@ -23,10 +23,11 @@ const items: MenuProps['items'] = [
         label: <a href="/account/settings">Settings</a>,
         key: '3',
     },
+    {key: 'divider', type: 'divider'},
     {
-        label: <a onClick={() => {
+        label: <Link style={{color: "orangered"}} onClick={() => {
             AuthTokensService.deleteAuthToken()
-        }} href="/">Logout</a>,
+        }} href="/">Logout</Link>,
         key: '4',
     },
 ]
