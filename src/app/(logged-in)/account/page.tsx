@@ -4,6 +4,7 @@ import { AuthTokensService } from "@/services/auth-token.service";
 import { Button, Divider, Modal } from "antd"
 
 import { useRouter } from "next/navigation";
+import StudentAccountPage from "@/components/i/students/StudentAccountPage";
 
 export default function AccountPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
@@ -24,15 +25,16 @@ export default function AccountPage() {
     };
 
     return (
-        <div>
-            <h1>Акаунт</h1>
-            <p style={{marginBottom: 15}}>В цьому розділі можна робити дії повязані з акаунтом.</p>
-
-            <Divider orientation="right" orientationMargin={0}>Вихід</Divider>
-
-            <Button onClick={logout} style={{display: "block", marginLeft: "auto"}} type="primary" danger>Вийти з акаунту</Button>
-
-            {modalCtxHolder}
-        </div>
+        <StudentAccountPage />
+        // <div>
+        //     <h1>Акаунт</h1>
+        //     <p style={{marginBottom: 15}}>В цьому розділі можна робити дії повязані з акаунтом.</p>
+        //
+        //     <Divider orientation="right" orientationMargin={0}>Вихід</Divider>
+        //
+        //     <Button onClick={logout} style={{display: "block", marginLeft: "auto"}} type="primary" danger>Вийти з акаунту</Button>
+        //
+        //     {modalCtxHolder}
+        // </div>
     )
 }

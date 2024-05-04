@@ -10,9 +10,7 @@ export default function ILayout({
   return (
       <Layout>
           <Content style={{margin: "15px 16px"}}>
-            <div style={{background: "#141414", borderRadius: 10, padding: 24, minHeight: 360}}>
               {children}
-            </div>
           </Content>
       </Layout>
   );
