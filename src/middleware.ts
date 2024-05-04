@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const notAuthorizedUrls = ['/', '/login', '/register']
+const notAuthorizedUrls = ['/', '/login', '/register'];
+const authorizedUrls = ['/home', '/account'];
 
 export function middleware(request: NextRequest) {
     if (notAuthorizedUrls.includes(request.nextUrl.pathname)) {
@@ -9,7 +10,9 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/home', request.url))
         }
         return NextResponse.next();
-    } else {
+    }
+    
+    if (authorizedUrls.includes(request.nextUrl.pathname)) {
         if (!cookies().get("AUTH_TOKEN")) {
             // todo: fix rendering of logo
             // return NextResponse.redirect(new URL('/', request.url))
