@@ -1,18 +1,18 @@
 'use client'
 
-import { API_URL, catchApiError } from "@/api";
+import { api, catchApiError } from "@/api";
 import { IResponse } from "@/types/api.types";
-import axios from "axios";
+import { AuthTokensService } from "./auth-token.service";
 
 export const AuthService = {
     async login(email: string, password: string): Promise<IResponse> {
         try {
-            const response = await axios.post(API_URL + "/authorization/login", {
+            const response = await api.post("/authorization/login", {
                 email, password
             });
 
-            // response.data.accessToken
-            // response.data.refreshToken
+            AuthTokensService.setAuthToken(response.data.accessToken);
+            AuthTokensService.setRefreshToken(response.data.refreshToken);
 
             return {
                 success: true
@@ -24,7 +24,7 @@ export const AuthService = {
 
     async createUser(email: string, first_name: string, last_name: string, password: string): Promise<IResponse> {
         try {
-            const response = await axios.post(API_URL + "/authorization/create-user", {
+            const response = await api.post("/authorization/create-user", {
                 email, first_name, last_name, password
             });
 
@@ -39,7 +39,7 @@ export const AuthService = {
 
     async refreshToken(): Promise<IResponse> {
         try {
-            const response = await axios.post(API_URL + "/authorization/refresh-authorized");
+            const response = await api.post("/authorization/refresh-authorized");
 
             return {
                 success: true
