@@ -1,11 +1,12 @@
 'use client'
 
-import { Button, Flex, Form, Input, theme } from "antd";
+import { Button, Flex, Form, Input, message, theme } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { CSSProperties, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthTokensService } from "@/services/auth-token.service";
+import { AuthService } from "@/services/auth.service";
 
 const formStyle: CSSProperties = {
     width: 400,
@@ -19,12 +20,24 @@ export default function LoginPage() {
     const [isLoading, setLoading] = useState(false);
     const {replace} = useRouter();
 
-    const onFormSubmitted = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const onFormSubmitted = async () => {
         setLoading(true);
-        setTimeout(() => {
-            AuthTokensService.setAuthToken("dfjhvbfhdvbhfdhbvj");
-            replace("/home");
-        }, 1000);
+
+        const resp = await AuthService.login(email, password);
+
+        setLoading(false);
+
+        if (!resp.success) {
+            messageApi.error("Не вдалося авторизуватися: " + resp.error_code);
+            return;
+        }
+        
+        replace("/home");
     }
 
   return (
@@ -42,18 +55,21 @@ export default function LoginPage() {
 
             <Form.Item label="Email" name="email" rules={[
                 { required: true, message: "Обов'язкове поле!" },
-                { min: 5, message: "Email повинен мати як мінімум 5 символів." },
-                { max: 50, message: "Email не може мати більше аніж 50 символів." },
             ]}>
-                <Input />
+                <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                 />
             </Form.Item>
 
             <Form.Item label="Пароль" name="password" rules={[
                 { required: true, message: "Обов'язкове поле!" },
-                { min: 5, message: "Пароль повинен мати як мінімум 5 символів." },
-                { max: 50, message: "Пароль не може мати більше аніж 50 символів." },
             ]}>
-                <Input type="password" />
+                <Input
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
+                    type="password"
+                 />
             </Form.Item>
 
             <Form.Item style={{marginTop: 40, marginBottom: 10}} wrapperCol={{ offset: 7, span: 30 }}>
@@ -67,6 +83,7 @@ export default function LoginPage() {
             </p>
         </Form>
       </Flex>
+      {contextHolder}
     </Content>
   );
 }

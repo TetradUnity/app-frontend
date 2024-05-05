@@ -1,13 +1,12 @@
 'use client'
 
-import { API_URL, catchApiError } from "@/api";
+import { api, catchApiError } from "@/api";
 import { IProfileResponse } from "@/types/api.types";
-import axios from "axios";
 
 export const ProfileService = {
     async getProfile(userId?: number): Promise<IProfileResponse> {
         try {
-            const response = await axios.get(API_URL + "/profile", {
+            const response = await api.get("/profile", {
                 params: {
                     userId
                 }
