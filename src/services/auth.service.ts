@@ -34,18 +34,5 @@ export const AuthService = {
         } catch (error) {
             return catchApiError(error);
         }
-    },
-
-
-    async refreshToken(): Promise<IResponse> {
-        try {
-            const response = await api.post("/authorization/refresh-authorized");
-
-            return {
-                success: true
-            }
-        } catch (error) {
-            return catchApiError(error);
-        }
     }
 };

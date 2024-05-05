@@ -23,6 +23,37 @@ api.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
+const interceptor = api.interceptors.response.use(function (response) {
+    return response;
+  }, function (error) {
+    let refreshToken: string = "";
+    if (error.response.status !== 401 && !(refreshToken = AuthTokensService.getRefreshToken())) {
+        api.post("/authorization/refresh-authorized");
+
+        return Promise.reject(error);
+    }
+
+    api.interceptors.response.eject(interceptor);
+
+    return api.post("/authorization/refresh-authorized", {
+        refresh_token: refreshToken
+    })
+    .then(response => {
+        return axios(error.response.config);
+    })
+    .catch(err2 => {
+        AuthTokensService.deleteAuthToken();
+        AuthTokensService.deleteRefreshToken();
+
+        const sp = new URLSearchParams({
+            err: "Вам потрібно перезайти в акаунт."
+        });
+        window.location.href = "/?" + sp.toString();
+
+        return Promise.reject(err2);
+    })
+});
+
 export function catchApiError(error: any): IResponse {
     if (process.env.NODE_ENV == "development") {
         console.log(error);

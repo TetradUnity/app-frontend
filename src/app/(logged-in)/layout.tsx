@@ -18,20 +18,14 @@ export default function ILayout({
 
   const [isFailedToLoad, setIsFailedToLoad] = useState(false);
 
-  const initialized = useRef(false);
   useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-
-      ProfileService.getProfile().then(response => {
-        setAppLoading(false);
-        if (!response.success) {
-          setIsFailedToLoad(true);
-          return;
-        }
-
-      })
-    }
+    ProfileService.getProfile().then(response => {
+      setAppLoading(false);
+      if (!response.success) {
+        //setIsFailedToLoad(true);
+        return;
+      }
+    })
   }, []);
 
   return (
