@@ -38,9 +38,7 @@ export default function ILayout({
       <Layout>
           <Content style={{margin: "15px 16px"}}>
           {(!isAppLoading && !isFailedToLoad) ? 
-            <div style={{background: "#141414", borderRadius: 10, padding: 24, minHeight: 360}}>
-              {children}
-            </div>
+              children
             : null}
           <Spin
             indicator={<LoadingOutlined style={{ fontSize: 60 }}/>}

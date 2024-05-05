@@ -5,7 +5,7 @@ import Link from "next/link";
 import {Avatar, Dropdown, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";
 import {CaretDownOutlined, UserOutlined} from "@ant-design/icons";
-
+import { useEffect, useRef, useState } from "react";
 const items: MenuProps['items'] = [
     {
         label: <a href="/subjects">Subjects</a>,
@@ -34,8 +34,10 @@ const items: MenuProps['items'] = [
 
 export default function AppHeader() {
     // todo: auto updating on login/logout
-    const isLoggedIn = AuthTokensService.getAuthToken() !== ""
-
+    const [isLoggedIn, setLoggedIn] = useState(false);
+    useEffect(() => {
+        setLoggedIn(AuthTokensService.getAuthToken() !== "");
+    })
     return (
         <Header style={{
             background: "#1f1f1f", padding: 0,
@@ -52,8 +54,7 @@ export default function AppHeader() {
                 </Space>
             </Link>
 
-
-            {isLoggedIn ?
+            {(isLoggedIn == true) ?
                 <Space align="baseline">
                     <Dropdown menu={{items}} trigger={["click"]}>
                         <CaretDownOutlined />
