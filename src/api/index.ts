@@ -23,13 +23,18 @@ api.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
+/*
+print cookie:
+if (typeof window !== null) {
+            console.log(AuthTokensService.getAuthToken())
+        }
+*/
+
 const interceptor = api.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
-    let refreshToken: string = "";
-    if (error.response.status !== 401 && !(refreshToken = AuthTokensService.getRefreshToken())) {
-        api.post("/authorization/refresh-authorized");
-
+    let refreshToken: string = AuthTokensService.getRefreshToken();
+    if (error.response.status !== 401 || (!refreshToken || refreshToken.length == 0)) {
         return Promise.reject(error);
     }
 

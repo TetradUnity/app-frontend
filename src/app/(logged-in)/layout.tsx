@@ -4,9 +4,10 @@ import { Content } from "antd/es/layout/layout";
 
 import { Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppStore } from "@/stores/appStore";
-import { ProfileService } from "@/services/profile.service";
+import { UserService } from "@/services/user.service";
+import { useProfileStore } from "@/stores/profileStore";
 
 export default function ILayout({
   children,
@@ -18,11 +19,16 @@ export default function ILayout({
 
   const [isFailedToLoad, setIsFailedToLoad] = useState(false);
 
+  const updateProfileStore = useProfileStore(selector => selector.updateProfile);
+
+
   useEffect(() => {
-    ProfileService.getProfile().then(response => {
+    UserService.getProfile().then(response => {
+      updateProfileStore(response.data);
       setAppLoading(false);
+
       if (!response.success) {
-        //setIsFailedToLoad(true);
+        setIsFailedToLoad(true);
         return;
       }
     })

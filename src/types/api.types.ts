@@ -5,13 +5,13 @@ export interface IResponse {
 }
 
 export interface IProfileResponse extends IResponse {
-    data?: IProfile;
+    data?: IUser;
 }
 
-export interface IProfile {
+export interface IUser {
     id: number,
     email: string,
     first_name: string,
     last_name: string,
-    role: string
+    role: "chief_teacher" | "teacher" | "student"
 }

@@ -3,10 +3,10 @@
 import { api, catchApiError } from "@/api";
 import { IProfileResponse } from "@/types/api.types";
 
-export const ProfileService = {
+export const UserService = {
     async getProfile(userId?: number): Promise<IProfileResponse> {
         try {
-            const response = await api.get("/profile", {
+            const response = await api.get("/user/get", {
                 params: {
                     userId
                 }
@@ -14,7 +14,7 @@ export const ProfileService = {
 
             return {
                 success: true,
-                data: response.data
+                data: response.data.user
             }
         } catch (e) {
             return catchApiError(e);

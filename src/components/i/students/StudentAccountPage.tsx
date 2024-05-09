@@ -3,9 +3,12 @@ import {Avatar, Flex, Space} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import {useState} from "react";
+import { useProfileStore } from "@/stores/profileStore";
 
 export default function StudentAccountPage() {
     const [selectedPage, setSelectedPage] = useState('subjects');
+
+    const profile = useProfileStore();
 
     let content;
     switch (selectedPage) {
@@ -21,6 +24,7 @@ export default function StudentAccountPage() {
         default:
             content = <h1>{selectedPage}</h1>;
     }
+
     return (
         <>
             <Space direction="vertical" style={{display: "flex", background: "#181818", borderRadius: 8}}>
@@ -28,8 +32,8 @@ export default function StudentAccountPage() {
                     <Flex gap={16} align="center">
                         <Avatar shape="square" size={50} icon={<UserOutlined/>}/>
                         <div>
-                            <strong>First & Last name</strong>
-                            <p>role</p>
+                            <strong>{profile.first_name + " " + profile.last_name}</strong>
+                            <p>{profile.role}</p>
                         </div>
                     </Flex>
                     <Link href="/account/settings">Settings</Link>
