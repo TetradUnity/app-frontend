@@ -2,6 +2,7 @@
 import { ConfigProvider, Layout, theme } from "antd";
 import Header from "@/components/Header";
 import { useEffect } from "react";
+import { AuthTokensService } from "@/services/auth-token.service";
 
 export default function BaseLayout({
     children,

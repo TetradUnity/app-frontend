@@ -34,30 +34,36 @@ const interceptor = api.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
     let refreshToken: string = AuthTokensService.getRefreshToken();
-    if (error.response.status !== 401 || (!refreshToken || refreshToken.length == 0)) {
+    if (error.response.status !== 401 || (!refreshToken)) {
         return Promise.reject(error);
     }
 
     api.interceptors.response.eject(interceptor);
 
-    return api.post("/authorization/refresh-authorized", {
-        refresh_token: refreshToken
+    return api.post("/authorization/refresh-authorized", {}, {
+        headers: {
+            Authorization: refreshToken
+        }
     })
     .then(response => {
-        AuthTokensService.setAuthToken(response.data.accessToken);
-        AuthTokensService.setRefreshToken(response.data.refreshToken);
+        if (response.data) {
+            AuthTokensService.setAuthToken(response.data.accessToken);
+            AuthTokensService.setRefreshToken(response.data.refreshToken);
+            window.location.href = window.location.href;
+        }
 
         return axios(error.response.config);
     })
     .catch(err2 => {
-        AuthTokensService.deleteAuthToken();
-        AuthTokensService.deleteRefreshToken();
-
-        const sp = new URLSearchParams({
-            err: "Вам потрібно перезайти в акаунт."
-        });
-        window.location.href = "/?" + sp.toString();
-
+        if (axios.isAxiosError(err2) && err2.status === 401) {
+            AuthTokensService.deleteAuthToken();
+            AuthTokensService.deleteRefreshToken();
+    
+            const sp = new URLSearchParams({
+                err: "Вам потрібно перезайти в акаунт."
+            });
+            window.location.href = "/?" + sp.toString();
+        }
         return Promise.reject(err2);
     })
 });

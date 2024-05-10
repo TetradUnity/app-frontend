@@ -51,7 +51,7 @@ export default function LoginPage() {
             return;
         }
         
-        replace("/home");
+        window.location.href = "/home";
     }
 
   return (
