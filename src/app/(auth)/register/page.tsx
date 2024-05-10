@@ -1,11 +1,10 @@
 'use client'
 
-import { Button, Flex, Form, Input, theme } from "antd";
+import { Button, Flex, Form, Input, Select, message } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { CSSProperties, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AuthTokensService } from "@/services/auth-token.service";
+import { AuthService } from "@/services/auth.service";
 
 const formStyle: CSSProperties = {
     width: 400,
@@ -16,15 +15,40 @@ const formStyle: CSSProperties = {
 }
 
 export default function RegisterPage() {
+    
     const [isLoading, setLoading] = useState(false);
-    const {replace} = useRouter();
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const onFormSubmitted = () => {
+    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [role, setRole] = useState("student");
+    const [password, setPassword] = useState('');
+
+    const onFormSubmitted = async () => {
         setLoading(true);
-        setTimeout(() => {
-            AuthTokensService.setAuthToken("dfjhvbfhdvbhfdhbvj");
-            replace("/home");
-        }, 1000);
+
+        const resp = await AuthService.register(email, firstName, lastName, password, role);
+
+        setLoading(false);
+
+        if (!resp.success) {
+            let errToDisplay;
+
+            switch(resp.error_code) {
+                case "user_already_exist":
+                    errToDisplay = "Користувач з таким email вже існує в системі.";
+                    break;
+                default:
+                    errToDisplay = "Трапилась невідома помилка. Спробуйте ще раз!";
+                    break;
+            }
+
+            messageApi.error(errToDisplay);
+            return;
+        }
+        
+        messageApi.success("Успішно! Тепер потрібно авторизуватися.");
     }
 
   return (
@@ -45,7 +69,29 @@ export default function RegisterPage() {
                 { min: 5, message: "Email повинен мати як мінімум 5 символів." },
                 { max: 50, message: "Email не може мати більше аніж 50 символів." },
             ]}>
-                <Input />
+                <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                 />
+            </Form.Item>
+
+
+            <Form.Item label="Імя" name="firstName" rules={[
+                { required: true, message: "Обов'язкове поле!" }
+            ]}>
+                <Input
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.currentTarget.value)}
+                 />
+            </Form.Item>
+
+            <Form.Item label="Фамілія" name="lastName" rules={[
+                { required: true, message: "Обов'язкове поле!" }
+            ]}>
+                <Input
+                    value={lastName}
+                    onChange={(e) => setLastName(e.currentTarget.value)}
+                 />
             </Form.Item>
 
             <Form.Item label="Пароль" name="password" rules={[
@@ -53,7 +99,23 @@ export default function RegisterPage() {
                 { min: 5, message: "Пароль повинен мати як мінімум 5 символів." },
                 { max: 50, message: "Пароль не може мати більше аніж 50 символів." },
             ]}>
-                <Input type="password" />
+                <Input
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
+                    type="password"
+                />
+            </Form.Item>
+
+            <Form.Item label="Роль" name="role" required={true}>
+                <Select
+                    defaultValue={role}
+                    onChange={(role) => setRole(role)}
+                    options={[
+                        { value: 'student', label: "Студент" },
+                        { value: 'teacher', label: "Вчитель" },
+                        { value: 'chief_teacher', label: "Головний вчитель" },
+                    ]}
+                />
             </Form.Item>
 
             <Form.Item style={{marginTop: 40, marginBottom: 10}} wrapperCol={{ offset: 7, span: 30 }}>
@@ -67,6 +129,8 @@ export default function RegisterPage() {
             </p>
         </Form>
       </Flex>
+
+      {contextHolder}
     </Content>
   );
 }

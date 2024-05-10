@@ -44,6 +44,9 @@ const interceptor = api.interceptors.response.use(function (response) {
         refresh_token: refreshToken
     })
     .then(response => {
+        AuthTokensService.setAuthToken(response.data.accessToken);
+        AuthTokensService.setRefreshToken(response.data.refreshToken);
+
         return axios(error.response.config);
     })
     .catch(err2 => {

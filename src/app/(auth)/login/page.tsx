@@ -33,7 +33,21 @@ export default function LoginPage() {
         setLoading(false);
 
         if (!resp.success) {
-            messageApi.error("Не вдалося авторизуватися: " + resp.error_code);
+            let errToDisplay;
+
+            switch(resp.error_code) {
+                case "user_not_found":
+                    errToDisplay = "Користувача з таким email не було знайдено.";
+                    break;
+                case "incorrect_password":
+                    errToDisplay = "Невірний пароль.";
+                    break;
+                default:
+                    errToDisplay = "Трапилась невідома помилка. Спробуйте ще раз!";
+                    break;
+            }
+
+            messageApi.error(errToDisplay);
             return;
         }
         

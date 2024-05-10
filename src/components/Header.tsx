@@ -5,28 +5,30 @@ import Link from "next/link";
 import {Avatar, Dropdown, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";
 import {CaretDownOutlined, UserOutlined} from "@ant-design/icons";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
 const items: MenuProps['items'] = [
     {
-        label: <a href="/subjects">Subjects</a>,
+        label: <Link href="/subjects">Subjects</Link>,
         key: '0',
     },
     {
-        label: <a href="/grades">Grades</a>,
+        label: <Link href="/grades">Grades</Link>,
         key: '1',
     },
     {
-        label: <a href="/achievements">Achievements</a>,
+        label: <Link href="/achievements">Achievements</Link>,
         key: '2',
     },
     {
-        label: <a href="/account/settings">Settings</a>,
+        label: <Link href="/account/settings">Settings</Link>,
         key: '3',
     },
     {key: 'divider', type: 'divider'},
     {
         label: <Link style={{color: "orangered"}} onClick={() => {
-            AuthTokensService.deleteAuthToken()
+            AuthTokensService.deleteAuthToken();
+            window.location.href = "/";
         }} href="/">Logout</Link>,
         key: '4',
     },
@@ -67,7 +69,11 @@ export default function AppHeader() {
                     </Link>
 
                 </Space>
-                : <Link href="/login">Sign in</Link>}
+
+                : <div>
+                <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
+                <Link href="/register">Реєстрація</Link>
+                </div>}
         </Header>
     )
 }
