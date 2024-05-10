@@ -106,9 +106,8 @@ export default function RegisterPage() {
                 />
             </Form.Item>
 
-            <Form.Item label="Роль" name="role" required={true}>
+            <Form.Item initialValue={role} label="Роль" name="role" required={true}>
                 <Select
-                    defaultValue={role}
                     onChange={(role) => setRole(role)}
                     options={[
                         { value: 'student', label: "Студент" },
