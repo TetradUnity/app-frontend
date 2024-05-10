@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const notAuthorizedUrls = ['/', '/login', '/register'];
-const authorizedUrls = ['/home', '/account'];
+const authorizedUrls = ['/home', '/profile'];
 
 export function middleware(request: NextRequest) {
     if (notAuthorizedUrls.includes(request.nextUrl.pathname)) {

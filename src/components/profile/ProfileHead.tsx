@@ -5,7 +5,7 @@ import Link from "next/link";
 import {useState} from "react";
 import { useProfileStore } from "@/stores/profileStore";
 
-export default function StudentAccountPage() {
+export default function ProfileHead() {
     const [selectedPage, setSelectedPage] = useState('subjects');
 
     const profile = useProfileStore();
@@ -36,16 +36,13 @@ export default function StudentAccountPage() {
                             <p>{profile.role}</p>
                         </div>
                     </Flex>
-                    <Link href="/account/settings">Settings</Link>
+                    <Link href="/profile/settings">Settings</Link>
                 </div>
                 <Space style={{display: "flex", padding: 8, borderTop: "solid #444 1px"}}>
-                    <a onClick={() => setSelectedPage('subjects')}>Subjects</a>
+                    <a href="/profile/subjects">Subjects</a>
                     <a onClick={() => setSelectedPage('grades')}>Grades</a>
                     <a onClick={() => setSelectedPage('achievements')}>Achievements</a>
                 </Space>
-            </Space>
-            <Space size={20} direction="vertical">
-                {content}
             </Space>
         </>
     );

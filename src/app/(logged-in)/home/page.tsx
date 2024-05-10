@@ -1,8 +1,8 @@
 'use client'
 
-import ChiefTeacherHomePage from "@/components/i/chief-teacher/ChiefTeacherHomePage";
-import StudentHomePage from "@/components/i/students/StudentHomePage";
-import TeacherHomePage from "@/components/i/teacher/TeacherHomePage";
+import ChiefTeacherHomePage from "@/components/chief-teacher/ChiefTeacherHomePage";
+import StudentHomePage from "@/components/students/StudentHomePage";
+import TeacherHomePage from "@/components/teacher/TeacherHomePage";
 import { useProfileStore } from "@/stores/profileStore"
 import { useShallow } from "zustand/react/shallow";
 

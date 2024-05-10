@@ -1,7 +1,6 @@
 'use client'
 import { ConfigProvider, Layout, theme } from "antd";
 import Header from "@/components/Header";
-import { useEffect } from "react";
 
 export default function BaseLayout({
     children,
@@ -13,9 +12,9 @@ export default function BaseLayout({
             theme={{
             algorithm: theme.darkAlgorithm,
             token: {
-                "colorPrimary": "#ab7ae0",
+                "colorPrimary": "#5e35b1",
                 "colorInfo": "#ab7ae0",
-                "colorBgBase": "#101010",
+                "colorBgBase": "#0A0A0A",
                 "fontSize": 17,
             },
             hashed: false

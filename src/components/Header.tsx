@@ -9,19 +9,19 @@ import { useEffect, useState } from "react";
 
 const items: MenuProps['items'] = [
     {
-        label: <Link href="/subjects">Subjects</Link>,
+        label: <Link href="/profile/subjects">Subjects</Link>,
         key: '0',
     },
     {
-        label: <Link href="/grades">Grades</Link>,
+        label: <Link href="/profile/grades">Grades</Link>,
         key: '1',
     },
     {
-        label: <Link href="/achievements">Achievements</Link>,
+        label: <Link href="/profile/achievements">Achievements</Link>,
         key: '2',
     },
     {
-        label: <Link href="/account/settings">Settings</Link>,
+        label: <Link href="/profile/settings">Settings</Link>,
         key: '3',
     },
     {key: 'divider', type: 'divider'},
@@ -56,12 +56,12 @@ export default function AppHeader() {
                 </Space>
             </Link>
 
-            {(isLoggedIn == true) ?
+            {isLoggedIn ?
                 <Space align="baseline">
                     <Dropdown menu={{items}} trigger={["click"]}>
                         <CaretDownOutlined />
                     </Dropdown>
-                    <Link href="/account">
+                    <Link href="/profile">
                         <Space>
                             <span>Account</span>
                             <Avatar shape="square" size={40} icon={<UserOutlined/>}/>
