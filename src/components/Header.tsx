@@ -51,56 +51,66 @@ const items: MenuProps['items'] = [
 export default function AppHeader() {
     // todo: auto updating on login/logout
     const [isLoggedIn, setLoggedIn] = useState(false)
-     useEffect(() => {
-         setLoggedIn(AuthTokensService.getAuthToken() !== "");
-     })
+    useEffect(() => {
+        setLoggedIn(AuthTokensService.getAuthToken() !== "");
+    })
     const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
     return (
         <div style={{
             background: 'rgba(31,31,31,0.85)',
-            display: "grid",
-            gridTemplateColumns: gridTemplateColumns,
-            alignItems: "center",
             position: "sticky",
             top: 0,
+            width: "100vw",
             zIndex: 1000,
             height: '58px',
             backdropFilter: "blur(10px)",
             borderBottom: "solid 1px #444",
         }}>
-            <Link href="/" style={{marginLeft: 20}}>
-                <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>
-                    <Image src="/react.svg" alt="React logo" preview={false} style={{width: 40, height: 40}}/>
-                    <h1>APPLICATION</h1>
-                </Space>
-            </Link>
-            {isLoggedIn ?
-                <Space style={{display: "flex", justifyContent: "center"}}>
-                    <Button type="text" href="/subjects" icon={<BookOutlined/>}>Предмети</Button>
-                    <Button type="text" href="/students" icon={<IdcardOutlined/>}>Студенти</Button>
-                    <Button type="text" href="/teachers" icon={<TeamOutlined/>}>Вчителі</Button>
-                </Space> : null}
-            {isLoggedIn ?
-                <Space align="center" style={{
-                    display: "flex",
-                    position: "relative",
-                    justifyContent: "flex-end",
-                    marginRight: 20
-                }}>
-                    <Link href={"/profile"}>
-                        <Avatar shape="square" alt="user avatar" size={32} style={{margin:0, padding:0}} icon={<UserOutlined/>}/>
-                    </Link>
+            <div style={{
+                maxWidth:"1200px",
+                width: "100%",
+                display: "grid",
+                gridTemplateColumns: gridTemplateColumns,
+                alignItems: "center",
+                margin: "0 auto",
+                height: "100%",
+            }}>
+                <Link href="/" style={{marginLeft: 20}}>
+                    <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>
+                        <Image src="/react.svg" alt="React logo" preview={false} style={{width: 40, height: 40}}/>
+                        <h1>APPLICATION</h1>
+                    </Space>
+                </Link>
+                {isLoggedIn ?
+                    <Space style={{display: "flex", justifyContent: "center"}}>
+                        <Button type="text" href="/subjects" icon={<BookOutlined/>}>Предмети</Button>
+                        <Button type="text" href="/students" icon={<IdcardOutlined/>}>Студенти</Button>
+                        <Button type="text" href="/teachers" icon={<TeamOutlined/>}>Вчителі</Button>
+                    </Space> : null}
+                {isLoggedIn ?
+                    <Space align="center" style={{
+                        display: "flex",
+                        position: "relative",
+                        justifyContent: "flex-end",
+                        marginRight: 20
+                    }}>
+                        <Link href={"/profile"}>
+                            <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
+                                    icon={<UserOutlined/>}/>
+                        </Link>
 
-                    <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop:12}}>
-                        <Button type="text" icon={<MenuOutlined/>}/>
-                    </Dropdown>
+                        <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12}}>
+                            <Button type="text" icon={<MenuOutlined/>}/>
+                        </Dropdown>
 
-                </Space>
+                    </Space>
 
-                : <Space style={{display: "flex", position: "relative", justifyContent: "flex-end", padding:"10px 0"}}>
-                    <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
-                    <Link href="/register">Реєстрація</Link>
-                </Space>}
+                    : <Space
+                        style={{display: "flex", position: "relative", justifyContent: "flex-end", padding: "10px 0"}}>
+                        <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
+                        <Link href="/register">Реєстрація</Link>
+                    </Space>}
+            </div>
         </div>
     )
 }
