@@ -47,6 +47,7 @@ const interceptor = api.interceptors.response.use(function (response) {
     })
     .then(response => {
         console.log('succes ??? ')
+        console.log(response.data)
         if (response.data) {
             AuthTokensService.setAuthToken(response.data.accessToken);
             AuthTokensService.setRefreshToken(response.data.refreshToken);
@@ -54,9 +55,8 @@ const interceptor = api.interceptors.response.use(function (response) {
         }
 
         return axios(error.response.config);
-    })
-    .catch(err2 => {
-        if (axios.isAxiosError(err2) && err2.response?.status === 401) {
+    }).catch(err2 => {
+        if (axios.isAxiosError(err2) && err2.response?.status === 401 && err2.config?.url == "/authorization/refresh-authorized") {
             AuthTokensService.deleteAuthToken();
             AuthTokensService.deleteRefreshToken();
     
