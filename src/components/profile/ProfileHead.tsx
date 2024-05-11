@@ -2,28 +2,10 @@
 import {Avatar, Flex, Space} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
-import {useState} from "react";
 import { useProfileStore } from "@/stores/profileStore";
 
 export default function ProfileHead() {
-    const [selectedPage, setSelectedPage] = useState('subjects');
-
     const profile = useProfileStore();
-
-    let content;
-    switch (selectedPage) {
-        case "subjects":
-            content = <h1>Subjects</h1>;
-            break;
-        case "grades":
-            content = <h1>Grades</h1>;
-            break;
-        case "achievements":
-            content = <h1>Achievements</h1>;
-            break;
-        default:
-            content = <h1>{selectedPage}</h1>;
-    }
 
     return (
         <>
@@ -39,9 +21,9 @@ export default function ProfileHead() {
                     <Link href="/profile/settings">Settings</Link>
                 </div>
                 <Space style={{display: "flex", padding: 8, borderTop: "solid #444 1px"}}>
-                    <a href="/profile/subjects">Subjects</a>
-                    <a onClick={() => setSelectedPage('grades')}>Grades</a>
-                    <a onClick={() => setSelectedPage('achievements')}>Achievements</a>
+                    <Link href="/profile/subjects">Subjects</Link>
+                    <Link href="/profile/grades">Grades</Link>
+                    <Link href="/profile/achievements">Achievements</Link>
                 </Space>
             </Space>
         </>
