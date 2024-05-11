@@ -24,7 +24,7 @@ export default function AccountSettingsPage() {
     };
 
     return (
-        <div>
+        <>
             <h1>Акаунт</h1>
             <p style={{marginBottom: 15}}>В цьому розділі можна робити дії повязані з акаунтом.</p>
         
@@ -33,6 +33,6 @@ export default function AccountSettingsPage() {
             <Button onClick={logout} style={{display: "block", marginLeft: "auto"}} type="primary" danger>Вийти з акаунту</Button>
         
             {modalCtxHolder}
-        </div>
+        </>
     )
 }

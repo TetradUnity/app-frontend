@@ -16,6 +16,7 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
+import { HEADER_HEIGHT } from "@/globalConstants";
 
 const items: MenuProps['items'] = [
     {
@@ -67,6 +68,7 @@ export default function AppHeader() {
             position: "fixed",
             width: "100%",
             zIndex: 1000,
+            height: HEADER_HEIGHT
         }}>
             <Link href="/" style={{marginLeft: 20}}>
                 <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>

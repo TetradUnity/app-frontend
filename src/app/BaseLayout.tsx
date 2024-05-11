@@ -2,6 +2,7 @@
 import {ConfigProvider, Layout, theme} from "antd";
 import Header from "@/components/Header";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
+import { HEADER_HEIGHT } from "@/globalConstants";
 
 export default function BaseLayout({
                                        children,
@@ -21,8 +22,9 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                <Layout style={{minHeight: '100vh'}}>
-                    <Header/>
+                <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column"}}>
+                    <Header />
+                    <div style={{height: HEADER_HEIGHT}}></div>
                     {children}
                 </Layout>
             </ConfigProvider>

@@ -18,7 +18,7 @@ export default function ChiefTeacherHomePage() {
         "German",
     ];
     return (
-        <div>
+        <>
             <h1>Головна сторінка для головного викладача</h1>
             <List pagination={{pageSize: 8}}
                   header={<h2>Subjects</h2>}
@@ -31,6 +31,6 @@ export default function ChiefTeacherHomePage() {
                       </List.Item>
                   )}
             />
-        </div>
+        </>
     )
 }
