@@ -9,9 +9,9 @@ export default function ProfileHead() {
 
     return (
         <>
-            <Space direction="vertical" style={{display: "flex", background: "#181818", borderRadius: 8}}>
+            <Space direction="vertical" style={{display: "flex", background: "var(--foreground)", borderRadius: 8}}>
                 <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px"}}>
-                    <Flex gap={16} align="center">
+                    <Flex gap='var(--gap)' align="center">
                         <Avatar shape="square" size={50} icon={<UserOutlined/>}/>
                         <div>
                             <strong>{profile.first_name + " " + profile.last_name}</strong>

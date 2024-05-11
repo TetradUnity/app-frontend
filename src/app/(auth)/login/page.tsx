@@ -12,7 +12,7 @@ const formStyle: CSSProperties = {
     width: 400,
     padding: 30,
     paddingBottom: 0,
-    background: "#1f1f1f",
+    background: 'var(--foreground)',
     borderRadius: 10
 }
 

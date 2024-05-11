@@ -11,5 +11,7 @@ body {
 }
 
 :root {
-
+  --gap: 16px;
+  --gap-half: 8px;
+  --foreground: #1b1b1b
 }

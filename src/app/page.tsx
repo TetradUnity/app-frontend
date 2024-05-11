@@ -22,7 +22,7 @@ export default function LandPage() {
 
   return (
     <Content>
-      <Flex style={{padding: 20}} vertical justify="center" align="center" gap={20}>
+      <Flex style={{padding: 20}} vertical justify="center" align="center" gap='var(--gap)'>
         <p style={{fontSize: 30}}>Головна</p>
 
         <Link href="/login">

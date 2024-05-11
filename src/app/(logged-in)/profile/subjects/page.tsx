@@ -22,10 +22,10 @@ export default function ProfileSubjects() {
         setSort(e.target.value)
     };
     return (
-        <Space style={{alignItems:"flex-start", gap:20}}>
+        <Space style={{alignItems:"flex-start", gap:'var(--gap)'}}>
             <Space style={{
                 display: "block",
-                background: "#181818",
+                background: 'var(--foreground)',
                 borderRadius: 8,
                 padding: "12px 16px",
                 width: "max-content"
@@ -57,7 +57,7 @@ export default function ProfileSubjects() {
             </Space>
             <Space direction="vertical" style={{display: "flex"}}>
                 <Input placeholder="Фільтр по назві" style={{position:"relative",flexGrow:1}}></Input>
-                <Space size={[8,16]} wrap style={{background: "#181818", borderRadius: 8, padding: "12px 16px"}}>
+                <Space size={[8,16]} wrap style={{background: 'var(--foreground)', borderRadius: 8, padding: "12px 16px"}}>
                     {new Array(20).fill(null).map((_, index) => (
                         <h1>Subject</h1>
                     ))}

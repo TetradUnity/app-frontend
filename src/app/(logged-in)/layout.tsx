@@ -10,13 +10,7 @@ import { UserService } from "@/services/user.service";
 import { useProfileStore } from "@/stores/profileStore";
 
 const contentStyle: CSSProperties = {
-  width: 1200,
-  margin: "18px auto",
-  background: "rgb(28,28,28)",
-  padding: 40,
-  borderRadius: 10,
-  boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
-  display: "block",
+
 };
 
 export default function ILayout({
@@ -45,7 +39,7 @@ export default function ILayout({
 
   return (
       <Layout style={{flex: 1}}>
-          <Content style={contentStyle}>
+          <Content>
             {(!isAppLoading && !isFailedToLoad) ? 
                   children
               : null}

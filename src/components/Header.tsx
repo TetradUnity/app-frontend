@@ -1,6 +1,5 @@
 'use client'
 
-import {Header} from "antd/es/layout/layout";
 import Link from "next/link";
 import {Avatar, Button, Dropdown, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";

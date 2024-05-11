@@ -21,9 +21,16 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column"}}>
+                <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
                     <Header />
-                    {children}
+                    <div style={{
+                        maxWidth:"1200px",
+                        margin: "0 auto",
+                        width: "100%",
+                        padding: "0 16px",
+                    }}>
+                        {children}
+                    </div>
                 </Layout>
             </ConfigProvider>
         </AntdRegistry>
