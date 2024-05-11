@@ -1,5 +1,5 @@
 'use client'
-import {Divider, Input, Radio, RadioChangeEvent, Space} from "antd";
+import {Divider, Flex, Input, Radio, RadioChangeEvent, Space} from "antd";
 import {useState} from "react";
 
 export default function ProfileSubjects() {
@@ -22,25 +22,37 @@ export default function ProfileSubjects() {
         setSort(e.target.value)
     };
     return (
-        <Space style={{alignItems:"flex-start", gap:'var(--gap)'}}>
+        <div style={{
+            display: "grid",
+            gap:'var(--gap)',
+            gridTemplateColumns: "auto 1fr",
+            gridTemplateRows: "auto 1fr",
+            gridTemplateAreas: `
+                "sidebar search"
+                "sidebar content"
+                `,
+        }}>
             <Space style={{
                 display: "block",
+                position: "sticky",
+                top: "calc(56px + var(--gap))",
                 background: 'var(--foreground)',
                 borderRadius: 8,
-                padding: "12px 16px",
-                width: "max-content"
+                padding: "12px 0px",
+                width: "max-content",
+                height: "max-content",
+                zIndex: 50,
+                gridArea: "sidebar",
             }}>
-
                 <Divider style={{margin: 0}} plain orientation="left">Вигляд</Divider>
-                <Radio.Group value={view} onChange={onChangeView} style={{margin: "8px 0"}}>
+                <Radio.Group value={view} onChange={onChangeView} style={{margin: "8px 0", padding:"0 12px"}}>
                     <Space direction="vertical" size="small">
                         <Radio value={"list"}>Список</Radio>
                         <Radio value={"grid"}>Плитка</Radio>
                     </Space>
                 </Radio.Group>
-
                 <Divider style={{margin: 0}} plain orientation="left">Сортування</Divider>
-                <Radio.Group value={sort} onChange={onChangeSort} style={{margin: "8px 0"}}>
+                <Radio.Group value={sort} onChange={onChangeSort} style={{margin: "8px 0", padding:"0 12px"}}>
                     <Space direction="vertical" size="small">
                         <Radio value={"name"}>По назві</Radio>
                         <Radio value={"date"}>По даті створення</Radio>
@@ -48,21 +60,22 @@ export default function ProfileSubjects() {
                     </Space>
                 </Radio.Group>
                 <Divider style={{margin: 0}}></Divider>
-                <Radio.Group value={sortOrder} onChange={onChangeSortOrder} style={{margin: "8px 0"}}>
+                <Radio.Group value={sortOrder} onChange={onChangeSortOrder} style={{margin: "8px 0", padding:"0 12px"}}>
                     <Space direction="vertical" size="small">
                         <Radio value={"asc"}>За зростанням</Radio>
                         <Radio value={"desc"}>За спаданням</Radio>
                     </Space>
                 </Radio.Group>
             </Space>
-            <Space direction="vertical" style={{display: "flex"}}>
-                <Input placeholder="Фільтр по назві" style={{position:"relative",flexGrow:1}}></Input>
-                <Space size={[8,16]} wrap style={{background: 'var(--foreground)', borderRadius: 8, padding: "12px 16px"}}>
-                    {new Array(20).fill(null).map((_, index) => (
+
+            <Flex vertical gap='var(--gap)' >
+                <Input placeholder="Фільтр по назві" style={{position:"relative",flexGrow:1, gridArea: "search",}}></Input>
+                <Space size={[8,16]} wrap style={{background: 'var(--foreground)', borderRadius: 8, padding: "12px 16px", gridArea:"content"}}>
+                    {new Array(200).fill(null).map((_, index) => (
                         <h1>Subject</h1>
                     ))}
                 </Space>
-            </Space>
-        </Space>
+            </Flex>
+        </div>
     )
 }
