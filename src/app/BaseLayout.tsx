@@ -21,8 +21,8 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                <Layout style={{minHeight: '100vh'}}>
-                    <Header/>
+                <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column"}}>
+                    <Header />
                     {children}
                 </Layout>
             </ConfigProvider>

@@ -2,12 +2,22 @@
 import { Button, Layout, Result } from "antd";
 import { Content } from "antd/es/layout/layout";
 
-import { Spin } from "antd";
+import { Spin, Flex } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { useAppStore } from "@/stores/appStore";
 import { UserService } from "@/services/user.service";
 import { useProfileStore } from "@/stores/profileStore";
+
+const contentStyle: CSSProperties = {
+  width: 1200,
+  margin: "15px auto",
+  background: "rgb(28,28,28)",
+  padding: 40,
+  borderRadius: 10,
+  boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
+  display: "block",
+};
 
 export default function ILayout({
   children,
@@ -20,7 +30,6 @@ export default function ILayout({
   const [isFailedToLoad, setIsFailedToLoad] = useState(false);
 
   const updateProfileStore = useProfileStore(selector => selector.updateProfile);
-
 
   useEffect(() => {
     UserService.getProfile().then(response => {
@@ -35,11 +44,11 @@ export default function ILayout({
   }, []);
 
   return (
-      <Layout>
-          <Content style={{margin: "15px 16px"}}>
-          {(!isAppLoading && !isFailedToLoad) ? 
-              children
-            : null}
+      <Layout style={{flex: 1}}>
+          <Content style={contentStyle}>
+            {(!isAppLoading && !isFailedToLoad) ? 
+                  children
+              : null}
           <Spin
             indicator={<LoadingOutlined style={{ fontSize: 60 }}/>}
             spinning={isAppLoading || isLoading}

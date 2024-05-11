@@ -23,13 +23,6 @@ api.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
-/*
-display cookie:
-if (typeof window !== null) {
-            console.log(AuthTokensService.getAuthToken())
-        }
-*/
-
 const interceptor = api.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
@@ -46,8 +39,6 @@ const interceptor = api.interceptors.response.use(function (response) {
         }
     })
     .then(response => {
-        console.log('succes ??? ')
-        console.log(response.data)
         if (response.data) {
             AuthTokensService.setAuthToken(response.data.accessToken);
             AuthTokensService.setRefreshToken(response.data.refreshToken);

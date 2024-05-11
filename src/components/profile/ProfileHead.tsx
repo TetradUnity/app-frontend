@@ -39,7 +39,7 @@ export default function ProfileHead() {
                     <Link href="/profile/settings">Settings</Link>
                 </div>
                 <Space style={{display: "flex", padding: 8, borderTop: "solid #444 1px"}}>
-                    <a href="/profile/subjects">Subjects</a>
+                    <Link href="/profile/subjects">Subjects</Link>
                     <a onClick={() => setSelectedPage('grades')}>Grades</a>
                     <a onClick={() => setSelectedPage('achievements')}>Achievements</a>
                 </Space>

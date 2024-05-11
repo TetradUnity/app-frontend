@@ -55,7 +55,7 @@ export default function StudentHomePage() {
     }];
 
     return (
-        <div>
+        <>
             <h1>Головна сторінка для студента</h1>
             <List pagination={{pageSize: 8}}
                   header={<h2>Subjects</h2>}
@@ -81,7 +81,7 @@ export default function StudentHomePage() {
                       </List.Item>
                   )}
             />
-        </div>
+        </>
     );
 }
 
