@@ -11,7 +11,7 @@ import { useProfileStore } from "@/stores/profileStore";
 
 const contentStyle: CSSProperties = {
   width: 1200,
-  margin: "18px auto",
+  margin: "20px auto",
   background: "rgb(28,28,28)",
   padding: 40,
   borderRadius: 10,
