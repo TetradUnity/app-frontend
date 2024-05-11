@@ -58,12 +58,15 @@ export default function AppHeader() {
     const gridTemplateColumns = isLoggedIn ? "280px 1fr 280px" : "280px 1fr";
     return (
         <Header style={{
-            background: "#1f1f1f", padding: 0,
+            background: "#1f1f1f",
+            padding: 0,
             display: "grid",
             gridTemplateColumns: gridTemplateColumns,
             alignItems: "center",
-            lineHeight: 0
-
+            lineHeight: 0,
+            position: "fixed",
+            width: "100%",
+            zIndex: 1000,
         }}>
             <Link href="/" style={{marginLeft: 20}}>
                 <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>
