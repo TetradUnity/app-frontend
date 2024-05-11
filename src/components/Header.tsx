@@ -16,7 +16,6 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
-import { HEADER_HEIGHT } from "@/globalConstants";
 
 const items: MenuProps['items'] = [
     {
@@ -59,7 +58,7 @@ export default function AppHeader() {
     const gridTemplateColumns = isLoggedIn ? "280px 1fr 280px" : "280px 1fr";
     return (
         <Header style={{
-            background: "#1f1f1f",
+            background: 'rgba(31,31,31,0.85)',
             padding: 0,
             display: "grid",
             gridTemplateColumns: gridTemplateColumns,
@@ -68,7 +67,9 @@ export default function AppHeader() {
             position: "fixed",
             width: "100%",
             zIndex: 1000,
-            height: HEADER_HEIGHT
+            height: 'var(--header-height)',
+            backdropFilter: "blur(10px)",
+            borderBottom: "solid 1px #444",
         }}>
             <Link href="/" style={{marginLeft: 20}}>
                 <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>
