@@ -15,7 +15,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(function (config) {
     const token = AuthTokensService.getAuthToken();
-    if (token) {
+    if (token && config.url != "/authorization/refresh-authorized") {
         config.headers.setAuthorization(token);
     }
     return config;
@@ -24,7 +24,7 @@ api.interceptors.request.use(function (config) {
 });
 
 /*
-print cookie:
+display cookie:
 if (typeof window !== null) {
             console.log(AuthTokensService.getAuthToken())
         }
@@ -46,6 +46,7 @@ const interceptor = api.interceptors.response.use(function (response) {
         }
     })
     .then(response => {
+        console.log('succes ??? ')
         if (response.data) {
             AuthTokensService.setAuthToken(response.data.accessToken);
             AuthTokensService.setRefreshToken(response.data.refreshToken);
@@ -55,7 +56,7 @@ const interceptor = api.interceptors.response.use(function (response) {
         return axios(error.response.config);
     })
     .catch(err2 => {
-        if (axios.isAxiosError(err2) && err2.status === 401) {
+        if (axios.isAxiosError(err2) && err2.response?.status === 401) {
             AuthTokensService.deleteAuthToken();
             AuthTokensService.deleteRefreshToken();
     
