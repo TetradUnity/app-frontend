@@ -1,17 +1,37 @@
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: clip;
+    max-width: 100vw;
+    overflow-x: clip;
 }
 
 :root {
-  --gap: 16px;
-  --gap-half: 8px;
-  --foreground: #1b1b1b
+    --gap: 16px;
+    --gap-half: 8px;
+    --foreground: #1b1b1b;
+    --scrollbar: #2b2b2b;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #6b6b6b;
+    border-radius: 12px;
+    border: 3px solid var(--scrollbar);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #818181;
+}
+
+::-webkit-scrollbar {
+    background-color: var(--scrollbar);
+    width: 14px;
+    height: 16px;
+    z-index: 99999;
+}
+::-webkit-scrollbar-button {
+    display: none;
 }
