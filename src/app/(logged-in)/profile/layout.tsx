@@ -8,8 +8,8 @@ export default function ProfileLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <Layout style={{gap:20}}>
-            <ProfileHead/>
+        <Layout style={{gap:20, marginTop: 64}}>
+            <ProfileHead />
             {children}
         </Layout>
     )
