@@ -1,11 +1,17 @@
 'use client'
-import {Avatar, Flex, Space} from "antd";
-import {UserOutlined} from "@ant-design/icons";
+import {Avatar, Button, Flex, Space} from "antd";
+import {SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import { useProfileStore } from "@/stores/profileStore";
+import {useState} from "react";
 
 export default function ProfileHead() {
+    const [selectedLink, setSelectedLink] = useState("/profile/subjects");
     const profile = useProfileStore();
+
+    const handleLinkClick = (link: string) => {
+        setSelectedLink(link);
+    }
 
     return (
         <>
@@ -18,13 +24,20 @@ export default function ProfileHead() {
                             <p>{profile.role}</p>
                         </div>
                     </Flex>
-                    <Link href="/profile/settings">Settings</Link>
+                    <Button type="text" href="/profile/settings" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
                 </div>
-                <Space style={{display: "flex", padding: 8, borderTop: "solid #444 1px"}}>
-                    <Link href="/profile/subjects">Subjects</Link>
-                    <Link href="/profile/grades">Grades</Link>
-                    <Link href="/profile/achievements">Achievements</Link>
-                </Space>
+                <div style={{
+                    display: "flex",
+                    padding: "0 16px",
+                    borderTop: "solid #444 1px",
+                    gap: "var(--gap)",
+                    whiteSpace: "nowrap",
+                    alignItems: "center"
+                }}>
+                    <Link href="/profile/subjects" className={"link-head-profile" + (selectedLink === "/profile/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/subjects")}>Subjects</Link>
+                    <Link href="/profile/grades" className={"link-head-profile" + (selectedLink === "/profile/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/grades")}>Grades</Link>
+                    <Link href="/profile/achievements" className={"link-head-profile" + (selectedLink === "/profile/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/achievements")}>Achievements</Link>
+                </div>
             </Space>
         </>
     );

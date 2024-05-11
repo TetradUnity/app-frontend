@@ -14,6 +14,9 @@ body {
     --gap: 16px;
     --gap-half: 8px;
     --foreground: #1b1b1b;
+    --primary: #5e35b1;
+    --primary-light: #ab7ae0;
+    --text-primary: #ffffffd9;
     --scrollbar: #2b2b2b;
 }
 

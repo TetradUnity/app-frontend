@@ -1,6 +1,7 @@
 'use client'
 import {Divider, Flex, Input, Radio, RadioChangeEvent, Space} from "antd";
 import {useState} from "react";
+import './page.css'
 
 export default function ProfileSubjects() {
     const [sort, setSort] = useState("name");

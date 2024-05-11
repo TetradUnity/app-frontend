@@ -1,0 +1,35 @@
+.link-head-profile {
+    transition: color .3s ease;
+    color: var(--text-primary);
+    display: block;
+    position: relative;
+    height: 100%;
+    padding: 12px 0;
+    opacity: 0.7;
+}
+
+.link-head-profile:hover {
+    color: var(--primary-light);
+}
+
+.link-head-profile.is-active {
+    opacity: 1;
+}
+
+.link-head-profile::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-light);
+    transition: transform .2s ease-out;
+    transform: translateY(100%) scale(0);
+    border-radius: 3px 3px 0 0;
+}
+
+.link-head-profile.is-active::after {
+    transform: translateY(0) scale(1);
+}
