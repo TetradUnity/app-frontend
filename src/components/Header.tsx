@@ -55,19 +55,17 @@ export default function AppHeader() {
      useEffect(() => {
          setLoggedIn(AuthTokensService.getAuthToken() !== "");
      })
-    const gridTemplateColumns = isLoggedIn ? "280px 1fr 280px" : "280px 1fr";
+    const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
     return (
-        <Header style={{
+        <div style={{
             background: 'rgba(31,31,31,0.85)',
-            padding: 0,
             display: "grid",
             gridTemplateColumns: gridTemplateColumns,
             alignItems: "center",
-            lineHeight: 0,
-            position: "fixed",
-            width: "100%",
+            position: "sticky",
+            top: 0,
             zIndex: 1000,
-            height: 'var(--header-height)',
+            height: '58px',
             backdropFilter: "blur(10px)",
             borderBottom: "solid 1px #444",
         }}>
@@ -100,10 +98,10 @@ export default function AppHeader() {
 
                 </Space>
 
-                : <Space style={{display: "flex", position: "relative", justifyContent: "flex-end", marginRight: 20}}>
+                : <Space style={{display: "flex", position: "relative", justifyContent: "flex-end", padding:"10px 0"}}>
                     <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
                     <Link href="/register">Реєстрація</Link>
                 </Space>}
-        </Header>
+        </div>
     )
 }
