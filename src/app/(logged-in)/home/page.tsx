@@ -1,5 +1,6 @@
 'use client'
 
+import Foreground from "@/components/Foreground";
 import ChiefTeacherHomePage from "@/components/chief-teacher/ChiefTeacherHomePage";
 import StudentHomePage from "@/components/students/StudentHomePage";
 import TeacherHomePage from "@/components/teacher/TeacherHomePage";
@@ -23,13 +24,8 @@ export default function HomePage() {
     }
 
     return (
-        <div style={{
-            margin: "auto",
-            padding: "12px 16px",
-            background: 'var(--foreground)',
-            borderRadius: 10,
-            boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
-            display: "block",
-        }}>{content}
-        </div>);
+        <Foreground>
+            {content}
+        </Foreground>
+    );
 }
