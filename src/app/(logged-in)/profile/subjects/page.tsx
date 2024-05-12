@@ -3,6 +3,7 @@ import {Divider, Flex, Input, Radio, RadioChangeEvent, Space} from "antd";
 import {useState} from "react";
 import './page.css'
 import {useProfileStore} from "@/stores/profileStore";
+import {SearchOutlined} from "@ant-design/icons";
 
 export default function ProfileSubjects() {
     const [sort, setSort] = useState("name");
@@ -74,7 +75,7 @@ export default function ProfileSubjects() {
             </Space>
 
             <Flex vertical gap='var(--gap)' >
-                <Input placeholder="Фільтр по назві" onChange={e => setSearchText(e.target.value)} style={{position:"relative",flexGrow:1, gridArea: "search",}}></Input>
+                <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>} onChange={e => setSearchText(e.target.value)} style={{position:"relative",flexGrow:1, gridArea: "search",}}></Input>
                 {/* todo when subjects will be in api */}
                 <Space size={[8,16]} wrap style={{background: 'var(--foreground)', borderRadius: 8, padding: "12px 16px", gridArea:"content"}}>
                     {new Array(200).fill(null).map((_, index) => (
