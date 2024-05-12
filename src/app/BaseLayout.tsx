@@ -19,6 +19,13 @@ export default function BaseLayout({
                         "colorBgBase": "#0A0A0A",
                         "fontSize": 17,
                     },
+                    components: {
+                        Card: {
+                            colorBgContainer: "rgb(38,38,38)",
+                            actionsBg: "rgb(42,42,42)",
+                            colorPrimary: "white",
+                        }
+                    },
                     hashed: false
                 }}>
                 <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>

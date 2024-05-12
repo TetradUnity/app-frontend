@@ -31,7 +31,7 @@ const items: MenuProps['items'] = [
         label: <Link href="/profile/achievements">Досягнення</Link>,
         icon: <RiseOutlined/>,
         key: '2',
-    },
+},
     {
         label: <Link href="/profile/settings">Налаштування</Link>,
         icon: <SettingOutlined/>,

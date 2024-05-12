@@ -24,7 +24,9 @@ export default function ProfileHead() {
                             <p>{profile.role}</p>
                         </div>
                     </Flex>
-                    <Button type="text" href="/profile/settings" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
+                    <Link href="/profile/settings">
+                    <Button type="text" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
+                    </Link>
                 </div>
                 <div style={{
                     display: "flex",

@@ -2,11 +2,21 @@
 import {Button, Layout, Result} from "antd";
 import {Content} from "antd/es/layout/layout";
 
-import {Spin} from "antd";
-import {LoadingOutlined} from '@ant-design/icons';
-import {useEffect, useState} from "react";
-import {UserService} from "@/services/user.service";
-import {useProfileStore} from "@/stores/profileStore";
+import { Spin } from "antd";
+import { LoadingOutlined } from '@ant-design/icons';
+import { CSSProperties, useEffect, useState } from "react";
+import { UserService } from "@/services/user.service";
+import { useProfileStore } from "@/stores/profileStore";
+
+const contentStyle: CSSProperties = {
+  width: 1200,
+  margin: "20px auto",
+  background: "rgb(28,28,28)",
+  padding: 40,
+  borderRadius: 10,
+  boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
+  display: "block",
+};
 
 export default function ILayout({
                                     children,
