@@ -1,0 +1,53 @@
+.main_div {
+    marginBottom: 30px;
+}
+.main_div > * {
+    margin-bottom: 15px;
+}
+
+.question {
+    background: var(--foreground-lighter);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.question section:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.answers_div > div:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.answer {
+    background: var(--foreground-lighter-2);
+    border-radius: 10px;
+    padding: 15px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    /* gap: 10px; */
+}
+
+.answer > * {
+    /* display: inline-block; */
+}
+
+.answer h4 {
+    margin-right: 5px;
+}
+.answer h4:not(:first-child), .answer button {
+    margin-left: 10px;
+}
+
+.answer input {
+    flex: 1;
+}
+
+.center_btn {
+    width: fit-content;
+    display: block;
+    margin: auto;
+}

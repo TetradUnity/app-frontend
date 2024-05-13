@@ -1,9 +1,10 @@
 'use client'
 
 import Foreground from "@/components/Foreground";
-import { AutoComplete, Button, Form, Input, Modal, Switch } from "antd";
+import { TestConstructor } from "@/components/tests/TestConstructor";
+import { AutoComplete, AutoCompleteProps, Button, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
+import { createRef, useRef, useState } from "react";
 
 const mock_teachers = [{
     email: "teacher@gmail.com"
@@ -23,12 +24,6 @@ const mock_search_teache_by_email = function(search: string) {
     return result;
 }
 
-const TestSelector = () => {
-    return (
-        <h1>TODO: test selector</h1>
-    )
-}
-
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
 
@@ -42,16 +37,27 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
         }));
     }
 
+    const autoComplete = useRef<GetRef<typeof Select>>(null);
+
     return (
-        <Form.Item name="teacher" label="Вчитель(email):">
+        <Form.Item
+            name="teacher"
+            label="Вчитель(email):"
+            rules={[
+                { required: true, message: "Обов'язкове поле!" },
+            ]}
+        >
             <AutoComplete
                 options={options}
                 onSearch={(text) => setOptions(search(text))}
+                ref={autoComplete}
                 notFoundContent={
                     <>
                         <h3>Здається, вчитель з таким email ще не доданий в систему.</h3>
-                        <Button onClick={() => setTeacherModalVisible(true)}>Створити</Button>
-
+                        <Button onClick={() => {
+                            autoComplete.current?.blur();
+                            setTeacherModalVisible(true);
+                        }}>Створити</Button>
                     </>
                 }
             />
@@ -75,6 +81,7 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any
             onOk={onOk}
             onCancel={() => setTeacherModalVisible(false)}
             maskClosable={false}
+            zIndex={1000}
         >
             <Form 
                 layout="vertical"
@@ -97,11 +104,12 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any
                     <Input />
                 </Form.Item>
 
-
-                <Form.Item name="password" label="Пароль:" rules={[
-                    { required: true, message: "Обов'язкове поле!" },
-                ]}>
-                    <Input />
+                <Form.Item label="Пароль:">
+                    <Form.Item name="password" rules={[
+                        { required: true, message: "Обов'язкове поле!" },
+                    ]} noStyle>
+                        <Input />
+                    </Form.Item>
                     <p>Вчитель зможе змінити свій пароль в будь який час.</p>
                 </Form.Item>
             </Form>
@@ -129,12 +137,14 @@ export default function CreateSubjectPage() {
                 setTeacherModalVisible={setTeacherModalVisible}
             />
 
-            <Form 
+            <Form
                 layout="vertical"
                 form={form}
                 onFinish={onSubmit}
                 onValuesChange={({isExamRequired}) => {
-                    setTestSelectorVisibkle(isExamRequired);
+                    if (typeof isExamRequired == 'boolean') {
+                        setTestSelectorVisibkle(isExamRequired);
+                    }
                 }}
             >
                 <Form.Item name="title" label="Назва предмету:" rules={[
@@ -152,13 +162,13 @@ export default function CreateSubjectPage() {
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />
 
+                <Form.Item noStyle>
+                    <Form.Item name="isExamRequired" label="Вступний тест:">
+                        <Switch />
+                    </Form.Item>
 
-                <Form.Item name="isExamRequired" label="Вступний екзамен:">
-                    <Switch />
+                    {testSelectorVisible && <TestConstructor />}
                 </Form.Item>
-
-                {testSelectorVisible && <TestSelector/>}
-
 
                 <Form.Item>
                     <Button type="primary">Створити</Button>
