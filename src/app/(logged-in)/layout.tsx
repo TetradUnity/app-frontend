@@ -7,6 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { CSSProperties, useEffect, useState } from "react";
 import { UserService } from "@/services/user.service";
 import { useProfileStore } from "@/stores/profileStore";
+import { useAppStore } from "@/stores/appStore";
 
 const contentStyle: CSSProperties = {
   width: 1200,
@@ -23,9 +24,10 @@ export default function ILayout({
                                 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const [isAppLoading, setAppLoading] = useState(true);
+    const [isLoading, setIsLoading] = useAppStore(store => [store.isLoading, store.setLoading]);
+    const [isFailedToLoad, setIsFailedToLoad] = useAppStore(store => [store.isFailedToLoad, store.setFailedToLoad]);
 
-    const [isFailedToLoad, setIsFailedToLoad] = useState(false);
+    const [isAppLoading, setAppLoading] = useState(true);
 
     const updateProfileStore = useProfileStore(selector => selector.updateProfile);
 
@@ -45,7 +47,7 @@ export default function ILayout({
         <Layout style={{flex: 1}}>
             <Content>
                 {!isAppLoading && !isFailedToLoad && children}
-                {isAppLoading && <Spin
+                {(isAppLoading || isLoading) && <Spin
                     indicator={<LoadingOutlined style={{fontSize: 60}}/>}
                     spinning={true}
                     fullscreen

@@ -2,12 +2,12 @@
 import {Avatar, Button, Flex, Space} from "antd";
 import {SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
-import { useProfileStore } from "@/stores/profileStore";
 import {useState} from "react";
+import { useQueryProfileStore } from "@/stores/queryProfileStore";
 
 export default function ProfileHead() {
     const [selectedLink, setSelectedLink] = useState("/profile/subjects");
-    const profile = useProfileStore();
+    const profile = useQueryProfileStore();
 
     const handleLinkClick = (link: string) => {
         setSelectedLink(link);
@@ -24,9 +24,10 @@ export default function ProfileHead() {
                             <p>{profile.role}</p>
                         </div>
                     </Flex>
+                    {profile.isMe &&
                     <Link href="/profile/settings">
-                    <Button type="text" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
-                    </Link>
+                        <Button type="text" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
+                    </Link>}
                 </div>
                 <div style={{
                     display: "flex",

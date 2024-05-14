@@ -15,6 +15,7 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
+import { usePathname } from "next/navigation";
 
 const items: MenuProps['items'] = [
     {
@@ -48,13 +49,23 @@ const items: MenuProps['items'] = [
     },
 ]
 
+function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, text: string}) {
+    const pathname = usePathname();
+
+    return (
+        <Link href={path}>
+            <Button type={pathname == path ? "dashed" : "text"} icon={icon}>{text}</Button>
+        </Link>
+    )
+}
+
 export default function AppHeader() {
-    // todo: auto updating on login/logout
     const [isLoggedIn, setLoggedIn] = useState(false)
     useEffect(() => {
         setLoggedIn(AuthTokensService.getAuthToken() !== "");
     })
     const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
+
     return (
         <div style={{
             background: 'rgba(31,31,31,0.85)',
@@ -83,9 +94,21 @@ export default function AppHeader() {
                 </Link>
                 {isLoggedIn ?
                     <Space style={{display: "flex", justifyContent: "center"}}>
-                        <Button type="text" href="/subjects" icon={<BookOutlined/>}>Предмети</Button>
-                        <Button type="text" href="/students" icon={<IdcardOutlined/>}>Студенти</Button>
-                        <Button type="text" href="/teachers" icon={<TeamOutlined/>}>Вчителі</Button>
+                        <NavButton
+                            path="/subjects"
+                            icon={<BookOutlined/>}
+                            text="Предмети"
+                        />
+                         <NavButton
+                            path="/students"
+                            icon={<IdcardOutlined/>}
+                            text="Студенти"
+                        />
+                         <NavButton
+                            path="/teachers"
+                            icon={<TeamOutlined/>}
+                            text="Вчителі"
+                        />
                     </Space> : null}
                 {isLoggedIn ?
                     <Space align="center" style={{

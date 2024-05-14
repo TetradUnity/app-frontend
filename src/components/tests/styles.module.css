@@ -1,5 +1,5 @@
 .main_div {
-    marginBottom: 30px;
+    margin-top: 15px;
 }
 .main_div > * {
     margin-bottom: 15px;
@@ -28,11 +28,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: start;
-    /* gap: 10px; */
-}
-
-.answer > * {
-    /* display: inline-block; */
 }
 
 .answer h4 {
@@ -42,7 +37,7 @@
     margin-left: 10px;
 }
 
-.answer input {
+.answer input[type="text"] {
     flex: 1;
 }
 

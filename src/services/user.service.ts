@@ -8,7 +8,7 @@ export const UserService = {
         try {
             const response = await api.get("/user/get", {
                 params: {
-                    userId
+                    id: userId
                 }
             });
 

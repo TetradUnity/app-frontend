@@ -2,9 +2,9 @@
 
 import Foreground from "@/components/Foreground";
 import { TestConstructor } from "@/components/tests/TestConstructor";
-import { AutoComplete, AutoCompleteProps, Button, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
+import { AutoComplete, AutoCompleteProps, Button, DatePicker, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { createRef, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const mock_teachers = [{
     email: "teacher@gmail.com"
@@ -42,7 +42,7 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
     return (
         <Form.Item
             name="teacher"
-            label="Вчитель(email):"
+            label="Вчитель (email):"
             rules={[
                 { required: true, message: "Обов'язкове поле!" },
             ]}
@@ -155,15 +155,39 @@ export default function CreateSubjectPage() {
                     <Input />
                 </Form.Item>
 
+                <Form.Item label="Короткий опис предмету:" required>
+                    <Form.Item noStyle name="short_desc" rules={[
+                        { required: true, message: "Обов'язкове поле!" }
+                    ]}>
+                        <TextArea />
+                    </Form.Item>
+                    <i style={{color: "rgb(230,230,230)", fontSize: 16}}>Короткий опис буде видно на сторінці з усіма предметами.</i>
+                </Form.Item>
 
-                <Form.Item name="desc" label="Опис предмету (опціонально):">
+                <Form.Item name="desc" label="Повний опис предмету:" rules={[
+                    { required: true, message: "Обов'язкове поле!" }
+                ]}>
                     <TextArea />
+                </Form.Item>
+
+                <Form.Item name="startDate" label="Початок предмету:" rules={[
+                    { required: true, message: "Обов'язкове поле!" }
+                ]}>
+                    <DatePicker
+                    />
+                </Form.Item>
+
+                <Form.Item name="examEndDate" label="До якої дати можна буде подати заявку:" rules={[
+                        { required: true, message: "Обов'язкове поле!" }
+                ]}>
+                    <DatePicker
+                    />
                 </Form.Item>
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />
 
-                <Form.Item noStyle>
-                    <Form.Item name="isExamRequired" label="Вступний тест:">
+                <Form.Item label="Вступний тест:">
+                    <Form.Item noStyle name="isExamRequired">
                         <Switch />
                     </Form.Item>
 

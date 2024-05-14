@@ -29,6 +29,7 @@ function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {
             <h4>Тип:</h4>
             <Select
                 defaultValue="text"
+                style={{maxWidth: 100}}
                 options={[
                     {value: "text", label: "Текст"},
                     {value: "image", label: "Картинка"},

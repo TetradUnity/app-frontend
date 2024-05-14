@@ -3,6 +3,13 @@ import {ConfigProvider, Layout, theme} from "antd";
 import Header from "@/components/Header";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 
+import locale from "antd/lib/locale/uk_UA";
+import dayjs from 'dayjs';
+
+import 'dayjs/locale/uk';
+
+dayjs.locale('uk');
+
 export default function BaseLayout({
                                        children,
                                    }: Readonly<{
@@ -11,6 +18,7 @@ export default function BaseLayout({
     return (
         <AntdRegistry>
             <ConfigProvider
+                locale={locale}
                 theme={{
                     algorithm: theme.darkAlgorithm,
                     token: {
