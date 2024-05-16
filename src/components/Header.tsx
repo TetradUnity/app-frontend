@@ -16,25 +16,27 @@ import {
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import { usePathname } from "next/navigation";
+import {useProfileStore} from "@/stores/profileStore";
 
+let myProfileId = -1;
 const items: MenuProps['items'] = [
     {
-        label: <Link href="/profile/subjects">Мої предмети</Link>,
+        label: <Link href={`/profile/${myProfileId}/subjects`}>Мої предмети</Link>,
         icon: <BookOutlined/>,
         key: '0',
     },
     {
-        label: <Link href="/profile/grades">Оцінки</Link>,
+        label: <Link href={`/profile/${myProfileId}/grades`}>Оцінки</Link>,
         icon: <StarOutlined/>,
         key: '1',
     },
     {
-        label: <Link href="/profile/achievements">Досягнення</Link>,
+        label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
         icon: <RiseOutlined/>,
         key: '2',
 },
     {
-        label: <Link href="/profile/settings">Налаштування</Link>,
+        label: <Link href={`/profile/${myProfileId}/settings`}>Налаштування</Link>,
         icon: <SettingOutlined/>,
         key: '3',
     },
@@ -61,11 +63,14 @@ function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, te
 
 export default function AppHeader() {
     const [isLoggedIn, setLoggedIn] = useState(false)
+    const profileId = useProfileStore(store => store.id);
+
     useEffect(() => {
         setLoggedIn(AuthTokensService.getAuthToken() !== "");
-    })
-    const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
+        myProfileId = profileId;
+    }, [])
 
+    const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
     return (
         <div style={{
             background: 'rgba(31,31,31,0.85)',
@@ -117,7 +122,7 @@ export default function AppHeader() {
                         justifyContent: "flex-end",
                         marginRight: 20
                     }}>
-                        <Link href={"/profile"}>
+                        <Link href={`/profile/${myProfileId}`}>
                             <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
                                     icon={<UserOutlined/>}/>
                         </Link>

@@ -1,7 +1,6 @@
 'use client'
 import {Divider, Flex, Input, Radio, RadioChangeEvent, Space} from "antd";
 import {useState} from "react";
-import './page.css'
 import {useProfileStore} from "@/stores/profileStore";
 import {SearchOutlined} from "@ant-design/icons";
 

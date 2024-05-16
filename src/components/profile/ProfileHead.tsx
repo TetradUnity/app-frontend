@@ -3,6 +3,7 @@ import {Avatar, Button, Flex, Space} from "antd";
 import {SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import {useState} from "react";
+import "./page.css";
 import { useQueryProfileStore } from "@/stores/queryProfileStore";
 
 export default function ProfileHead() {
@@ -37,9 +38,9 @@ export default function ProfileHead() {
                     whiteSpace: "nowrap",
                     alignItems: "center"
                 }}>
-                    <Link href="/profile/subjects" className={"link-head-profile" + (selectedLink === "/profile/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/subjects")}>Subjects</Link>
-                    <Link href="/profile/grades" className={"link-head-profile" + (selectedLink === "/profile/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/grades")}>Grades</Link>
-                    <Link href="/profile/achievements" className={"link-head-profile" + (selectedLink === "/profile/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/achievements")}>Achievements</Link>
+                    <Link href={"/profile/"+profile.id+"/subjects"} className={"link-head-profile" + (selectedLink === "/profile/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/subjects")}>Subjects</Link>
+                    {profile.isMe && <Link href={"/profile/"+profile.id+"/grades"} className={"link-head-profile" + (selectedLink === "/profile/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/grades")}>Grades</Link> }
+                    <Link href={"/profile/"+profile.id+"/achievements"} className={"link-head-profile" + (selectedLink === "/profile/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/achievements")}>Achievements</Link>
                 </div>
             </Space>
         </>
