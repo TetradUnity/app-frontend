@@ -2,7 +2,7 @@
 
 import ProfileHead from "@/components/profile/ProfileHead";
 import React, { useEffect, useState } from "react";
-import { notFound, useParams, usePathname } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { Layout } from "antd";
 import { UserService } from "@/services/user.service";
 import { useAppStore } from "@/stores/appStore";
@@ -45,6 +45,7 @@ export default function ProfileLayout({
             }
 
             if (response.data) {
+                console.log(response.data)
                 setIsLoading(false);
                 setProfileLoaded(true);
                 updateQueryProfile({

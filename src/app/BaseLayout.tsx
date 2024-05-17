@@ -6,9 +6,12 @@ import {AntdRegistry} from "@ant-design/nextjs-registry";
 import locale from "antd/lib/locale/uk_UA";
 import dayjs from 'dayjs';
 
-import 'dayjs/locale/uk';
+import "dayjs/locale/uk";
+
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.locale('uk');
+dayjs.extend(relativeTime);
 
 export default function BaseLayout({
                                        children,
@@ -26,13 +29,19 @@ export default function BaseLayout({
                         "colorInfo": "#ab7ae0",
                         "colorBgBase": "#0A0A0A",
                         "fontSize": 17,
+                        "borderRadius": 10
                     },
                     components: {
                         Card: {
                             colorBgContainer: "rgb(38,38,38)",
                             actionsBg: "rgb(42,42,42)",
                             colorPrimary: "white",
-                        }
+                        },
+                        Segmented: {
+                            trackBg: "var(--foreground-darker)",
+                            // itemHoverBg: "var(--foreground-lighter)",
+                            itemHoverBg: "null"
+                        },
                     },
                     hashed: false
                 }}>
