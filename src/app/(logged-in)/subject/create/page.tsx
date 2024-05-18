@@ -10,7 +10,7 @@ const mock_teachers = [{
     email: "teacher@gmail.com"
 }];
 
-const mock_search_teache_by_email = function(search: string) {
+const mock_search_teacher_by_email = function(search: string) {
     let result = [];
 
     let teacher;
@@ -32,7 +32,7 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
             return [];
         }
 
-        return mock_search_teache_by_email(text).map(email => ({
+        return mock_search_teacher_by_email(text).map(email => ({
             value: email
         }));
     }
