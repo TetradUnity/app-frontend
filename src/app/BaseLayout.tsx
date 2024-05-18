@@ -22,7 +22,7 @@ export default function BaseLayout({
                 theme={{
                     algorithm: theme.darkAlgorithm,
                     token: {
-                        "colorPrimary": "#5e35b1",
+                        "colorPrimary": "#8458dd",
                         "colorInfo": "#ab7ae0",
                         "colorBgBase": "#0A0A0A",
                         "fontSize": 17,

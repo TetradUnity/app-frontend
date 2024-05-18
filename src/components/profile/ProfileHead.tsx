@@ -5,9 +5,11 @@ import Link from "next/link";
 import {useState} from "react";
 import "./page.css";
 import { useQueryProfileStore } from "@/stores/queryProfileStore";
+import {usePathname} from "next/navigation";
 
 export default function ProfileHead() {
-    const [selectedLink, setSelectedLink] = useState("/profile/subjects");
+    const pathname = usePathname();
+    const [selectedLink, setSelectedLink] = useState(pathname);
     const profile = useQueryProfileStore();
 
     const handleLinkClick = (link: string) => {
@@ -27,7 +29,7 @@ export default function ProfileHead() {
                     </Flex>
                     {profile.isMe &&
                     <Link href="/profile/settings">
-                        <Button type="text" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Settings</Button>
+                        <Button type="text" icon={<SettingOutlined />} style={{padding:"0 8px", display:"flex", alignItems:"center"}}>Налаштування</Button>
                     </Link>}
                 </div>
                 <div style={{
@@ -38,9 +40,9 @@ export default function ProfileHead() {
                     whiteSpace: "nowrap",
                     alignItems: "center"
                 }}>
-                    <Link href={"/profile/"+profile.id+"/subjects"} className={"link-head-profile" + (selectedLink === "/profile/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/subjects")}>Subjects</Link>
-                    {profile.isMe && <Link href={"/profile/"+profile.id+"/grades"} className={"link-head-profile" + (selectedLink === "/profile/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/grades")}>Grades</Link> }
-                    <Link href={"/profile/"+profile.id+"/achievements"} className={"link-head-profile" + (selectedLink === "/profile/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/achievements")}>Achievements</Link>
+                    <Link href={"/profile/"+profile.id+"/subjects"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/"+profile.id+"/subjects")}>Предмети</Link>
+                    {profile.isMe && <Link href={"/profile/"+profile.id+"/grades"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/"+profile.id+"/grades")}>Оцінки</Link> }
+                    <Link href={"/profile/"+profile.id+"/achievements"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/"+profile.id+"/achievements")}>Досягнення</Link>
                 </div>
             </Space>
         </>

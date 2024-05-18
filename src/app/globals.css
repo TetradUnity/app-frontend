@@ -16,10 +16,11 @@ body {
 :root {
     --gap: 16px;
     --gap-half: 8px;
+    --background: #0A0A0A;
     --foreground: #1b1b1b;
     --foreground-lighter: #252525;
     --foreground-lighter-2: #2d2d2d;
-    --primary: #5e35b1;
+    --primary: #8458dd;
     --primary-light: #ab7ae0;
     --text-primary: #ffffffd9;
     --scrollbar: #2b2b2b;
