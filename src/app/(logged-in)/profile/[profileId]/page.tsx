@@ -1,8 +1,10 @@
 'use client'
 
+import {useRouter} from "next/navigation";
+
 export default function AccountPage() {
-    return (
-        <>
-        </>
-    )
+    const {replace} = useRouter();
+
+    replace(location.pathname + "/subjects");
+    return null;
 }

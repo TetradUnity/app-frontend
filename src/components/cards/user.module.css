@@ -1,0 +1,15 @@
+.Name {
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.Name:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+}

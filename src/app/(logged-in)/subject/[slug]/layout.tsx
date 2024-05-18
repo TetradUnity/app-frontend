@@ -84,7 +84,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                 {label: "Оцінки", value: "grades"}
             ]}
             onChange={key => {
-                push("/subjects/" + slug + "/" + key)
+                push("/subject/" + slug + "/" + key)
             }}
             size="large"
             block

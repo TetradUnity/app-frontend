@@ -17,6 +17,7 @@ import {
 import {useEffect, useState} from "react";
 import { usePathname } from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
+import "./header.css"
 
 let myProfileId = -1;
 const items: MenuProps['items'] = [
