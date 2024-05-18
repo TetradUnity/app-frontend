@@ -1,11 +1,10 @@
 'use client'
 
-import {Button, Divider, Dropdown, Flex, Image, Input, MenuProps, Radio, Space} from "antd";
+import {Button, Dropdown, Flex, Input, MenuProps, Radio, Space} from "antd";
 import {useState} from "react";
 import {CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined} from "@ant-design/icons";
-import {tempSubjects, tempTeachers} from "@/temporary/data";
-import Link from "next/link";
-import styles from "@/app/(logged-in)/profile/[profileId]/subjects/styles.module.css";
+import {tempSubjects} from "@/temporary/data";
+import SubjectCard from "@/components/cards/SubjectCard";
 
 
 const items: MenuProps['items'] = [
@@ -88,37 +87,7 @@ export default function Subjects() {
                     minWidth: 0,
                 }}>
                     {tempSubjects.map(subject => (
-                        <Link href="/subject/id" key={subject.id} style={{
-                            background: "var(--foreground)",
-                            borderRadius: 8,
-                            height: "max-content",
-                            minWidth: "1px",
-                            maxWidth: "400px",
-                            display: "block",
-                            color: "var(--text-primary)",
-                            overflow: "hidden",
-                        }}>
-                            <Image src={subject.banner} alt="subject banner"
-                                   preview={false} style={{
-                                width: "100%",
-                                height: "100px",
-                                objectFit: "cover",
-                                objectPosition: "center",
-                            }}></Image>
-                            <Divider style={{margin: 0}}></Divider>
-                            <Flex vertical style={{
-                                padding: "12px 16px 12px 16px",
-                                justifyContent: "space-between",
-                                maxHeight: "40%",
-                                background: "var(--foreground-lighter)",
-                            }}>
-                                <h3 className={styles.subjectTitle}>{subject.title}</h3>
-                                <Link className={styles.teacherLink} href={"/profile/" + subject.teacher_id}>{
-                                    tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.first_name + " " +
-                                    tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.last_name
-                                }</Link>
-                            </Flex>
-                        </Link>
+                        <SubjectCard key={subject.id} subject={subject}/>
                     ))}
                 </div>
             </Flex>
