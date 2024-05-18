@@ -1,4 +1,4 @@
-.link-head-profile {
+.linkHeadProfile {
     transition: color .3s ease;
     color: var(--text-primary);
     display: block;
@@ -8,15 +8,15 @@
     opacity: 0.7;
 }
 
-.link-head-profile:hover {
+.linkHeadProfile:hover {
     color: var(--primary-light);
 }
 
-.link-head-profile.is-active {
+.linkHeadProfile.isActive {
     opacity: 1;
 }
 
-.link-head-profile::after {
+.linkHeadProfile::after {
     content: "";
     display: block;
     position: absolute;
@@ -30,6 +30,6 @@
     border-radius: 3px 3px 0 0;
 }
 
-.link-head-profile.is-active::after {
+.linkHeadProfile.isActive::after {
     transform: translateY(0) scale(1);
 }

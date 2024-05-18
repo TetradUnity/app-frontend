@@ -3,7 +3,7 @@ import {Avatar, Button, Flex, Space} from "antd";
 import {SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import {useState} from "react";
-import "./page.css";
+import styles from "./styles.module.css";
 import { useQueryProfileStore } from "@/stores/queryProfileStore";
 import {usePathname} from "next/navigation";
 
@@ -21,7 +21,7 @@ export default function ProfileHead() {
             <Space direction="vertical" style={{display: "flex", background: "var(--foreground)", borderRadius: 8}}>
                 <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px"}}>
                     <Flex gap='var(--gap)' align="center">
-                        <Avatar shape="square" size={50} icon={<UserOutlined/>}/>
+                        <Avatar shape="square" size={48} icon={<UserOutlined/>}/>
                         <div>
                             <strong>{profile.first_name + " " + profile.last_name}</strong>
                             <p>{profile.role}</p>
@@ -40,9 +40,29 @@ export default function ProfileHead() {
                     whiteSpace: "nowrap",
                     alignItems: "center"
                 }}>
-                    <Link href={"/profile/"+profile.id+"/subjects"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/subjects" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/"+profile.id+"/subjects")}>Предмети</Link>
-                    {profile.isMe && <Link href={"/profile/"+profile.id+"/grades"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/grades" ? " is-active" : "")}  onClick={() => handleLinkClick("/profile/"+profile.id+"/grades")}>Оцінки</Link> }
-                    <Link href={"/profile/"+profile.id+"/achievements"} className={"link-head-profile" + (selectedLink === "/profile/"+profile.id+"/achievements" ? " is-active" : "")} onClick={() => handleLinkClick("/profile/"+profile.id+"/achievements")}>Досягнення</Link>
+                    <Link
+                        href={"/profile/"+profile.id+"/subjects"}
+                        className={styles.linkHeadProfile + " " + styles.isActive +  (selectedLink === "/profile/"+profile.id+"/grades" ? styles.isActive : "")}
+                        onClick={() => handleLinkClick("/profile/"+profile.id+"/subjects")}
+                    >
+                        Предмети
+                    </Link>
+                    {profile.isMe &&
+                        <Link
+                            href={"/profile/"+profile.id+"/grades"}
+                            className={styles.linkHeadProfile + " " + (selectedLink === "/profile/"+profile.id+"/grades" ? styles.isActive : "")}
+                            onClick={() => handleLinkClick("/profile/"+profile.id+"/grades")}
+                        >
+                            Оцінки
+                        </Link>
+                    }
+                    <Link
+                        href={"/profile/"+profile.id+"/achievements"}
+                        className={styles.linkHeadProfile + " " + (selectedLink === "/profile/"+profile.id+"/achievements" ? styles.isActive : "")}
+                        onClick={() => handleLinkClick("/profile/"+profile.id+"/achievements")}
+                    >
+                        Досягнення
+                    </Link>
                 </div>
             </Space>
         </>
