@@ -5,97 +5,10 @@ import {useProfileStore} from "@/stores/profileStore";
 import {RightOutlined, SearchOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import styles from "./styles.module.css"
+import {tempTeachers} from "@/temporary/data";
+import {tempSubjects} from "@/temporary/data";
 
-const tempTeachers = [
-    {
-        id: 1,
-        first_name: "Максим",
-        last_name: "Янов",
-        email: "",
-        role: "teacher",
-        isMe: false,
-    }
-]
 
-const tempSubjects = [
-    {
-        id: 1,
-        title: "Математика",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 2,
-        title: "Українська мова",
-        teacher_id: 1,
-        description: "Опис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предметуОпис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 3,
-        title: "Іноземна мова",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 4,
-        title: "Фізика",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 5,
-        title: "Хімія",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 6,
-        title: "Біологія",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    },
-    {
-        id: 7,
-        title: "Історія Державності та Культури України",
-        teacher_id: 1,
-        description: "Опис предмету",
-        is_active: true,
-        created_at: "2021-09-01T00:00:00",
-        exam: null,
-        exam_end_date: null,
-        start_date: "2023-05-01T00:00:00",
-    }
-]
 
 export default function ProfileSubjects() {
     const [sort, setSort] = useState("name");
@@ -237,7 +150,7 @@ export default function ProfileSubjects() {
                                 color: "var(--text-primary)",
                                 overflow: "hidden",
                             }}>
-                                <Image src="https://gstatic.com/classroom/themes/Honors.jpg" alt="React logo"
+                                <Image src={subject.banner} alt="subject banner"
                                        preview={false} style={{
                                     width: "100%",
                                     height: "100px",

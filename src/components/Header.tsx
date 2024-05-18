@@ -56,7 +56,7 @@ function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, te
 
     return (
         <Link href={path}>
-            <Button type={pathname == path ? "dashed" : "text"} icon={icon}>{text}</Button>
+            <Button type={pathname == path ? "dashed" : "text"} icon={icon} style={{background: 0,}}>{text}</Button>
         </Link>
     )
 }
@@ -73,7 +73,7 @@ export default function AppHeader() {
     const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
     return (
         <div style={{
-            background: 'rgba(31,31,31,0.85)',
+            background: 'var(--header)',
             position: "sticky",
             top: 0,
             width: "100vw",
