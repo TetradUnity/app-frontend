@@ -51,3 +51,26 @@
     top: calc(50% - 15px);
     font-size: 30px;
 }
+
+
+.conference_modal_p {
+    color: rgb(210, 210, 210);
+    font-style: italic;
+}
+
+.timetable_cell {
+    width: 165px;
+    height: 130px;
+    background: rgb(37,37,37);
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 15px;
+}
+
+.timetable_cell p {
+    font-size: 20px;
+}
+
+.timetable_cell_today {
+    background: var(--primary);
+}

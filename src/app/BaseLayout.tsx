@@ -39,9 +39,11 @@ export default function BaseLayout({
                         },
                         Segmented: {
                             trackBg: "var(--foreground-darker)",
-                            // itemHoverBg: "var(--foreground-lighter)",
                             itemHoverBg: "null"
                         },
+                        Calendar: {
+                            colorPrimary: "#9b75e6"
+                        }
                     },
                     hashed: false
                 }}>

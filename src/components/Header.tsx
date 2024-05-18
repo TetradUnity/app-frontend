@@ -36,7 +36,7 @@ const items: MenuProps['items'] = [
         key: '2',
 },
     {
-        label: <Link href={`/profile/${myProfileId}/settings`}>Налаштування</Link>,
+        label: <Link href={`/profile/settings`}>Налаштування</Link>,
         icon: <SettingOutlined/>,
         key: '3',
     },
