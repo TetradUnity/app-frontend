@@ -13,7 +13,7 @@ interface IUser {
 
 export default function UserCard({user} : {user: IUser}) {
     return (
-        <Link href={"/profile/"+user.id} style={{
+        <Link className={styles.Card} href={"/profile/"+user.id} style={{
             background: "var(--foreground)",
             padding: "var(--gap)",
             borderRadius: 8,
