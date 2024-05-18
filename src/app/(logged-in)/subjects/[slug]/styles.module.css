@@ -1,0 +1,53 @@
+.header_div {
+    padding: 30px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    border-radius: 10px;
+}
+
+.header_div * {
+    text-shadow: rgba(0,0,0,.4) 1px 0 10px;
+}
+
+.material_slot {
+    position: relative;
+    border-radius: 10px;
+    padding: 20px;
+    background: var(--foreground-darker);
+    margin-bottom: 10px;
+}
+.slot_with_arrow {
+    background: linear-gradient(to right, var(--foreground-darker) 70%, var(--foreground-lighter));
+}
+
+.student_slot > a > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+.student_avatar {
+    width: 50px;
+    border-radius: 5px;
+}
+.student_slot h2 {
+    margin-left: 15px;
+}
+
+.material_slot * {
+    color: white;
+}
+
+.empty_text {
+    text-align: center;
+    font-size: 20px;
+    color: rgb(200,200,200);
+}
+
+.arrow_style {
+    position: absolute;
+    right: 20px;
+    top: calc(50% - 15px);
+    font-size: 30px;
+}

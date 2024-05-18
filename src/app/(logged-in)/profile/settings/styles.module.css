@@ -1,0 +1,27 @@
+.setting_div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.setting_div p {
+    font-size: 20px;
+}
+
+.modal_avatar_btn {
+    display: block;
+    margin: auto;
+    width: fit-content; height: fit-content;
+    background: none; outline: none; border: none;
+    cursor: pointer;
+}
+.modal_avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+.modal_section {
+    margin: 20px 0;
+}
