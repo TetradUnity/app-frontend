@@ -57,7 +57,7 @@ function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, te
 
     return (
         <Link href={path}>
-            <Button type={pathname == path ? "dashed" : "text"} icon={icon} style={{background: 0,}}>{text}</Button>
+            <Button className="nav-button" type={pathname == path ? "dashed" : "text"} icon={icon}>{text}</Button>
         </Link>
     )
 }

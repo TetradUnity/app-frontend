@@ -1,4 +1,13 @@
 .ant-btn-dashed:not(:disabled):not(.ant-btn-disabled):hover {
     color: rgba(255, 255, 255, 0.85) !important;
     border-color: #4c4c4c !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.ant-btn-dashed:not(:disabled):not(.ant-btn-disabled) {
+    background: 0 !important;
+}
+
+.nav-button{
+    background: 0;
 }
