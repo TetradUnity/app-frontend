@@ -1,9 +1,13 @@
 'use client'
 
 import Foreground from "@/components/Foreground";
-import { TestConstructor } from "@/components/tests/TestConstructor";
-import { AutoComplete, AutoCompleteProps, Button, DatePicker, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
+import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
+import { ChiefTeacherService } from "@/services/chief_teacher.service";
+import { CreateSubjectParams } from "@/types/api.types";
+import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
+import { AutoComplete, Button, DatePicker, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import dayjs from "dayjs";
 import { useRef, useState } from "react";
 
 const mock_teachers = [{
@@ -124,8 +128,37 @@ export default function CreateSubjectPage() {
 
     const [testSelectorVisible, setTestSelectorVisibkle] = useState(false);
 
-    const onSubmit = () => {
+    const [duration, setDuration] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([dayjs(), dayjs().add(1, 'month')]);
 
+    const testRef = useRef<TestConstructorRef>();
+
+    const [isLoading, setLoading] = useState(false);
+
+    const onSubmit = () => {
+        if (isLoading) return;
+
+        let info: CreateSubjectParams = {
+            title: form.getFieldValue("title"),
+            description: form.getFieldValue("desc"),
+            short_description: form.getFieldValue("short_desc"),
+            start: form.getFieldValue("startDate").unix() * 1000,
+            exam_end: form.getFieldValue("examEndDate").unix() * 1000,
+            duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
+            timetable: "поки що нічого :)",
+            tags: [],
+            exam: testRef.current ? JSON.stringify(testRef.current.getData()) : null,
+            teacherEmail: form.getFieldValue("teacher")
+        }
+
+        setLoading(true);
+        ChiefTeacherService.createSubject(info).then(resp => {
+            setLoading(false);
+            if (!resp.success) {
+                alert("Failed ? ");
+                return;
+            }
+            alert("Success :)")
+        })
     }
 
     return (
@@ -177,11 +210,32 @@ export default function CreateSubjectPage() {
                     />
                 </Form.Item>
 
-                <Form.Item name="examEndDate" label="До якої дати можна буде подати заявку:" rules={[
+                <Form.Item name="examEndDate" label="До якої дати можна буде здати екзамен:" rules={[
                         { required: true, message: "Обов'язкове поле!" }
                 ]}>
                     <DatePicker
                     />
+                </Form.Item>
+
+                <Form.Item label="Приблизна тривалість предмету:">
+                    <Form.Item initialValue={duration} noStyle name="duration">
+                        <DatePicker.RangePicker
+                            value={duration}
+                            onChange={(val) => {
+                                if (!val) {
+                                    return;
+                                }
+                                setDuration(val);
+                            }}
+                        />
+                    </Form.Item>
+                    <span style={{marginLeft: 10}}>
+                        {
+                            (duration[0] && duration[1])
+                            ? "(" + formatTimeInSeconds(differenceBetweenTwoDatesInSec(duration[0], duration[1])) + ")"
+                            : ""
+                        }
+                    </span>
                 </Form.Item>
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />
@@ -191,11 +245,11 @@ export default function CreateSubjectPage() {
                         <Switch />
                     </Form.Item>
 
-                    {testSelectorVisible && <TestConstructor />}
+                    {testSelectorVisible && <TestConstructor ref={testRef} />}
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary">Створити</Button>
+                    <Button loading={isLoading} htmlType="submit" type="primary">Створити</Button>
                 </Form.Item>
             </Form>
         </Foreground>

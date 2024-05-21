@@ -4,10 +4,12 @@ import dayjs from "dayjs";
 import { pluralize } from "./InternalizationUtils";
 
 export const TIME_PLURAL = {
+    SECONDS: ["секунда", "секунди", "секунд"],
     MINUTES: ["хвилина", "хвилини", "хвилин"],
     HOURS: ["година", "години", "годин"],
     DAYS: ["день", "дня", "днів"],
-    SECONDS: ["секунда", "секунди", "секунд"]
+    MONTHS: ["місяць", "місяця", "місяців"],
+    YEARS: ["рік", "роки", "років"],
 };
 
 export function differenceBetweenTwoDatesInSec(d1: dayjs.ConfigType, d2: dayjs.ConfigType): number {
@@ -21,7 +23,15 @@ export function formatTimeInSeconds(seconds: number): string {
     let minutes = Math.round(seconds / 60);
     let hours = Math.round(minutes / 60);
     let days = Math.round(hours / 24);
+    let months = Math.round(days / 30);
+    let years = Math.round(months / 12);
 
+    if (years > 0) {
+        return pluralize(years, TIME_PLURAL.YEARS);
+    }
+    if (months > 0) {
+        return pluralize(months, TIME_PLURAL.MONTHS);
+    }
     if (days > 0) {
         return pluralize(days, TIME_PLURAL.DAYS);
     }

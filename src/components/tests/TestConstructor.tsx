@@ -1,12 +1,14 @@
-import { Button, Checkbox, Input, Modal, Select } from "antd";
+import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "antd";
 import {PlusCircleFilled, CloseCircleOutlined} from "@ant-design/icons";
 
 import styles from "./styles.module.css";
 import TextArea from "antd/es/input/TextArea";
-import { Dispatch, SetStateAction, useEffect, useReducer, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useImperativeHandle, useReducer, useState } from "react";
 import { HookAPI } from "antd/es/modal/useModal";
 
-function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {deleteAnswer: (answer: Answer) => void, item: Answer, type: Question["type"], answers: Answer[], forceUpdate: () => void, setAnswers: Dispatch<SetStateAction<Answer[]>>}) {
+import { TestsNamespace } from "@/types/api.types";
+
+function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {deleteAnswer: (answer: TestsNamespace.Answer) => void, item: TestsNamespace.Answer, type: TestsNamespace.Question["type"], answers: TestsNamespace.Answer[], forceUpdate: () => void, setAnswers: Dispatch<SetStateAction<TestsNamespace.Answer[]>>}) {
     const [content, setContent] = useState("");
     
     return (
@@ -34,7 +36,7 @@ function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {
                     {value: "text", label: "Текст"},
                     {value: "image", label: "Картинка"},
                 ]}
-                onChange={(value: Answer["type"]) => {
+                onChange={(value: TestsNamespace.Answer["type"]) => {
                     item.type = value;
                     setContent("");
                     item.content = "";
@@ -61,7 +63,7 @@ function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {
     )
 }
 
-function TextAnswer({deleteAnswer, item} : {deleteAnswer: (answer: Answer) => void, item: Answer}) {
+function TextAnswer({deleteAnswer, item} : {deleteAnswer: (answer: TestsNamespace.Answer) => void, item: TestsNamespace.Answer}) {
     return (
         <div className={styles.answer}>
             <Input />
@@ -73,12 +75,12 @@ function TextAnswer({deleteAnswer, item} : {deleteAnswer: (answer: Answer) => vo
                 icon={<CloseCircleOutlined />}
             />
         </div>
-    )
+    );
 }
 
-function Question({item,questions,setQuestions,modal} : {item: Question, questions: Question[], setQuestions: Dispatch<SetStateAction<Question[]>>, modal: HookAPI}) {
-    const [type, setType] = useState<Question["type"]>("one_answer");
-    const [answers, setAnswers] = useState<Answer[]>([]);
+function Question({item,questions,setQuestions,modal} : {item: TestsNamespace.Question, questions: TestsNamespace.Question[], setQuestions: Dispatch<SetStateAction<TestsNamespace.Question[]>>, modal: HookAPI}) {
+    const [type, setType] = useState<TestsNamespace.Question["type"]>("one_answer");
+    const [answers, setAnswers] = useState<TestsNamespace.Answer[]>([]);
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -102,9 +104,18 @@ function Question({item,questions,setQuestions,modal} : {item: Question, questio
         }]);
     };
 
-    const deleteAnswer = (answer: Answer) => {
+    const deleteAnswer = (answer: TestsNamespace.Answer) => {
         setAnswers(answers.filter(item => item !== answer));
     };
+
+    useEffect(() => {
+        setQuestions(questions.map(obj => {
+            if (obj != item) {
+                return obj;
+            }
+            return {...item, answers: answers}
+        }))
+    }, [answers]);
 
     return (
         <div className={styles.question}>
@@ -119,7 +130,7 @@ function Question({item,questions,setQuestions,modal} : {item: Question, questio
                 <h3>Тип питання:</h3>
                 <Select
                     value={type}
-                    onChange={(type: Question["type"]) => {
+                    onChange={(type: TestsNamespace.Question["type"]) => {
                         if (
                             (answers.length > 0) && (
                             (item.type == "one_answer" && type == "text") ||
@@ -184,21 +195,24 @@ function Question({item,questions,setQuestions,modal} : {item: Question, questio
     )
 }
 
-type Answer = {
-    isCorrect: boolean,
-    type: "text" | "image",
-    content: string
-};
+export type TestConstructorRef = {
+    getData: () => TestsNamespace.Test[]
+}
 
-type Question = {
-    title: string,
-    type: "one_answer" | "multiply_answer" | "text",
-    answers: Answer[]
-};
-
-export function TestConstructor() {
-    const [questions, setQuestions] = useState<Question[]>([]);
+export const TestConstructor = React.forwardRef((props, ref) => {
+    const [questions, setQuestions] = useState<TestsNamespace.Question[]>([]);
     const [modal, modalCtxHolder] = Modal.useModal();
+
+    const [testDuration, setTestDuration] = useState<number | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ([
+            {
+                time: testDuration
+            },
+            ...questions
+        ]) as TestsNamespace.Test
+    }));
 
     const createNewQuestion = () => {
         setQuestions([...questions, {
@@ -206,10 +220,26 @@ export function TestConstructor() {
             type: "one_answer",
             answers: []
         }]);
-    }
+    };
 
     return (
         <div className={styles.main_div}>
+            <Divider orientationMargin={30} orientation="right" dashed>Загальна інформація</Divider>
+            <section>
+                <h2 style={{marginBottom: 10}}>Тривалість тесту:</h2>
+                <TimePicker
+                    onChange={e => {
+                        if (!e) {
+                            setTestDuration(null);
+                            return;
+                        }
+                        setTestDuration(e.unix() * 1000)
+                    }}
+                    showNow={false}
+                />
+            </section>
+
+            <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             {questions.map((question,i) =>
             <Question
                 key={i}
@@ -218,6 +248,7 @@ export function TestConstructor() {
                 setQuestions={setQuestions}
                 modal={modal}
             />)}
+            
             <Button
                 block
                 icon={<PlusCircleFilled />}
@@ -228,4 +259,4 @@ export function TestConstructor() {
             {modalCtxHolder}
         </div>
     )
-}
+})

@@ -27,7 +27,7 @@ const interceptor = api.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
     let refreshToken: string = AuthTokensService.getRefreshToken();
-    if (error.response.status !== 401 || (!refreshToken)) {
+    if (error?.response?.status !== 401 || (!refreshToken)) {
         return Promise.reject(error);
     }
 
