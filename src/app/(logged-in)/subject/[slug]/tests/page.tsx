@@ -9,6 +9,7 @@ import Link from "next/link";
 import dayjs from "dayjs";
 
 import { RightOutlined } from "@ant-design/icons";
+import {Empty} from "antd";
 
 function TestSlot({item} : {item: ITestShortInfo}) {
     let date = dayjs(item.date);
@@ -32,7 +33,7 @@ export default function SubjectTestsPage() {
         {
             (tests.length > 0)
             ? tests.map((item, k) => <TestSlot item={item} key={k} />)
-            : <p className={styles.empty_text}>Тестів поки ще немає.</p>
+            : <Empty description={<p className={styles.empty_text}>Тестів поки ще немає.</p>}/>
         }
         </>
     )

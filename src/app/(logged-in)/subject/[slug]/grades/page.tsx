@@ -6,7 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import styles from "../styles.module.css";
 import dayjs from "dayjs";
-import { List } from "antd";
+import {Empty, List} from "antd";
 
 function GradeSlot({item} : {item: IGrade}) {
     let date = dayjs(item.date);
@@ -34,7 +34,7 @@ export default function SubjectGradesPage() {
                             <GradeSlot item={item} key={k} />
                         )}
                     />
-                : <p className={styles.empty_text}>У Вас оцінок поки ще немає.</p>
+                : <Empty description={<p className={styles.empty_text}>У Вас оцінок поки ще немає.</p>}/>
             }
         </>
     )

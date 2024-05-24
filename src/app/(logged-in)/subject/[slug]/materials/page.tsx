@@ -9,6 +9,7 @@ import { RightOutlined } from "@ant-design/icons";
 import styles from "../styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
+import {Empty} from "antd";
 
 function MaterialSlot({item} : {item: IMaterialShortInfo}) {
     let date = dayjs(item.date);
@@ -33,7 +34,7 @@ export default function SubjectMaterialsPage() {
         {
             (materials.length > 0)
             ? materials.map((item, k) => <MaterialSlot item={item} key={k} />)
-            : <p className={styles.empty_text}>Матеріалів поки ще немає.</p>
+            : <Empty description={<p className={styles.empty_text}>Матеріалів поки ще немає.</p>}/>
         }
         </>
     )
