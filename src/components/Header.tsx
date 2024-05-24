@@ -1,9 +1,10 @@
 'use client'
 
 import Link from "next/link";
-import {Avatar, Button, Dropdown, Image, MenuProps, Space} from "antd";
+import {Avatar, Button, Dropdown, Flex, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";
 import {
+    ArrowRightOutlined,
     BookOutlined,
     IdcardOutlined,
     LogoutOutlined,
@@ -15,44 +16,12 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
-import { usePathname } from "next/navigation";
+import {usePathname} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
+import {IUser} from "@/types/api.types";
 
-let myProfileId = -1;
-const items: MenuProps['items'] = [
-    {
-        label: <Link href={`/profile/${myProfileId}/subjects`}>Мої предмети</Link>,
-        icon: <BookOutlined/>,
-        key: '0',
-    },
-    {
-        label: <Link href={`/profile/${myProfileId}/grades`}>Оцінки</Link>,
-        icon: <StarOutlined/>,
-        key: '1',
-    },
-    {
-        label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
-        icon: <RiseOutlined/>,
-        key: '2',
-},
-    {
-        label: <Link href={`/profile/settings`}>Налаштування</Link>,
-        icon: <SettingOutlined/>,
-        key: '3',
-    },
-    {key: 'divider', type: 'divider'},
-    {
-        label: <Link style={{color: "orangered"}} onClick={() => {
-            AuthTokensService.deleteAuthToken();
-            window.location.href = "/";
-        }} href="/">Вихід</Link>,
-        icon: <LogoutOutlined style={{color: "orangered", fontSize: "16px"}}/>,
-        key: '4',
-    },
-]
-
-function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, text: string}) {
+function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
     const pathname = usePathname();
 
     return (
@@ -64,12 +33,108 @@ function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, te
 
 export default function AppHeader() {
     const [isLoggedIn, setLoggedIn] = useState(false)
-    const profileId = useProfileStore(store => store.id);
+    const profile : IUser = useProfileStore();
+
 
     useEffect(() => {
         setLoggedIn(AuthTokensService.getAuthToken() !== "");
-        myProfileId = profileId;
     }, [])
+
+    const items: MenuProps['items'] = [
+        {
+            label: (
+                <Link href={`/profile/${profile.id}`} style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    maxWidth: "100%",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    marginLeft: 6,
+                }}>
+                    <div style={{
+                        maxWidth: "70%",
+                        height: "max-content",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                        fontSize: 14,
+                    }}>{profile.first_name}</div>
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: 11,
+                        color: "#ffffff99"
+                    }}>
+                        <span>Профіль</span>
+                        <ArrowRightOutlined style={{fontSize: 11, padding: 0, margin: "0 0 0 4px"}}/>
+                    </div>
+                </Link>
+            ),
+            icon: <Avatar shape="square" alt="user avatar" icon={profile.avatar}/>,
+            key: '0',
+        },
+        {key: 'divider', type: 'divider'},
+        {
+            label: (
+                <Link href={`/profile/${profile.id}/subjects`} style={{ display: "flex", alignItems: "center" }}>
+                    <BookOutlined/>
+                    <div style={{paddingLeft: 8}}>Мої предмети</div>
+                </Link>
+            ),
+            key: '1',
+        },
+        {
+            label: (
+                <Link href={`/profile/${profile.id}/grades`} style={{ display: "flex", alignItems: "center" }}>
+                    <StarOutlined/>
+                    <div style={{paddingLeft: 8}}>Оцінки</div>
+                </Link>
+            ),
+            key: '2',
+        },
+        {
+            label: (
+                <Link href={`/profile/${profile.id}/achievements`} style={{ display: "flex", alignItems: "center" }}>
+                    <RiseOutlined/>
+                    <div style={{paddingLeft: 8}}>Досягнення</div>
+                </Link>
+            ),
+            key: '3',
+        },
+        {key: 'divider2', type: 'divider'},
+        {
+            label: (
+                <Link href={`/profile/settings`} style={{ color: "var(--text-primary)", display: "flex", alignItems: "center" }}>
+                    <SettingOutlined/>
+                    <div style={{paddingLeft: 8}}>Налаштування</div>
+                </Link>
+            ),
+            key: '4',
+        },
+        {
+            label: (
+                <Link
+                    style={{ color: "orangered", display: "flex", alignItems: "center" }}
+                    onClick={() => {
+                        AuthTokensService.deleteAuthToken();
+                        window.location.href = "/";
+                    }}
+                    href="/"
+                >
+                    <LogoutOutlined style={{color: "orangered", fontSize: "16px"}}/>
+                    <div style={{paddingLeft: 8}}>Вихід</div>
+                </Link>
+            ),
+            key: '5',
+        },
+
+
+    ]
 
     const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
     return (
@@ -84,7 +149,7 @@ export default function AppHeader() {
             borderBottom: "solid 1px #444",
         }}>
             <div style={{
-                maxWidth:"1200px",
+                maxWidth: "1200px",
                 width: "100%",
                 display: "grid",
                 gridTemplateColumns: gridTemplateColumns,
@@ -105,12 +170,12 @@ export default function AppHeader() {
                             icon={<BookOutlined/>}
                             text="Предмети"
                         />
-                         <NavButton
+                        <NavButton
                             path="/students"
                             icon={<IdcardOutlined/>}
                             text="Студенти"
                         />
-                         <NavButton
+                        <NavButton
                             path="/teachers"
                             icon={<TeamOutlined/>}
                             text="Вчителі"
@@ -123,12 +188,12 @@ export default function AppHeader() {
                         justifyContent: "flex-end",
                         marginRight: 20
                     }}>
-                        <Link href={`/profile/${myProfileId}`}>
+                        <Link href={`/profile/${profile.id}`}>
                             <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
                                     icon={<UserOutlined/>}/>
                         </Link>
 
-                        <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12}}>
+                        <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12, minWidth: 230}}                        >
                             <Button type="text" icon={<MenuOutlined/>}/>
                         </Dropdown>
 
