@@ -12,6 +12,7 @@ import Dragger from "antd/es/upload/Dragger";
 import { UploadProps } from "antd/lib";
 
 import {InboxOutlined} from "@ant-design/icons";
+import Foreground from "@/components/Foreground";
 
 const props: UploadProps = {
     name: 'file',
@@ -44,6 +45,7 @@ const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editP
     }
 
     return (
+
         <Modal
             title="Редагування профілю"
             closable={false}
@@ -164,9 +166,9 @@ export default function AccountSettingsPage() {
     };
 
     return (
-        <>
+        <Foreground>
             <h1>Налаштування</h1>
-    
+
             <Divider orientation="right" orientationMargin={0}>Профіль</Divider>
 
             <div className={styles.setting_div}>
@@ -194,7 +196,7 @@ export default function AccountSettingsPage() {
 
             <Divider orientation="right" orientationMargin={0}>Вихід</Divider>
             <Button onClick={logout} style={{display: "block", marginLeft: "auto"}} type="primary" danger>Вийти з акаунту</Button>
-        
+
             {modalCtxHolder}
             <ProfileChangeModal
                 editProfileVisible={editProfileVisible}
@@ -204,6 +206,6 @@ export default function AccountSettingsPage() {
                 editPasswordVisible={editPasswordVisible}
                 setEditPasswordVisible={setEditPasswordVisible}
             />
-        </>
+        </Foreground>
     )
 }
