@@ -54,7 +54,7 @@ export function TeacherCard({item: {name, img}} : {item: {name: string, img: str
             <div style={{...bgImgStyle, background: bgImgStyle.background + "url(" + img + ")"}} />
             <img style={imgStyle} alt="subject_cover" src={img} />
             <div style={divInfoStyle}>
-                <Link href="/">
+                <Link href="/public">
                     <h1 style={textStyle}>{name}</h1>
                 </Link>
                 <p style={textStyle}>Кількість предметів: 1</p>

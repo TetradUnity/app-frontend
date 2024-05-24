@@ -10,7 +10,15 @@ import {usePathname} from "next/navigation";
 export default function ProfileHead() {
     const pathname = usePathname();
     const [selectedLink, setSelectedLink] = useState(pathname);
-    const profile = useQueryProfileStore();
+    //const profile = useQueryProfileStore();
+    const profile = {
+        id: 1,
+        email: "max.yanov@gmail.com",
+        first_name: "Max",
+        last_name: "Yanov",
+        role: "student",
+        isMe: true
+    }
 
     const handleLinkClick = (link: string) => {
         setSelectedLink(link);
