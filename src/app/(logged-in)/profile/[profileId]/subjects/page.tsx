@@ -96,12 +96,11 @@ export default function ProfileSubjects() {
                         {tempSubjects.map(subject => (
                             <div className={styles.subjectList} key={subject.id}>
                                 <Flex gap="var(--gap)" align="center" style={{minWidth: "200px"}}>
-                                    <Link href="/subject/id" style={{
+                                    <Link href={"/subject/"+subject.id} style={{
                                         maxWidth: "160px",
                                         minWidth: "160px",
                                     }}>
-                                        <Image src="https://gstatic.com/classroom/themes/Honors.jpg" alt="subject baner"
-                                               preview={false} style={{
+                                        <Image src={subject.banner} alt="subject baner" preview={false} style={{
                                             width: "100%",
                                             height: "90px",
                                             borderRadius: "8px",
