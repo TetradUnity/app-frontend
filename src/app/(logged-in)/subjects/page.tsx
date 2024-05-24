@@ -1,7 +1,7 @@
 'use client'
 
 import {Button, Dropdown, Flex, Input, MenuProps, Radio, Space} from "antd";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined} from "@ant-design/icons";
 import {tempSubjects} from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
@@ -34,6 +34,10 @@ const items: MenuProps['items'] = [
 export default function Subjects() {
     const [sortBy, setSortBy] = useState("По назві");
     const [sortOrder, setSortOrder] = useState("asc");
+
+    useEffect(() => {
+        document.title = `Предмети / Пошук`
+    }, [])
 
     const onClick: MenuProps['onClick'] = ({key}) => {
         switch (key) {

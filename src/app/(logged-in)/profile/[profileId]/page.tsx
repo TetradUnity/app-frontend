@@ -1,13 +1,14 @@
 'use client'
 import {Divider, Flex, Image, Input, Radio, RadioChangeEvent, Space} from "antd";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useProfileStore} from "@/stores/profileStore";
-import {RightOutlined, SearchOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {RightOutlined, SearchOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import styles from "./styles.module.css"
 import {tempTeachers} from "@/temporary/data";
 import {tempSubjects} from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
+import {useQueryProfileStore} from "@/stores/queryProfileStore";
 
 
 
@@ -18,6 +19,11 @@ export default function ProfileSubjects() {
     const [searchText, setSearchText] = useState("");
 
     const profile = useProfileStore();
+
+    const profileQuery = useQueryProfileStore();
+    useEffect(() => {
+        document.title = `Профіль / ${profileQuery.first_name} ${profileQuery.last_name}`
+    }, [])
 
     const onChangeSortOrder = (e: RadioChangeEvent) => {
         console.log(e.target.value)
