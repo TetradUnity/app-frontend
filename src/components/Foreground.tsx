@@ -4,6 +4,7 @@ export default function Foreground({children} : {children: React.ReactNode}) {
     return (
         <div style={{
             margin: "auto",
+            marginBottom: "var(--gap)",
             padding: "12px 16px",
             background: 'var(--foreground)',
             borderRadius: 10,

@@ -1,6 +1,5 @@
 'use client'
 
-import Foreground from "@/components/Foreground";
 import ChiefTeacherHomePage from "@/components/HomePages/ChiefTeacherHomePage";
 import StudentHomePage from "@/components/HomePages/StudentHomePage";
 import TeacherHomePage from "@/components/HomePages/TeacherHomePage";
@@ -24,8 +23,8 @@ export default function HomePage() {
     }
 
     return (
-        <Foreground>
+        <>
             {content}
-        </Foreground>
+        </>
     );
 }

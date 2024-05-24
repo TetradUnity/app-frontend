@@ -16,6 +16,7 @@ export const useQueryProfileStore = create<State & Action>(set => ({
     last_name: "",
     role: "student",
     isMe: false,
+    avatar: "",
 
     updateProfile: (profile) => set(state => {
         return profile || state;

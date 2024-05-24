@@ -1,0 +1,17 @@
+.SubjectsContainer {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    position: relative;
+    justify-content: center;
+    max-height: calc(var(--subject-card-height) * 3 + 16px * 6);
+    overflow: clip;
+}
+
+.Subject {
+    flex: 1 1 0;
+    padding: 16px;
+    box-sizing: border-box;
+    min-width: 250px;
+    max-width: max-content;
+}

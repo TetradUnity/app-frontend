@@ -30,9 +30,9 @@
 .Card {
     background: var(--foreground);
     border-radius: 8px;
-    height: max-content;
     min-width: 1px;
     max-width: 400px;
+    height: var(--subject-card-height);
     display: block;
     color: var(--text-primary);
     overflow: hidden;

@@ -1,36 +1,23 @@
 'use client'
 
-import {Card, List} from "antd";
+import styles from "@/components/HomePages/styles.module.css";
+import {tempSubjects} from "@/temporary/data";
+import SubjectCard from "@/components/cards/SubjectCard";
+import Foreground from "@/components/Foreground";
 
 export default function TeacherHomePage() {
-    // todo: fetch subjects and grades from the server
-    const subjects = [
-        "Math",
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "History",
-        "Geography",
-        "Literature",
-        "English",
-        "Ukrainian",
-        "Russian",
-        "German",
-    ];
     return (
         <>
-            <h1>Головна сторінка для викладача</h1>
-            <List pagination={{pageSize: 8}}
-                  header={<h2>Subjects</h2>}
-                  split={false}
-                  grid={{gutter: 16, column: 4}}
-                  dataSource={subjects}
-                  renderItem={item => (
-                      <List.Item>
-                          <Card title={item}>Card content</Card>
-                      </List.Item>
-                  )}
-            />
+            <Foreground>
+                <h1>Предмети, які ви викладаєте</h1>
+                <div className={styles.SubjectsContainer}>
+                    {tempSubjects.map(item => (
+                        <div key={item.id} className={styles.Subject}>
+                            <SubjectCard subject={item}/>
+                        </div>
+                    ))}
+                </div>
+            </Foreground>
         </>
     )
 }

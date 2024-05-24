@@ -13,6 +13,7 @@ export const useProfileStore = create<State & Action>(set => ({
     first_name: "",
     last_name: "",
     role: "student",
+    avatar: "",
 
     updateProfile: (profile) => set(state => {
         return profile || state;

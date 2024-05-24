@@ -1,27 +1,11 @@
 'use client'
-import {useState} from 'react';
-import {Card, List} from "antd";
-
-import { AuthService } from "@/services/auth.service"
+import {List} from "antd";
+import {tempSubjects} from "@/temporary/data";
+import SubjectCard from "@/components/cards/SubjectCard";
+import styles from "./styles.module.css";
+import Foreground from "@/components/Foreground";
 
 export default function StudentHomePage() {
-    // const [subjects, setSubjects] = useState([]);
-    // const [grades, setGrades] = useState([]);
-
-    // todo: fetch subjects and grades from the server
-    const subjects = [
-        "Math",
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "History",
-        "Geography",
-        "Literature",
-        "English",
-        "Ukrainian",
-        "Russian",
-        "German",
-    ];
     const lastGrades = [{
         subject: "Math",
         task: "logarithms test",
@@ -56,31 +40,32 @@ export default function StudentHomePage() {
 
     return (
         <>
-            <h1>Головна сторінка для студента</h1>
-            <List pagination={{pageSize: 8}}
-                  header={<h2>Subjects</h2>}
-                  split={false}
-                  grid={{gutter: 16, column: 4}}
-                  dataSource={subjects}
-                  renderItem={item => (
-                      <List.Item>
-                          <Card title={item}>Card content</Card>
-                      </List.Item>
-                  )}
-            />
-            <List
-                  dataSource={lastGrades.slice(0, 5)}
-                  size="small"
-                    header={<h2>Last grades</h2>}
-                  renderItem={item => (
-                      <List.Item>
-                          <List.Item.Meta
-                              title={`Ви отримали оцінку ${item.grade} з предмету ${item.subject}, ${item.task}`}
-                              description={generateDescription(item)}
-                          />
-                      </List.Item>
-                  )}
-            />
+            <Foreground>
+                <h1>Предмети</h1>
+                <div className={styles.SubjectsContainer}>
+                    {tempSubjects.map(item => (
+                        <div key={item.id} className={styles.Subject}>
+                            <SubjectCard subject={item}/>
+                        </div>
+                    ))}
+                </div>
+            </Foreground>
+            <Foreground>
+                <h1>Останні оцінки (TODO)</h1>
+                <List
+                    dataSource={lastGrades.slice(0, 5)}
+                    size="small"
+                    renderItem={item => (
+                        <List.Item>
+                            <List.Item.Meta
+                                title={`Ви отримали оцінку ${item.grade} з предмету ${item.subject}, ${item.task}`}
+                                description={generateDescription(item)}
+                            />
+                        </List.Item>
+                    )}
+
+                />
+            </Foreground>
         </>
     );
 }

@@ -20,7 +20,7 @@ interface SubjectCardProps {
 
 export default function SubjectCard({subject}: SubjectCardProps) {
     return (
-        <Link className={styles.Card} href={"/subject/"+subject.id} key={subject.id}>
+        <Link className={styles.Card} href={"/subject/" + subject.id} key={subject.id}>
             <Image src={subject.banner} alt="subject banner"
                    preview={false} style={{
                 width: "100%",
@@ -32,7 +32,6 @@ export default function SubjectCard({subject}: SubjectCardProps) {
             <Flex vertical style={{
                 padding: "12px 16px 12px 16px",
                 justifyContent: "space-between",
-                maxHeight: "40%",
                 background: "var(--foreground-lighter)",
             }}>
                 <h3 className={styles.subjectTitle}>{subject.title}</h3>
