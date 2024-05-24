@@ -1,19 +1,11 @@
 import Link from "next/link";
 import Image from "antd/lib/image";
 import styles from "./user.module.css";
+import {IUser} from "@/types/api.types";
 
-interface IUser {
-    id: number,
-    email: string,
-    first_name: string | undefined,
-    last_name: string | undefined,
-    avatar: string,
-    role: "chief_teacher" | "teacher" | "student"
-}
-
-export default function UserCard({user} : {user: IUser}) {
+export default function UserCard({user}: { user: IUser }) {
     return (
-        <Link className={styles.Card} href={"/profile/"+user.id} style={{
+        <Link className={styles.Card} href={"/profile/" + user.id} style={{
             background: "var(--foreground)",
             padding: "var(--gap)",
             borderRadius: 8,
@@ -23,14 +15,25 @@ export default function UserCard({user} : {user: IUser}) {
             flexDirection: "column",
             gap: "var(--gap)"
         }}>
-            <Image preview={false} src={user.avatar} style={{
-                width: 128,
-                height: 128,
-                borderRadius: "50%",
-                objectFit: "cover",
-                objectPosition: "center"
-            }} alt="user avatar"/>
-                <div className={styles.Name}>{user.first_name} {user.last_name}</div>
+            <Image preview={false}
+                   src={user.avatar}
+                   placeholder={
+                       <div className={styles.Placeholder} style={{
+                           width: 128,
+                           height: 128,
+                           borderRadius: "50%",
+                           objectFit: "cover",
+                           objectPosition: "center"
+                       }}/>
+                   }
+                   style={{
+                       width: 128,
+                       height: 128,
+                       borderRadius: "50%",
+                       objectFit: "cover",
+                       objectPosition: "center"
+                   }} alt="user avatar"/>
+            <div className={styles.Name}>{user.first_name} {user.last_name}</div>
         </Link>
     );
 }

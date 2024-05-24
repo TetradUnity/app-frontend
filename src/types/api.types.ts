@@ -23,6 +23,7 @@ export interface IUser {
     email: string,
     first_name: string | undefined,
     last_name: string | undefined,
+    avatar: string
     role: "chief_teacher" | "teacher" | "student"
 }
 
@@ -30,7 +31,7 @@ export interface ITeacherShortInfo {
     id: number,
     first_name: string,
     last_name: string
-};
+}
 
 export interface IMaterialShortInfo {
     id: number,
