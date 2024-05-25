@@ -33,7 +33,7 @@ function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, te
 
 export default function AppHeader() {
     const [isLoggedIn, setLoggedIn] = useState(false)
-    const profile : IUser = useProfileStore();
+    const profile: IUser = useProfileStore();
 
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export default function AppHeader() {
                         display: "flex",
                         alignItems: "center",
                         fontSize: 11,
-                        color: "#ffffff99"
+                        color: "var(--text-secondary)"
                     }}>
                         <span>Профіль</span>
                         <ArrowRightOutlined style={{fontSize: 11, padding: 0, margin: "0 0 0 4px"}}/>
@@ -81,7 +81,7 @@ export default function AppHeader() {
         {key: 'divider', type: 'divider'},
         {
             label: (
-                <Link href={`/profile/${profile.id}/subjects`} style={{ display: "flex", alignItems: "center" }}>
+                <Link href={`/profile/${profile.id}/subjects`} style={{display: "flex", alignItems: "center"}}>
                     <BookOutlined/>
                     <div style={{paddingLeft: 8}}>Мої предмети</div>
                 </Link>
@@ -90,7 +90,7 @@ export default function AppHeader() {
         },
         {
             label: (
-                <Link href={`/profile/${profile.id}/grades`} style={{ display: "flex", alignItems: "center" }}>
+                <Link href={`/profile/${profile.id}/grades`} style={{display: "flex", alignItems: "center"}}>
                     <StarOutlined/>
                     <div style={{paddingLeft: 8}}>Оцінки</div>
                 </Link>
@@ -99,7 +99,7 @@ export default function AppHeader() {
         },
         {
             label: (
-                <Link href={`/profile/${profile.id}/achievements`} style={{ display: "flex", alignItems: "center" }}>
+                <Link href={`/profile/${profile.id}/achievements`} style={{display: "flex", alignItems: "center"}}>
                     <RiseOutlined/>
                     <div style={{paddingLeft: 8}}>Досягнення</div>
                 </Link>
@@ -109,7 +109,8 @@ export default function AppHeader() {
         {key: 'divider2', type: 'divider'},
         {
             label: (
-                <Link href={`/profile/settings`} style={{ color: "var(--text-primary)", display: "flex", alignItems: "center" }}>
+                <Link href={`/profile/settings`}
+                      style={{color: "var(--text-primary)", display: "flex", alignItems: "center"}}>
                     <SettingOutlined/>
                     <div style={{paddingLeft: 8}}>Налаштування</div>
                 </Link>
@@ -119,7 +120,7 @@ export default function AppHeader() {
         {
             label: (
                 <Link
-                    style={{ color: "orangered", display: "flex", alignItems: "center" }}
+                    style={{color: "orangered", display: "flex", alignItems: "center"}}
                     onClick={() => {
                         AuthTokensService.deleteAuthToken();
                         window.location.href = "/";
@@ -136,7 +137,7 @@ export default function AppHeader() {
 
     ]
 
-    const gridTemplateColumns = isLoggedIn ? "290px 1fr 145px" : "280px 1fr";
+    const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
     return (
         <div style={{
             background: 'var(--header)',
@@ -157,11 +158,8 @@ export default function AppHeader() {
                 margin: "0 auto",
                 height: "100%",
             }}>
-                <Link href="/" style={{marginLeft: 20}}>
-                    <Space style={{display: "flex", alignItems: "center", color: "#fff", textDecoration: "none"}}>
-                        <Image src="/react.svg" alt="React logo" preview={false} style={{width: 40, height: 40}}/>
-                        <h1>APPLICATION</h1>
-                    </Space>
+                <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
+                    <Image src="logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
                 {isLoggedIn ?
                     <Space style={{display: "flex", justifyContent: "center"}}>
@@ -193,7 +191,7 @@ export default function AppHeader() {
                                     icon={<UserOutlined/>}/>
                         </Link>
 
-                        <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12, minWidth: 230}}                        >
+                        <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12, minWidth: 230}}>
                             <Button type="text" icon={<MenuOutlined/>}/>
                         </Dropdown>
 
