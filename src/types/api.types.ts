@@ -71,13 +71,12 @@ export namespace TestsNamespace {
 
     export interface Question {
         title: string,
-        type: "one_answer" | "multiply_answer" | "text",
+        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
         answers: Answer[]
     } 
 
     export type Answer = {
         isCorrect: boolean,
-        type: "text" | "image",
         content: string
     };
 }

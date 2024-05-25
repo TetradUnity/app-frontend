@@ -1,206 +1,277 @@
 import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "antd";
-import {PlusCircleFilled, CloseCircleOutlined} from "@ant-design/icons";
+import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
 import TextArea from "antd/es/input/TextArea";
-import React, { Dispatch, SetStateAction, useEffect, useImperativeHandle, useReducer, useState } from "react";
+import React, { Dispatch, SetStateAction, Suspense, useEffect, useImperativeHandle, useReducer, useState } from "react";
 import { HookAPI } from "antd/es/modal/useModal";
 
 import { TestsNamespace } from "@/types/api.types";
+import { MDXEditor } from "@mdxeditor/editor";
+import { EditorComp } from "../mdx/WMDXEditor";
 
-function Answer({deleteAnswer, item, type, answers, forceUpdate, setAnswers} : {deleteAnswer: (answer: TestsNamespace.Answer) => void, item: TestsNamespace.Answer, type: TestsNamespace.Question["type"], answers: TestsNamespace.Answer[], forceUpdate: () => void, setAnswers: Dispatch<SetStateAction<TestsNamespace.Answer[]>>}) {
+type AnswerRef = {
+    getData: () => TestsNamespace.Answer,
+    uncheck: () => void
+};
+
+const Answer = React.forwardRef((
+    {deleteAnswer, uncheckAllAnswers, orderAnswer}:
+    {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void}, ref) => {
+    const [isCorrect, setIsCorrect] = useState(false);
     const [content, setContent] = useState("");
     
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+            isCorrect: isCorrect,
+            content: content
+        }),
+        uncheck: () => {
+            setIsCorrect(false)
+        }
+    } as AnswerRef));
+
     return (
         <div className={styles.answer}>
             <h4>Вірна відповідь:</h4>
             <Checkbox
-                checked={item.isCorrect}
+                checked={isCorrect}
                 onChange={e => {
-                    if (type == "one_answer") {
-                        for (let i = 0; i < answers.length; i++) {
-                            answers[i].isCorrect = false;
-                        }
-                    }
-                    item.isCorrect = !item.isCorrect;
-                    setAnswers(answers);
-                    forceUpdate();
+                    uncheckAllAnswers();
+                    setIsCorrect(!isCorrect);
                 }}
+                style={{marginRight: 10}}
             />
 
-            <h4>Тип:</h4>
-            <Select
-                defaultValue="text"
-                style={{maxWidth: 100}}
-                options={[
-                    {value: "text", label: "Текст"},
-                    {value: "image", label: "Картинка"},
-                ]}
-                onChange={(value: TestsNamespace.Answer["type"]) => {
-                    item.type = value;
-                    setContent("");
-                    item.content = "";
-                }}
-            />
-
-            <h4>Текст:</h4>
             <Input
+                placeholder="Вміст..."
                 value={content}
-                onChange={e => {
-                    setContent(e.target.value);
-                    item.content = content;
-                }}
+                onChange={e => setContent(e.target.value)}
             />
 
             <Button
-                onClick={() => deleteAnswer(item)}
                 danger
                 shape="circle"
                 type="text"
                 icon={<CloseCircleOutlined />}
+                onClick={deleteAnswer}
             />
+
+            <div>
+                <Button onClick={() => orderAnswer(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
+                <Button onClick={() => orderAnswer(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
+            </div>
         </div>
     )
-}
+})
 
-function TextAnswer({deleteAnswer, item} : {deleteAnswer: (answer: TestsNamespace.Answer) => void, item: TestsNamespace.Answer}) {
+const TextAnswer = React.forwardRef((
+    {deleteAnswer, orderAnswer}:
+    {deleteAnswer: () => void, orderAnswer: (up: boolean) => void}, ref) => {
+    const [content, setContent] = useState("");
+    
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+            isCorrect: true,
+            content: content
+        }),
+        uncheck: () => {}
+    } as AnswerRef));
+
     return (
         <div className={styles.answer}>
-            <Input />
+            <Input
+                value={content}
+                onChange={e => setContent(e.target.value)}
+            />
+
             <Button
-                onClick={() => deleteAnswer(item)}
+                onClick={deleteAnswer}
                 danger
                 shape="circle"
                 type="text"
                 icon={<CloseCircleOutlined />}
             />
+
+            <div>
+                <Button onClick={() => orderAnswer(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
+                <Button onClick={() => orderAnswer(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
+            </div>
         </div>
-    );
-}
+    )
+})
 
-function Question({item,questions,setQuestions,modal} : {item: TestsNamespace.Question, questions: TestsNamespace.Question[], setQuestions: Dispatch<SetStateAction<TestsNamespace.Question[]>>, modal: HookAPI}) {
-    const [type, setType] = useState<TestsNamespace.Question["type"]>("one_answer");
-    const [answers, setAnswers] = useState<TestsNamespace.Answer[]>([]);
+type QuestionRef = {
+    getData: () => TestsNamespace.Question
+};
 
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+const Question = React.forwardRef((
+    {modal, deleteQuestion, orderQuestion} :
+    {modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void},
+ref) => {
+    const [title, setTitle] = useState("");
+    const [type, setType] = useState<TestsNamespace.Question["type"]>("ONE_ANSWER");
+    const [contentType, setContentType] = useState("text");
 
-    const deleteQuestion = () => {
-        const m = modal.confirm({
-            title: "Видалення питання",
-            content: "Ви впевнені в цему?",
-            okText: "Видалити",
-            cancelText: "Ні.",
-            onOk: () => {
-                setQuestions(questions.filter(question => question !== item));
-            }
+    type answer = {
+        id: number,
+        ref: React.RefObject<AnswerRef>,
+    };
+
+    const [answers, setAnswers] = useState<answer[]>([]);
+    const [answersCount, setAnswersCount] = useState(0);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+            title:title,
+            type: type,
+            answers: answers.map(item => item.ref.current?.getData()),
         })
+    } as QuestionRef));
+
+    const changeQuestionType = (newType: TestsNamespace.Question["type"]) => {
+        if (
+            (answers.length > 0) && (
+            (type == "ONE_ANSWER" && newType == "TEXT") ||
+            (type == "MULTI_ANSWER" && newType == "TEXT") ||
+            (type == "TEXT" && newType == "ONE_ANSWER") ||
+            (type == "TEXT" && newType == "MULTI_ANSWER") )
+        ) {
+            modal.confirm({
+                title: "Попередження",
+                content: "Якщо ви змінюєте тип з одної/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей на даний момент зникнуть.",
+                okText: "Продовжити",
+                cancelText: "Відмінити",
+                closable: false,
+                maskClosable: false,
+
+                onOk: () => {
+                    setAnswers([]);
+                    setType(newType);
+                }
+            });
+            return;
+        }
+
+        if ((type == "MULTI_ANSWER" && newType == "ONE_ANSWER")) {
+            uncheckAllAnswers(true);
+        }
+
+        setType(newType);
     };
 
     const createAnswer = () => {
         setAnswers([...answers, {
-            content: "",
-            type: "text",
-            isCorrect: (type == "text") || (answers.length == 0)
+            id: answersCount,
+            ref: React.createRef()
         }]);
+        setAnswersCount(answersCount + 1);
     };
 
-    const deleteAnswer = (answer: TestsNamespace.Answer) => {
+    const uncheckAllAnswers = (ignore?: boolean) => {
+        if ((type != "ONE_ANSWER") && (!ignore)) return;
+        answers.forEach(answer => answer.ref.current?.uncheck());
+    }
+
+    const deleteAnswer = (answer: answer) => {
         setAnswers(answers.filter(item => item !== answer));
-    };
+    }
 
-    useEffect(() => {
-        setQuestions(questions.map(obj => {
-            if (obj != item) {
-                return obj;
-            }
-            return {...item, answers: answers}
-        }))
-    }, [answers]);
+    const orderAnswer = (answer: answer, up: boolean) => {
+        // TODO: make it function workly.
+    }
 
     return (
         <div className={styles.question}>
+            <div className={styles.question_order_buttons}>
+                <Button onClick={() => orderQuestion(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
+                <Button onClick={() => orderQuestion(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
+            </div>
+
             <section>
                 <h3>Питання:</h3>
                 <TextArea
-                    onChange={e => item.title = e.currentTarget.value}
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
                 />
             </section>
+
+            <Suspense fallback={null}>
+                <EditorComp editorRef={null} markdown="Hello **world!**" />
+            </Suspense>
 
             <section>
                 <h3>Тип питання:</h3>
                 <Select
                     value={type}
-                    onChange={(type: TestsNamespace.Question["type"]) => {
-                        if (
-                            (answers.length > 0) && (
-                            (item.type == "one_answer" && type == "text") ||
-                            (item.type == "multiply_answer" && type == "text") ||
-                            (item.type == "text" && type == "one_answer") ||
-                            (item.type == "text" && type == "multiply_answer") )
-                        ) {
-                            const m = modal.confirm({
-                                title: "Попередження",
-                                content: "Якщо ви змінюєте тип з одної/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей на даний момент зникнуть.",
-                                okText: "Продовжити",
-                                cancelText: "Відмінити",
-                                closable: false,
-                                maskClosable: false,
-
-                                onOk: () => {
-                                    item.type = type;
-                                    setType(type);
-                                    setAnswers([]);
-                                    m.destroy();
-                                },
-                                onCancel: () => {
-                                    m.destroy();
-                                }
-                            });
-                        }
-
-                        if ((item.type == "multiply_answer" && type == "one_answer")) {
-                            for (let i = 0; i < answers.length; i++) {
-                                answers[i].isCorrect = i == 0;
-                            }
-                        }
-
-                        item.type = type;
-                        setType(type);
-                    }}
+                    onChange={changeQuestionType}
                     options={[
-                        {value: "one_answer", label: "Одна правильна відповідь"},
-                        {value: "multiply_answer", label: "Декілька правильних відповідей"},
-                        {value: "text", label: "Текст"}
+                        {value: "ONE_ANSWER", label: "Одна правильна відповідь"},
+                        {value: "MULTI_ANSWER", label: "Декілька правильних відповідей"},
+                        {value: "TEXT", label: "Текст"}
                     ]}
+                    style={{marginBottom: 10}}
+                />
+
+                <h3>Тип вмісту:</h3>
+                <Select
+                    value={contentType}
+                    onChange={type => setContentType(type)}
+                    options={[
+                        {value: "text", label: "Текст"},
+                        {value: "image", label: "Зображення", disabled: true}
+                    ]}
+                    style={{marginBottom: 10}}
                 />
             </section>
 
             <section>
                 <h3>Варіанти відповідей:</h3>
-                {(type == "text") && <p style={{marginBottom: 10}}>Під час перевірки відповіді нижній та верхній регістр не враховується.</p>}
                 <div className={styles.answers_div}>
-                    {
-                        (type != "text")
-                        ? answers.map((item, i) => <Answer key={i} setAnswers={setAnswers} forceUpdate={forceUpdate} type={type} answers={answers} deleteAnswer={deleteAnswer} item={item} />)
-                        : answers.map((item, i) => <TextAnswer key={i} deleteAnswer={deleteAnswer} item={item} />)
-                    }
+                    {(type == "TEXT") && <p style={{marginBottom: 10}}>Під час перевірки відповіді нижній та верхній регістр не враховується.</p>}
+                    
+                    {(type != "TEXT") && answers.map(item =>
+                        <Answer
+                            ref={item.ref}
+                            key={item.id}
+                            deleteAnswer={deleteAnswer.bind(null, item)}
+                            uncheckAllAnswers={uncheckAllAnswers}
+                            orderAnswer={orderAnswer.bind(null, item)}
+                        />
+                    )}
+                    {(type == "TEXT") && answers.map(item =>
+                        <TextAnswer
+                            ref={item.ref}
+                            key={item.id}
+                            deleteAnswer={deleteAnswer.bind(null, item)}
+                            orderAnswer={orderAnswer.bind(null, item)}
+                        />
+                    )}
+
                     <div className={styles.center_btn}>
                         <Button onClick={createAnswer} size="large" type="dashed" shape="circle" icon={<PlusCircleFilled />} />
                     </div>
                 </div>
             </section>
-
+            
             <Button onClick={deleteQuestion} type="primary" danger block>Видалити</Button>
         </div>
     )
-}
+});
+
 
 export type TestConstructorRef = {
     getData: () => TestsNamespace.Test[]
 }
 
 export const TestConstructor = React.forwardRef((props, ref) => {
-    const [questions, setQuestions] = useState<TestsNamespace.Question[]>([]);
+    type question = {
+        id: number,
+        ref: React.RefObject<QuestionRef>
+    };
+    const [questions, setQuestions] = useState<question[]>([]);
+    const [questionCount, setQuestionCount] = useState(0);
+
     const [modal, modalCtxHolder] = Modal.useModal();
 
     const [testDuration, setTestDuration] = useState<number | null>(null);
@@ -210,17 +281,33 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             {
                 time: testDuration
             },
-            ...questions
+            ...questions.map(item => item.ref.current?.getData())
         ]) as TestsNamespace.Test
     }));
 
     const createNewQuestion = () => {
         setQuestions([...questions, {
-            title: "",
-            type: "one_answer",
-            answers: []
+            id: questionCount,
+            ref: React.createRef(),
         }]);
+        setQuestionCount(questionCount + 1);
     };
+
+    const deleteQuestion = (question: question) => {
+        modal.confirm({
+            title: "Видалення питання",
+            content: "Ви впевнені в цему?",
+            okText: "Видалити",
+            cancelText: "Ні.",
+            onOk: () => {
+                setQuestions(questions.filter(item => item !== question));
+            }
+        })
+    }
+
+    const orderQuestion = (question: question, up: boolean) => {
+        // TODO: make it function workly.
+    }
 
     return (
         <div className={styles.main_div}>
@@ -240,14 +327,16 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             </section>
 
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
-            {questions.map((question,i) =>
-            <Question
-                key={i}
-                item={question}
-                questions={questions}
-                setQuestions={setQuestions}
-                modal={modal}
-            />)}
+            
+            {questions.map(item => 
+                <Question
+                    key={item.id}
+                    ref={item.ref}
+                    deleteQuestion={deleteQuestion.bind(null, item)}
+                    orderQuestion={orderQuestion.bind(null, item)}
+                    modal={modal}
+                />
+            )}
             
             <Button
                 block

@@ -11,6 +11,10 @@
     border-radius: 10px;
 }
 
+.question_order_buttons {
+    float: right;
+}
+
 .question section:not(:last-child) {
     margin-bottom: 10px;
 }
@@ -28,6 +32,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: start;
+
+    margin-bottom: 10px;
 }
 
 .answer h4 {
