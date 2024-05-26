@@ -7,8 +7,10 @@ import React, { Dispatch, SetStateAction, Suspense, useEffect, useImperativeHand
 import { HookAPI } from "antd/es/modal/useModal";
 
 import { TestsNamespace } from "@/types/api.types";
-import { MDXEditor } from "@mdxeditor/editor";
-import { EditorComp } from "../mdx/WMDXEditor";
+import Tiptap, { TiptapRef } from "../Tiptap";
+import ImageUploadModal from "../ImageUploadModal";
+import { moveElementInArray, moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
+import countWordsInHtmlString from "@/utils/StringUtils";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
@@ -16,15 +18,15 @@ type AnswerRef = {
 };
 
 const Answer = React.forwardRef((
-    {deleteAnswer, uncheckAllAnswers, orderAnswer}:
-    {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void}, ref) => {
+    {deleteAnswer, uncheckAllAnswers, orderAnswer, openImageUploadModal}:
+    {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void}, ref) => {
     const [isCorrect, setIsCorrect] = useState(false);
-    const [content, setContent] = useState("");
-    
+    const editorRef = React.createRef<TiptapRef>();
+
     useImperativeHandle(ref, () => ({
         getData: () => ({
             isCorrect: isCorrect,
-            content: content
+            content: editorRef.current?.getEditor()?.getHTML()
         }),
         uncheck: () => {
             setIsCorrect(false)
@@ -43,10 +45,16 @@ const Answer = React.forwardRef((
                 style={{marginRight: 10}}
             />
 
-            <Input
+            {/* <Input
                 placeholder="Вміст..."
                 value={content}
                 onChange={e => setContent(e.target.value)}
+            /> */}
+            <Tiptap
+                className="ant-input ant-input-outlined"
+                style={{flex: 1}}
+                ref={editorRef}
+                openImageUploadModal={openImageUploadModal}
             />
 
             <Button
@@ -106,12 +114,11 @@ type QuestionRef = {
 };
 
 const Question = React.forwardRef((
-    {modal, deleteQuestion, orderQuestion} :
-    {modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void},
+    {index, modal, deleteQuestion, orderQuestion, openImageUploadModal} :
+    {index: number, modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
 ref) => {
-    const [title, setTitle] = useState("");
+    const questionTitleEditorRef = React.useRef<TiptapRef>();
     const [type, setType] = useState<TestsNamespace.Question["type"]>("ONE_ANSWER");
-    const [contentType, setContentType] = useState("text");
 
     type answer = {
         id: number,
@@ -123,7 +130,7 @@ ref) => {
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-            title:title,
+            title: questionTitleEditorRef.current?.getEditor()?.getHTML(),
             type: type,
             answers: answers.map(item => item.ref.current?.getData()),
         })
@@ -178,7 +185,12 @@ ref) => {
     }
 
     const orderAnswer = (answer: answer, up: boolean) => {
-        // TODO: make it function workly.
+        let index = answers.findIndex(item => item === answer);
+
+        if (up) 
+            setAnswers(moveElementLeftInArray(answers, index));
+        else 
+            setAnswers(moveElementRightInArray(answers, index));
     }
 
     return (
@@ -189,16 +201,14 @@ ref) => {
             </div>
 
             <section>
-                <h3>Питання:</h3>
-                <TextArea
-                    value={title}
-                    onChange={e => setTitle(e.target.value)}
+                <h3>Питання №{index+1}:</h3>
+                <Tiptap
+                    ref={questionTitleEditorRef}
+                    className="ant-input ant-input-outlined"
+                    style={{minHeight: 30}}
+                    openImageUploadModal={openImageUploadModal}
                 />
             </section>
-
-            <Suspense fallback={null}>
-                <EditorComp editorRef={null} markdown="Hello **world!**" />
-            </Suspense>
 
             <section>
                 <h3>Тип питання:</h3>
@@ -209,17 +219,6 @@ ref) => {
                         {value: "ONE_ANSWER", label: "Одна правильна відповідь"},
                         {value: "MULTI_ANSWER", label: "Декілька правильних відповідей"},
                         {value: "TEXT", label: "Текст"}
-                    ]}
-                    style={{marginBottom: 10}}
-                />
-
-                <h3>Тип вмісту:</h3>
-                <Select
-                    value={contentType}
-                    onChange={type => setContentType(type)}
-                    options={[
-                        {value: "text", label: "Текст"},
-                        {value: "image", label: "Зображення", disabled: true}
                     ]}
                     style={{marginBottom: 10}}
                 />
@@ -237,6 +236,7 @@ ref) => {
                             deleteAnswer={deleteAnswer.bind(null, item)}
                             uncheckAllAnswers={uncheckAllAnswers}
                             orderAnswer={orderAnswer.bind(null, item)}
+                            openImageUploadModal={openImageUploadModal}
                         />
                     )}
                     {(type == "TEXT") && answers.map(item =>
@@ -261,7 +261,7 @@ ref) => {
 
 
 export type TestConstructorRef = {
-    getData: () => TestsNamespace.Test[]
+    getData: () => TestsNamespace.Test[] | null;
 }
 
 export const TestConstructor = React.forwardRef((props, ref) => {
@@ -276,13 +276,89 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
     const [testDuration, setTestDuration] = useState<number | null>(null);
 
+    const err = (ind: number, str: string) => {
+        modal.error({
+            title: "Помилка.",
+            maskClosable: true,
+            content: <p>В запитанні №{ind+1}: {str}</p>
+        })
+    };
+
+    const checkIfCorrectly = (data: (TestsNamespace.Question | undefined)[]) => {
+        let question;
+        for (let i = 0; i < data.length; i++)  {
+            question = data[i];
+            
+            if (question === undefined) {
+                err(i, "Щось пішло не так.");
+                return false;
+            }
+
+            question.title = question.title.trim();
+            if (countWordsInHtmlString(question.title) == 0) {
+                err(i, "Заговолок запитання не може бути порожнім!");
+                return false;
+            }
+
+            if (question.type != "TEXT") {
+                if (question.answers.length < 2) {
+                    err(i, "К-сть відповідей не може бути меншою за 2.");
+                    return false;
+                }
+                let isOneCorrect = false;
+                for (let j = 0; j < question.answers.length; j++) {
+                    question.answers[j].content = question.answers[j].content.trim();
+                    if (countWordsInHtmlString(question.answers[j].content) == 0) {
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        return false;
+                    }
+                    if (question.answers[j].isCorrect) {
+                        isOneCorrect = true;
+                    }
+                }
+                if (!isOneCorrect) {
+                    err(i, "Принаймі одна відповідь повина бути правильною.");
+                    return false;
+                }
+            }
+
+            if (question.type == "TEXT") {
+                if (question.answers.length <= 1) {
+                    err(i, "Повина існувати принаймі хоча б одна відповідь.");
+                    return false;
+                }
+
+                for (let j = 0; j < question.answers.length; j++) {
+                    question.answers[j].content = question.answers[j].content.trim();
+                    if (countWordsInHtmlString(question.answers[j].content) == 0) {
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        return false;
+                    }
+                }
+            }
+
+            if (question.answers.length > 5) {
+                err(i, "В питанні може існувати не більше 5-ти відповідей.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     useImperativeHandle(ref, () => ({
-        getData: () => ([
-            {
-                time: testDuration
-            },
-            ...questions.map(item => item.ref.current?.getData())
-        ]) as TestsNamespace.Test
+        getData: () => {
+            let data = questions.map(item => item.ref.current?.getData());
+            if (!checkIfCorrectly(data)) {
+                return null;
+            }
+            return [
+                {
+                    time: testDuration
+                },
+                ...data
+            ];
+        } 
     }));
 
     const createNewQuestion = () => {
@@ -305,12 +381,29 @@ export const TestConstructor = React.forwardRef((props, ref) => {
         })
     }
 
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
+    const [uploadModalCallback, setUploadModalCallback] = useState<(url: string) => void>(() => {});
+    const openImageUploadModal = (callback: (url: string) => void) => {
+        setUploadModalCallback(() => callback);
+        setUploadModalOpen(true);
+    }
+
     const orderQuestion = (question: question, up: boolean) => {
-        // TODO: make it function workly.
+        let index = questions.findIndex(item => item === question);
+
+        if (up) 
+            setQuestions(moveElementLeftInArray(questions, index));
+        else 
+            setQuestions(moveElementRightInArray(questions, index));
     }
 
     return (
         <div className={styles.main_div}>
+            <ImageUploadModal
+                open={uploadModalOpen}
+                setOpen={setUploadModalOpen}
+                callback={uploadModalCallback}
+            />
             <Divider orientationMargin={30} orientation="right" dashed>Загальна інформація</Divider>
             <section>
                 <h2 style={{marginBottom: 10}}>Тривалість тесту:</h2>
@@ -328,13 +421,16 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
-            {questions.map(item => 
+            <p>В заголовках запитання, або в текстових відповідях можна формувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
+            {questions.map((item,i) => 
                 <Question
                     key={item.id}
+                    index={i}
                     ref={item.ref}
                     deleteQuestion={deleteQuestion.bind(null, item)}
                     orderQuestion={orderQuestion.bind(null, item)}
                     modal={modal}
+                    openImageUploadModal={openImageUploadModal}
                 />
             )}
             

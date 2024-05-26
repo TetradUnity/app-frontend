@@ -5,7 +5,7 @@ import { TestConstructor, TestConstructorRef } from "@/components/tests/TestCons
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
-import { AutoComplete, Button, DatePicker, Form, GetRef, Input, InputRef, Modal, Select, Switch } from "antd";
+import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
@@ -134,30 +134,58 @@ export default function CreateSubjectPage() {
 
     const [isLoading, setLoading] = useState(false);
 
+    const [modal, modalCtxHolder] = Modal.useModal();
+
+    const err = (err: string) => {
+        modal.error({
+            title: "Помилка.",
+            maskClosable: true,
+            content: err
+        })
+    }
+
     const onSubmit = () => {
         if (isLoading) return;
+
+        let exam = null;
+        if (testRef.current) {
+            exam = testRef.current.getData();
+            if (exam == null) {
+                return;
+            }
+            exam = JSON.stringify(exam);
+        }
+
+        let start_subject = form.getFieldValue("startDate").unix() * 1000;
+        let end_exam = form.getFieldValue("examEndDate").unix() * 1000;
+
+        if (end_exam > start_subject) {
+            err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+            return;
+        }
 
         let info: CreateSubjectParams = {
             title: form.getFieldValue("title"),
             description: form.getFieldValue("desc"),
             short_description: form.getFieldValue("short_desc"),
-            start: form.getFieldValue("startDate").unix() * 1000,
-            exam_end: form.getFieldValue("examEndDate").unix() * 1000,
+            start: start_subject,
+            exam_end: end_exam,
             duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
             timetable: "поки що нічого :)",
             tags: [],
-            exam: testRef.current ? JSON.stringify(testRef.current.getData()) : null,
+            exam: exam,
             teacherEmail: form.getFieldValue("teacher")
         }
 
+        alert(JSON.stringify(info));
         setLoading(true);
         ChiefTeacherService.createSubject(info).then(resp => {
             setLoading(false);
             if (!resp.success) {
-                alert("Failed ? ");
+                err("Failed ?");
                 return;
             }
-            alert("Success :)")
+            err("Успіх!")
         })
     }
 
@@ -252,6 +280,8 @@ export default function CreateSubjectPage() {
                     <Button loading={isLoading} htmlType="submit" type="primary">Створити</Button>
                 </Form.Item>
             </Form>
+
+            {modalCtxHolder}
         </Foreground>
     );
 }
