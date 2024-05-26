@@ -18,7 +18,6 @@ const formStyle: CSSProperties = {
 
 export default function LoginPage() {
     const [isLoading, setLoading] = useState(false);
-    const {replace} = useRouter();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -48,3 +48,8 @@ body {
 ::-webkit-scrollbar-button {
     display: none;
 }
+
+.tiptap {
+    outline: none;
+    border: none;
+}

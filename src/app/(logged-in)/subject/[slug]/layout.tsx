@@ -81,7 +81,8 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                 {label: "Матеріали", value: "materials"},
                 {label: "Тести", value: "tests"},
                 {label: "Студенти", value: "students"},
-                {label: "Оцінки", value: "grades"}
+                {label: "Розклад занять", value: "timetable"},
+                {label: "Оцінки", value: "grades"},
             ]}
             onChange={key => {
                 push("/subject/" + slug + "/" + key)

@@ -1,3 +1,5 @@
+import { title } from "process";
+
 // Response interfaces
 export interface IResponse {
     success: boolean,
@@ -58,4 +60,37 @@ export interface IGrade {
     grade: number,
     reason: "task" | "test" | "conference",
     date: Date
+}
+
+export namespace TestsNamespace {
+    export type Test = [
+        {
+            time: number
+        },
+        ...Question[]
+    ]
+
+    export interface Question {
+        title: string,
+        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        answers: Answer[]
+    } 
+
+    export type Answer = {
+        isCorrect: boolean,
+        content: string
+    };
+}
+
+export interface CreateSubjectParams {
+    title: string,
+    description: string,
+    short_description: string,
+    start: number,
+    exam_end?: number,
+    duration: number,
+    timetable: string,
+    teacherEmail: string,
+    tags: string[],
+    exam: string | null
 }

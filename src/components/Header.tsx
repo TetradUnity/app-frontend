@@ -21,7 +21,40 @@ import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
 import {IUser} from "@/types/api.types";
 
-function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
+let myProfileId = -1;
+const items: MenuProps['items'] = [
+    {
+        label: <Link href={`/profile/${myProfileId}/subjects`}>Мої предмети</Link>,
+        icon: <BookOutlined/>,
+        key: '0',
+    },
+    {
+        label: <Link href={`/profile/${myProfileId}/grades`}>Оцінки</Link>,
+        icon: <StarOutlined/>,
+        key: '1',
+    },
+    {
+        label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
+        icon: <RiseOutlined/>,
+        key: '2',
+},
+    {
+        label: <Link href={`/profile/settings`}>Налаштування</Link>,
+        icon: <SettingOutlined/>,
+        key: '3',
+    },
+    {key: 'divider', type: 'divider'},
+    {
+        label: <Link style={{color: "orangered"}} onClick={() => {
+            AuthTokensService.deleteAuthToken();
+            window.location.href = "/";
+        }} href="/">Вихід</Link>,
+        icon: <LogoutOutlined style={{color: "orangered", fontSize: "16px"}}/>,
+        key: '4',
+    },
+]
+
+function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, text: string}) {
     const pathname = usePathname();
 
     return (
