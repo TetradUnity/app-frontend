@@ -8,6 +8,8 @@ import { CSSProperties, useEffect, useState } from "react";
 import { UserService } from "@/services/user.service";
 import { useProfileStore } from "@/stores/profileStore";
 import { useAppStore } from "@/stores/appStore";
+import { usePathname } from "next/navigation";
+import { AuthTokensService } from "@/services/auth-token.service";
 
 const contentStyle: CSSProperties = {
   width: 1200,
@@ -18,6 +20,8 @@ const contentStyle: CSSProperties = {
   boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
   display: "block",
 };
+
+const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/"];
 
 export default function ILayout({
                                     children,
@@ -31,7 +35,22 @@ export default function ILayout({
 
     const updateProfileStore = useProfileStore(selector => selector.updateProfile);
 
+    const pathname = usePathname();
+
     useEffect(() => {
+        let isNotRequired = false;
+        for (let i = 0; i < NOT_REQUIRED_AUTH_URLS.length; i++) {
+            if (pathname.startsWith(NOT_REQUIRED_AUTH_URLS[i])) {
+                isNotRequired = true;
+                break;
+            }
+        }
+
+        if (isNotRequired && !AuthTokensService.getAuthToken()) {
+            setAppLoading(false);
+            return;
+        }
+        
         UserService.getProfile().then(response => {
             updateProfileStore(response.data);
             setAppLoading(false);

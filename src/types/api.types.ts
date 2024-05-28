@@ -54,6 +54,46 @@ export interface ISubject {
     tests: ITestShortInfo[]
 }
 
+export interface IAnnouncedSubject {
+    id: number,
+
+    time_exam_end: number,
+    time_start: number,
+    time_end: number,
+
+    title: string,
+    description: string,
+
+    short_description: string,
+    duration: string,
+    timetable: string,
+
+    teacher_id: number,
+
+    is_end: boolean,
+    is_start: boolean
+}
+
+/* TEMPORARY */
+export interface TemporaryAnnoncedSubjectInfo {
+    id: number,
+    title: string,
+    teacher_id: number,
+    description: string,
+    is_active: boolean,
+    created_at: string,
+    exam: any,
+    exam_end_date: any,
+    start_date: string,
+    banner: string,
+
+    duration: string,
+    timetable: string,
+}
+export interface SubjectCardProps {
+    subject: TemporaryAnnoncedSubjectInfo
+}
+
 export type IStudentShortInfo = ITeacherShortInfo;
 
 export interface IGrade {

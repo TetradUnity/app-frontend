@@ -192,7 +192,7 @@ export default function AppHeader() {
                 height: "100%",
             }}>
                 <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
-                    <Image src="logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
                 {isLoggedIn ?
                     <Space style={{display: "flex", justifyContent: "center"}}>

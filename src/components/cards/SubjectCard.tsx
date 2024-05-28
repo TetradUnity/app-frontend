@@ -2,25 +2,11 @@ import {Divider, Flex, Image} from "antd";
 import styles from "./subject.module.css";
 import Link from "next/link";
 import {tempTeachers} from "@/temporary/data";
-
-interface SubjectCardProps {
-    subject: {
-        id: number,
-        title: string,
-        teacher_id: number,
-        description: string,
-        is_active: boolean,
-        created_at: string,
-        exam: any,
-        exam_end_date: any,
-        start_date: string,
-        banner: string,
-    }
-}
+import { SubjectCardProps } from "@/types/api.types";
 
 export default function SubjectCard({subject}: SubjectCardProps) {
     return (
-        <Link className={styles.Card} href={"/subject/" + subject.id} key={subject.id}>
+        <Link className={styles.Card} href={"/subject/announced/" + subject.id} key={subject.id}>
             <Image src={subject.banner} alt="subject banner"
                    preview={false} style={{
                 width: "100%",
