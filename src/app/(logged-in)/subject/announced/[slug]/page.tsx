@@ -11,6 +11,7 @@ import { Button, Drawer } from "antd";
 import styles from "./styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
+import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRequestModal";
 
 export default function AnnouncedSubject() {
     const params = useParams();
@@ -20,6 +21,8 @@ export default function AnnouncedSubject() {
     const [teacherInfo, setTeacherInfo] = useState<IUser>();
 
     const [isLoaded, setIsLoaded] = useState(false);
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         let subjectId = parseInt(slug as string);
@@ -87,8 +90,13 @@ export default function AnnouncedSubject() {
                     <p>{dayjs(info.start_date).format("D MMMM YYYY року")}</p>
                 </section>
 
-                <Button style={{display: "block", margin: "auto"}} type="primary">Подати заявку</Button>
+                <Button onClick={() => setModalVisible(true)} style={{display: "block", margin: "auto"}} type="primary">Подати заявку</Button>
            </div>
+
+           <AnnouncedSubjectRequestModal
+            isOpen={modalVisible}
+            close={() => setModalVisible(false)}
+           />
         </div>
     )
 }
