@@ -6,7 +6,7 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { Button, Drawer } from "antd";
+import { Button } from "antd";
 
 import styles from "./styles.module.css";
 import Link from "next/link";

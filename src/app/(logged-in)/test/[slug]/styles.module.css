@@ -1,0 +1,19 @@
+.sider, .divider, .content {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.sider {
+    width: 230px;
+}
+
+.sider > button {
+    margin-bottom: 10px;
+}
+
+.divider {
+    margin-left: 15px;
+    width: 1px;
+    height: 90vh;
+    background: var(--foreground-darker);
+}

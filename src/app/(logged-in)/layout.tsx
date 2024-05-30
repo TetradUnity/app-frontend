@@ -21,7 +21,7 @@ const contentStyle: CSSProperties = {
   display: "block",
 };
 
-const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/"];
+const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/"];
 
 export default function ILayout({
                                     children,

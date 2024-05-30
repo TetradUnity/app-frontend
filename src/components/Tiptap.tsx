@@ -22,6 +22,8 @@ export type TiptapRef = {
 
 type TiptapProps = React.HTMLAttributes<HTMLDivElement> & {
     charsLimit?: number,
+    content?: string,
+    editable?: boolean,
     openImageUploadModal?: (cb: (url: string) => void) => void
 };
 
@@ -59,7 +61,8 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             Image,
             MathExtension
         ],
-        content: ""
+        content: props.content || "",
+        editable: props.editable
     });
 
     useImperativeHandle(ref, () => ({

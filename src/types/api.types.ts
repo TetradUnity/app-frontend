@@ -105,7 +105,7 @@ export interface IGrade {
 export namespace TestsNamespace {
     export type Test = [
         {
-            time: number
+            time: number,
         },
         ...Question[]
     ]
