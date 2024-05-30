@@ -120,6 +120,23 @@ export namespace TestsNamespace {
         isCorrect: boolean,
         content: string
     };
+
+    export type ProdTest = [
+        {
+            time: number,
+        },
+        ...ProdQuestion[]
+    ];
+
+    export interface ProdQuestion {
+        title: string,
+        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        answers: ProdAnswer[]
+    };
+
+    export type ProdAnswer = {
+        content: string
+    };
 }
 
 export interface CreateSubjectParams {

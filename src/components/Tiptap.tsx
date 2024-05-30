@@ -10,7 +10,7 @@ import { Button } from "antd";
 
 import { FileImageOutlined } from "@ant-design/icons";
 
-import React, { useImperativeHandle, useState } from "react";
+import React, { useEffect, useImperativeHandle, useState } from "react";
 
 import "katex/dist/katex.min.css";
 import ImageUploadModal from "./ImageUploadModal";
@@ -71,7 +71,13 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
 
     const callback = (url: string) => {
         editor?.commands.setImage({src: url, alt: "uploaded_img", title: "hack u!"});
-    }
+    };
+
+    useEffect(() => {
+        if (!(editor && props.content)) return;
+
+        editor.commands.setContent(props.content);
+    }, [props.content]);
 
     return (
         <>

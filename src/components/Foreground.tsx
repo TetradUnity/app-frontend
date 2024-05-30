@@ -1,8 +1,10 @@
-'use client'
+'use client';
 
-export default function Foreground({children} : {children: React.ReactNode}) {
+export default function Foreground({children, className} : {children: React.ReactNode, className?: string}) {
     return (
-        <div style={{
+        <div
+        className={className}
+        style={{
             margin: "auto",
             marginBottom: "var(--gap)",
             padding: "12px 16px",

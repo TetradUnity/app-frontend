@@ -12,6 +12,10 @@ export const TIME_PLURAL = {
     YEARS: ["рік", "роки", "років"],
 };
 
+export function pad2Start(input: string | number): string {
+    return new String(input).padStart(2, "0");
+}
+
 export function differenceBetweenTwoDatesInSec(d1: dayjs.ConfigType, d2: dayjs.ConfigType): number {
     return dayjs(d2).diff(
         dayjs(d1),
@@ -43,4 +47,16 @@ export function formatTimeInSeconds(seconds: number): string {
     }
 
     return pluralize(seconds, TIME_PLURAL.SECONDS);
+}
+
+export function formatTimeInSeconds2(sec: number): string {
+    let seconds = sec % 60;
+    let minutes = Math.floor(sec / 60) % 60;
+    let hours = Math.floor(sec / 3600) % 24;
+
+    if (hours > 0) {
+        return `${pad2Start(hours)}:${pad2Start(minutes)}:${pad2Start(seconds)}`;
+    }
+    
+    return `${pad2Start(minutes)}:${pad2Start(seconds)}`;
 }
