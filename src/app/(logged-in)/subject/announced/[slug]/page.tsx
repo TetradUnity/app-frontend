@@ -54,7 +54,7 @@ const announcedSubjectStudentsColumns: TableColumnsType<DataType> = [
         width: 1,
         render: (_, record) => {
             return (
-                <Tooltip title="Відказати студенту бути в вашому предметі">
+                <Tooltip title="Відказати студенту бути участником вашого предмету">
                     <Button
                         type="primary"
                         shape="circle"
@@ -99,7 +99,7 @@ export default function AnnouncedSubject() {
     const [modalVisible, setModalVisible] = useState(false);
 
     /* Temporary */
-    const isTeacher = true;
+    const isTeacher = false;
 
     useEffect(() => {
         let subjectId = parseInt(slug as string);

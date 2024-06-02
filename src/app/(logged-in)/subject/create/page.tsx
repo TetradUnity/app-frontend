@@ -5,7 +5,7 @@ import { TestConstructor, TestConstructorRef } from "@/components/tests/TestCons
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
-import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch } from "antd";
+import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
@@ -70,25 +70,49 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
 }
 
 const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any) => {
+    const [form] = Form.useForm();
 
-    const onOk = () => {
-        setTeacherModalVisible(false);
+    const [loading, setLoading] = useState(false);
+
+    const [api, ctx] = message.useMessage();
+
+    const onSubmit = () => {
+        setLoading(true);
+
+        ChiefTeacherService.createUser(
+            form.getFieldValue("firstName"),
+            form.getFieldValue("lastName"),
+            form.getFieldValue("email"),
+            form.getFieldValue("password"),
+            "TEACHER"
+        ).then(res => {
+            setLoading(false);
+
+            if (!res.success) {
+                api.error("Трапилась помилка: " + res.error_code);
+                return;
+            }
+
+            api.success("Успішно!");
+            setTeacherModalVisible(false);
+        })
     }
 
     return (
         <Modal
-            title="Створити вчителя"
+            title="Зареєструвати вчителя"
             closable={false}
-            okText="Створити"
-            cancelText="Скасувати"
             open={teacherModalVisible}
-            onOk={onOk}
-            onCancel={() => setTeacherModalVisible(false)}
+            // onOk={onOk}
+            // onCancel={() => setTeacherModalVisible(false)}
+            footer={null}
             maskClosable={false}
             zIndex={1000}
         >
-            <Form 
+            <Form
                 layout="vertical"
+                form={form}
+                onFinish={onSubmit}
             >
                 <Form.Item name="firstName" label="Ім'я:" rules={[
                     { required: true, message: "Обов'язкове поле!" },
@@ -108,33 +132,40 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any
                     <Input />
                 </Form.Item>
 
-                <Form.Item label="Пароль:">
+                <Form.Item required label="Пароль:">
                     <Form.Item name="password" rules={[
                         { required: true, message: "Обов'язкове поле!" },
                     ]} noStyle>
-                        <Input />
+                        <Input type="password" />
                     </Form.Item>
                     <p>Вчитель зможе змінити свій пароль в будь який час.</p>
                 </Form.Item>
+
+                <Form.Item>
+                    <Button style={{display: "block", margin: "auto"}} loading={loading} htmlType="submit" type="primary">Зареєструвати</Button>
+                </Form.Item>
+
+                <Form.Item>
+                    <Button style={{display: "block", margin: "auto"}} onClick={() => setTeacherModalVisible(false)} type="dashed">Скасувати</Button>
+                </Form.Item>
             </Form>
+            {ctx}
         </Modal>
     )
 }
 
 export default function CreateSubjectPage() {
     const [form] = Form.useForm();
+    const [modal, modalCtxHolder] = Modal.useModal();
 
     const [teacherModalVisible, setTeacherModalVisible] = useState(false);
-
-    const [testSelectorVisible, setTestSelectorVisibkle] = useState(false);
+    const [testSelectorVisible, setTestSelectorVisible] = useState(false);
 
     const [duration, setDuration] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([dayjs(), dayjs().add(1, 'month')]);
 
     const testRef = useRef<TestConstructorRef>();
 
     const [isLoading, setLoading] = useState(false);
-
-    const [modal, modalCtxHolder] = Modal.useModal();
 
     const err = (err: string) => {
         modal.error({
@@ -147,45 +178,56 @@ export default function CreateSubjectPage() {
     const onSubmit = () => {
         if (isLoading) return;
 
-        let exam = null;
-        if (testRef.current) {
-            exam = testRef.current.getData();
-            if (exam == null) {
-                return;
+        modal.confirm({
+            title: "Підтвердження",
+            content: <p>Всі поля заповнені правильно щоб створити предмет?</p>,
+            onOk: () => {
+                let exam = null;
+                if (testRef.current) {
+                    exam = testRef.current.getData();
+                    if (exam == null) {
+                        return;
+                    }
+                    exam = JSON.stringify(exam);
+                }
+
+                let start_subject = form.getFieldValue("startDate").unix() * 1000;
+                let end_exam = form.getFieldValue("examEndDate").unix() * 1000;
+
+                if (end_exam > start_subject) {
+                    err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+                    return;
+                }
+
+                let info: CreateSubjectParams = {
+                    title: form.getFieldValue("title"),
+                    description: form.getFieldValue("desc"),
+                    short_description: form.getFieldValue("short_desc"),
+                    start: start_subject,
+                    exam_end: end_exam,
+                    duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
+                    timetable: form.getFieldValue("timetable"),
+                    tags: [],
+                    exam: exam,
+                    teacherEmail: form.getFieldValue("teacher")
+                }
+                
+                setLoading(true);
+
+                ChiefTeacherService.createSubject(info).then(resp => {
+                    setLoading(false);
+                    if (!resp.success) {
+                        err("Не вдалось створити предмет: " + resp.error_code);
+                        return;
+                    }
+
+                    modal.success({
+                        title: "Успіх!",
+                        maskClosable: true,
+                        content: "Тільки що ви створили новий предмет."
+                    })
+                })
             }
-            exam = JSON.stringify(exam);
-        }
-
-        let start_subject = form.getFieldValue("startDate").unix() * 1000;
-        let end_exam = form.getFieldValue("examEndDate").unix() * 1000;
-
-        if (end_exam > start_subject) {
-            err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
-            return;
-        }
-
-        let info: CreateSubjectParams = {
-            title: form.getFieldValue("title"),
-            description: form.getFieldValue("desc"),
-            short_description: form.getFieldValue("short_desc"),
-            start: start_subject,
-            exam_end: end_exam,
-            duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
-            timetable: "поки що нічого :)",
-            tags: [],
-            exam: exam,
-            teacherEmail: form.getFieldValue("teacher")
-        }
-
-        alert(JSON.stringify(info));
-        setLoading(true);
-        ChiefTeacherService.createSubject(info).then(resp => {
-            setLoading(false);
-            if (!resp.success) {
-                err("Failed ?");
-                return;
-            }
-            err("Успіх!")
         })
     }
 
@@ -204,7 +246,7 @@ export default function CreateSubjectPage() {
                 onFinish={onSubmit}
                 onValuesChange={({isExamRequired}) => {
                     if (typeof isExamRequired == 'boolean') {
-                        setTestSelectorVisibkle(isExamRequired);
+                        setTestSelectorVisible(isExamRequired);
                     }
                 }}
             >
@@ -245,7 +287,7 @@ export default function CreateSubjectPage() {
                     />
                 </Form.Item>
 
-                <Form.Item label="Приблизна тривалість предмету:">
+                <Form.Item required label="Приблизна тривалість предмету:">
                     <Form.Item initialValue={duration} noStyle name="duration">
                         <DatePicker.RangePicker
                             value={duration}
@@ -264,6 +306,12 @@ export default function CreateSubjectPage() {
                             : ""
                         }
                     </span>
+                </Form.Item>
+
+                <Form.Item required name="timetable" label="Розклад заннять:" rules={[
+                    { required: true, message: "Обов'язкове поле!" },
+                ]}>
+                    <Input placeholder="Заняття кожну середу" />
                 </Form.Item>
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />

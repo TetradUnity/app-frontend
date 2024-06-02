@@ -2,9 +2,12 @@
 
 import {Button, Dropdown, Flex, Input, MenuProps, Radio, Space} from "antd";
 import {useEffect, useState} from "react";
-import {CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined} from "@ant-design/icons";
+import { PlusCircleFilled, CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 import {tempSubjects} from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
+import Link from "next/link";
+import { useProfileStore } from "@/stores/profileStore";
+import { useShallow } from "zustand/react/shallow";
 
 
 const items: MenuProps['items'] = [
@@ -34,6 +37,8 @@ const items: MenuProps['items'] = [
 export default function Subjects() {
     const [sortBy, setSortBy] = useState("По назві");
     const [sortOrder, setSortOrder] = useState("asc");
+
+    const profileRole = useProfileStore(useShallow(state => state.role));
 
     useEffect(() => {
         document.title = `Предмети / Пошук`
@@ -69,18 +74,26 @@ export default function Subjects() {
             }}>
                 <Flex justify="space-between" align="flex-end">
                     <h2 style={{fontWeight: 350}}>Предмети</h2>
-                    <Dropdown menu={{items, onClick}} trigger={["click"]} overlayStyle={{paddingTop: 12}}
-                              placement="bottomRight">
-                        <Button size="small" style={{
-                            display: "flex",
-                            alignItems: "center",
-                            borderRadius: 8,
-                        }}>
-                            {sortOrder === "asc" ? <SortAscendingOutlined/> : <SortDescendingOutlined/>}
-                            {sortBy}
-                            <CaretDownOutlined style={{fontSize: 12}}/>
-                        </Button>
-                    </Dropdown>
+                    <Flex gap={15}>
+                        {profileRole == "CHIEF_TEACHER" &&
+                            <Button size="small" type="primary" style={{fontSize: 15}} icon={<PlusCircleFilled />}>
+                                <Link href="/subject/create">Створити новий предмет</Link>
+                            </Button>
+                        }
+
+                        <Dropdown menu={{items, onClick}} trigger={["click"]} overlayStyle={{paddingTop: 12}}
+                                placement="bottomRight">
+                            <Button size="small" style={{
+                                display: "flex",
+                                alignItems: "center",
+                                borderRadius: 8,
+                            }}>
+                                {sortOrder === "asc" ? <SortAscendingOutlined/> : <SortDescendingOutlined/>}
+                                {sortBy}
+                                <CaretDownOutlined style={{fontSize: 12}}/>
+                            </Button>
+                        </Dropdown>
+                    </Flex>
                 </Flex>
                 <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>}/>
                 <div style={{

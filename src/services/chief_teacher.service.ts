@@ -5,7 +5,7 @@ import { CreateSubjectParams, IResponse } from "@/types/api.types";
 
 export const ChiefTeacherService = {
     // auth
-    async createUser(email: string, password: string, firstName: string, lastName: string, role: "teacher" | "student"): Promise<IResponse> {
+    async createUser(firstName: string, lastName: string, email: string, password: string, role: "TEACHER" | "STUDENT"): Promise<IResponse> {
         try {
             const response = await api.post("/authorization/create-user", {
                 email, password,

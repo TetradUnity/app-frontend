@@ -6,7 +6,7 @@ export const tempTeachers : IUser[] = [
         first_name: "Максим",
         last_name: "Янов",
         email: "",
-        role: "teacher",
+        role: "TEACHER",
         avatar: "https://i.pravatar.cc/256"
     }
 ]
@@ -17,7 +17,7 @@ export const tempStudents : IUser[] = [
         first_name: "Борис",
         last_name: "Васильков",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/254"
     },
     {
@@ -25,7 +25,7 @@ export const tempStudents : IUser[] = [
         first_name: "Тарас",
         last_name: "Квас",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/257"
     },
     {
@@ -33,7 +33,7 @@ export const tempStudents : IUser[] = [
         first_name: "Ольга",
         last_name: "Хрещатик",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/255"
     },
     {
@@ -41,7 +41,7 @@ export const tempStudents : IUser[] = [
         first_name: "Володимир",
         last_name: "Винниченко",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/128"
     },
     {
@@ -49,7 +49,7 @@ export const tempStudents : IUser[] = [
         first_name: "Роман",
         last_name: "Кошик",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/256"
     },
     {
@@ -57,7 +57,7 @@ export const tempStudents : IUser[] = [
         first_name: "Яна",
         last_name: "Ковальчук",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/512"
     },
     {
@@ -65,7 +65,7 @@ export const tempStudents : IUser[] = [
         first_name: "Софія",
         last_name: "Ковальчук",
         email: "",
-        role: "student",
+        role: "STUDENT",
         avatar: "https://i.pravatar.cc/256"
     }
 ]

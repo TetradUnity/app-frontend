@@ -26,7 +26,7 @@ export interface IUser {
     first_name: string | undefined,
     last_name: string | undefined,
     avatar: string
-    role: "chief_teacher" | "teacher" | "student"
+    role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT"
 }
 
 export interface ITeacherShortInfo {

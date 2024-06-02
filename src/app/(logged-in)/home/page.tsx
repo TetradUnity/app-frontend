@@ -16,13 +16,13 @@ export default function HomePage() {
 
     let content;
     switch (role) {
-        case "teacher":
+        case "TEACHER":
             content = <TeacherHomePage/>
             break;
-        case "student":
+        case "STUDENT":
             content = <StudentHomePage/>
             break;
-        case "chief_teacher":
+        case "CHIEF_TEACHER":
             content = <ChiefTeacherHomePage/>
             break;
     }

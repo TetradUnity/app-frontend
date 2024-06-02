@@ -275,6 +275,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
     const [modal, modalCtxHolder] = Modal.useModal();
 
     const [testDuration, setTestDuration] = useState<number | null>(null);
+    const [passingGrade, setPassingGrade] = useState(70);
 
     const err = (ind: number, str: string) => {
         modal.error({
@@ -285,6 +286,15 @@ export const TestConstructor = React.forwardRef((props, ref) => {
     };
 
     const checkIfCorrectly = (data: (TestsNamespace.Question | undefined)[]) => {
+        if (passingGrade < 0) {
+            modal.error({
+                title: "Помилка.",
+                maskClosable: true,
+                content: <p>Прохідний бал не може бути меньшим за 0.</p>
+            })
+            return false;
+        }
+
         let question;
         for (let i = 0; i < data.length; i++)  {
             question = data[i];
@@ -354,7 +364,8 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             }
             return [
                 {
-                    time: testDuration
+                    time: testDuration,
+                    passing_grade: passingGrade
                 },
                 ...data
             ];
@@ -404,7 +415,9 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                 setOpen={setUploadModalOpen}
                 callback={uploadModalCallback}
             />
+
             <Divider orientationMargin={30} orientation="right" dashed>Загальна інформація</Divider>
+
             <section>
                 <h2 style={{marginBottom: 10}}>Тривалість тесту:</h2>
                 <TimePicker
@@ -419,9 +432,18 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                 />
             </section>
 
+            <section>
+                <h2 style={{marginBottom: 10}}>Прохідний бал:</h2>
+                <Input
+                    value={passingGrade}
+                    onChange={val => setPassingGrade(parseInt(val.target.value))}
+                    type="number"
+                />
+            </section>
+
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
-            <p>В заголовках запитання, або в текстових відповідях можна формувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
+            <p>В заголовках запитання, або в текстових відповідях можна форматувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
             {questions.map((item,i) => 
                 <Question
                     key={item.id}

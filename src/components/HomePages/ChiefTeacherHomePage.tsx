@@ -9,6 +9,6 @@ export default function ChiefTeacherHomePage() {
     useEffect(() => {
         replace("/subjects")
     }, []);
-
+    
     return null;
 }
