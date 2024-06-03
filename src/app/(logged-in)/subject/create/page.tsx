@@ -161,8 +161,6 @@ export default function CreateSubjectPage() {
     const [teacherModalVisible, setTeacherModalVisible] = useState(false);
     const [testSelectorVisible, setTestSelectorVisible] = useState(false);
 
-    const [duration, setDuration] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([dayjs(), dayjs().add(1, 'month')]);
-
     const testRef = useRef<TestConstructorRef>();
 
     const [isLoading, setLoading] = useState(false);
@@ -205,7 +203,7 @@ export default function CreateSubjectPage() {
                     short_description: form.getFieldValue("short_desc"),
                     start: start_subject,
                     exam_end: end_exam,
-                    duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
+                    duration: form.getFieldValue("duration"),
                     timetable: form.getFieldValue("timetable"),
                     tags: [],
                     exam: exam,
@@ -287,31 +285,16 @@ export default function CreateSubjectPage() {
                     />
                 </Form.Item>
 
-                <Form.Item required label="Приблизна тривалість предмету:">
-                    <Form.Item initialValue={duration} noStyle name="duration">
-                        <DatePicker.RangePicker
-                            value={duration}
-                            onChange={(val) => {
-                                if (!val) {
-                                    return;
-                                }
-                                setDuration(val);
-                            }}
-                        />
-                    </Form.Item>
-                    <span style={{marginLeft: 10}}>
-                        {
-                            (duration[0] && duration[1])
-                            ? "(" + formatTimeInSeconds(differenceBetweenTwoDatesInSec(duration[0], duration[1])) + ")"
-                            : ""
-                        }
-                    </span>
+                <Form.Item required label="Тривалість предмету:" name="duration">
+                    <Input
+                        placeholder="Наприклад: 6 місяців + 1 місяць практика"
+                    />
                 </Form.Item>
 
                 <Form.Item required name="timetable" label="Розклад заннять:" rules={[
                     { required: true, message: "Обов'язкове поле!" },
                 ]}>
-                    <Input placeholder="Заняття кожну середу" />
+                    <Input placeholder="Наприклад: Заняття кожну середу" />
                 </Form.Item>
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />
