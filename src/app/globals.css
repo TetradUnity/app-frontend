@@ -59,3 +59,18 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+.tiptap-text-area > div {
+    min-height: inherit;
+    height: inherit;
+    max-height: inherit;
+
+    padding: 8px 4px;
+
+    resize: vertical;
+    overflow: auto;
+}
+
+.tiptap-text-area > div li {
+    margin-left: 20px;
+}

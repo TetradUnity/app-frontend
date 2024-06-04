@@ -7,15 +7,11 @@ export interface IResponse {
     error_code?: string
 }
 
-export interface IProfileResponse extends IResponse {
-    data?: IUser;
+export interface ITResponse<T> extends IResponse {
+    data?: T
 }
-
-export interface ISubjectResponse extends IResponse {
-    data?: ISubject;
-}
-export interface ISubjectStudentsResponse extends IResponse {
-    data?: IStudentShortInfo[];
+export interface ITArrResponse<T> extends IResponse {
+    data?: T[]
 }
 
 
@@ -54,24 +50,39 @@ export interface ISubject {
     tests: ITestShortInfo[]
 }
 
-export interface IAnnouncedSubject {
+
+
+type IAnnouncedSubjectBase = {
+    time_start: number;
+  
+    title: string;
+    description: string;
+    duration: number;
+    timetable: string;
+  
+    teacher_first_name: string;
+    teacher_last_name: string;
+    teacher_id: number;
+}
+
+export type IAnnouncedSubject = 
+    | IAnnouncedSubjectBase & {time_exam_end: number; duration_exam: number}
+    | IAnnouncedSubjectBase & {time_exam_end?: never; duration_exam?: never};
+
+
+export interface IAnnouncedSubjectShort {
     id: number,
 
     time_exam_end: number,
     time_start: number,
-    time_end: number,
 
     title: string,
-    description: string,
-
     short_description: string,
-    duration: string,
-    timetable: string,
+    tags: [],
 
-    teacher_id: number,
-
-    is_end: boolean,
-    is_start: boolean
+    teacher_first_name: string,
+    teacher_last_name: string,
+    teacher_id: number
 }
 
 /* TEMPORARY */

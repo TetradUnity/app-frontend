@@ -66,8 +66,6 @@ export default function SubjectStudentsPage() {
     }
 
     return (
-        <>
-            {students.map((item, k) => <StudentSlot item={item} key={k} />)}
-        </>
+        students.map((item, k) => <StudentSlot item={item} key={k} />)
     )
 }

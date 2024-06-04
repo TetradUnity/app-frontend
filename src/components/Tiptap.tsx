@@ -5,7 +5,7 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Color from "@tiptap/extension-color";
 import Underline from "@tiptap/extension-underline";
 import { BubbleMenu, Editor, EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import StarterKit, { StarterKitOptions } from "@tiptap/starter-kit";
 import { Button } from "antd";
 
 import { FileImageOutlined } from "@ant-design/icons";
@@ -13,8 +13,10 @@ import { FileImageOutlined } from "@ant-design/icons";
 import React, { useEffect, useImperativeHandle, useState } from "react";
 
 import "katex/dist/katex.min.css";
-import ImageUploadModal from "./ImageUploadModal";
 import Image from "@tiptap/extension-image";
+import OrderedList from "@tiptap/extension-ordered-list";
+import BulletList from "@tiptap/extension-bullet-list";
+import ListItem from "@tiptap/extension-list-item";
 
 export type TiptapRef = {
     getEditor: () => Editor | null
@@ -24,7 +26,8 @@ type TiptapProps = React.HTMLAttributes<HTMLDivElement> & {
     charsLimit?: number,
     content?: string,
     editable?: boolean,
-    openImageUploadModal?: (cb: (url: string) => void) => void
+    openImageUploadModal?: (cb: (url: string) => void) => void,
+    listsEnabled?: boolean
 };
 
 const BubbleMenuButton = ({editor, property, text, onClick} : {editor: Editor, property: string, text: string, onClick: () => void}) => {
@@ -37,20 +40,39 @@ const BubbleMenuButton = ({editor, property, text, onClick} : {editor: Editor, p
     )
 }
 
+const getStarterKitConfig = (props : TiptapProps) => {
+    let starterKitConfig: Partial<StarterKitOptions> = {
+        blockquote: false,
+        codeBlock: false,
+        horizontalRule: false,
+        listItem: false,
+        heading: false,
+    };
+
+    if (!props.listsEnabled) {
+        starterKitConfig.bulletList = false;
+        starterKitConfig.orderedList = false;
+    }
+
+    return starterKitConfig;
+}
+
+const getAdditionalExtensions = (props : TiptapProps) => {
+    let arr = [];
+    
+    if (props.listsEnabled) {
+        arr.push(OrderedList, BulletList, ListItem)
+    }
+
+    return arr;
+}
+
 const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
-    const [modalOpen, setModalOpen] = useState(true);
+    
 
     const editor = useEditor({
         extensions: [
-            StarterKit.configure({
-                blockquote: false,
-                bulletList: false,
-                codeBlock: false,
-                horizontalRule: false,
-                listItem: false,
-                orderedList: false,
-                heading: false,
-            }),
+            StarterKit.configure(getStarterKitConfig(props)),
             Color.configure({
                 types: ['textStyle']
             }),
@@ -59,7 +81,8 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             }),
             Underline,
             Image,
-            MathExtension
+            MathExtension,
+            ...getAdditionalExtensions(props)
         ],
         content: props.content || "",
         editable: props.editable
@@ -70,7 +93,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
     } as TiptapRef));
 
     const callback = (url: string) => {
-        editor?.commands.setImage({src: url, alt: "uploaded_img", title: "hack u!"});
+        editor?.commands.setImage({src: url, alt: "uploaded_img"});
     };
 
     useEffect(() => {
@@ -81,7 +104,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
 
     return (
         <>
-            {editor && <BubbleMenu editor={editor} tippyOptions={{duration: 50}}>
+            {editor && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
                 <BubbleMenuButton
                     editor={editor}
                     property="bold"
@@ -109,12 +132,29 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
                     text="Підчеркнути"
                     onClick={() => editor.chain().focus().toggleUnderline().run()}
                 />
+
+                {props.listsEnabled && <>
+                    <BubbleMenuButton
+                        editor={editor}
+                        property="orderedList"
+                        text="Впорядкований список"
+                        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    />
+
+                    <BubbleMenuButton
+                        editor={editor}
+                        property="bulletList"
+                        text="Маркований список"
+                        onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    />
+                </>}
             </BubbleMenu>}
 
             <EditorContent
                 {...props}
                 editor={editor}
             />
+
             {props.openImageUploadModal && 
             <Button
                 size="small"

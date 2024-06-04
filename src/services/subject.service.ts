@@ -1,7 +1,7 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { IStudentShortInfo, ISubject, ISubjectResponse, ISubjectStudentsResponse } from "@/types/api.types";
+import { IAnnouncedSubject, IAnnouncedSubjectShort, IStudentShortInfo, ISubject, ITArrResponse, ITResponse, IUser } from "@/types/api.types";
 
 let subjects: {[id: number]: ISubject} = {
     1: {
@@ -47,11 +47,53 @@ let subject_students: {[id: number]: IStudentShortInfo[]} = {
     ]
 };
 
+export type filtersType = {
+    tags?: string[],
+    hasExam?: boolean
+};
+
 export const SubjectService = {
     // TODO: Release api calls when it's wiil be ready
 
+    async getAnnouncedSubjects(page=1, filters?: filtersType): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
+        try {
+            const response = await api.get("/subject/get-announce-subjects", {
+                params: {
+                    page,
+                    tags: filters?.tags,
+                    hasExam: filters?.hasExam
+                }
+            });
+
+            return {
+                success: true,
+                data: response.data.subjects,
+                count_pages: response.data.count_pages
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
+    async getAnnouncedSubjectInfo(id: number): Promise<ITResponse<IAnnouncedSubject>> {
+        try {
+            const response = await api.get("/subject/get-detail-announce-subject", {
+                params: {
+                    id
+                }
+            });
+
+            return {
+                success: true,
+                data: response.data.subject,
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
     mock: {
-        getSubject: (subjectId: number): Promise<ISubjectResponse> => {
+        getSubject: (subjectId: number): Promise<ITResponse<ISubject>> => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     if (!subjects[subjectId]) {
@@ -68,7 +110,7 @@ export const SubjectService = {
             });
         },
 
-        getStudents: (subjectId: number): Promise<ISubjectStudentsResponse> => {
+        getStudents: (subjectId: number): Promise<ITArrResponse<IStudentShortInfo>> => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     if (!subjects[subjectId]) {

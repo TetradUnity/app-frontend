@@ -1,14 +1,17 @@
 'use client'
 
-import {Button, Dropdown, Flex, Input, MenuProps, Radio, Space} from "antd";
+import {Button, Dropdown, Flex, Input, MenuProps, Pagination, Radio, Space, Spin} from "antd";
 import {useEffect, useState} from "react";
 import { PlusCircleFilled, CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
-import {tempSubjects} from "@/temporary/data";
+import { tempSubjects } from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
 import Link from "next/link";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
+import { IAnnouncedSubjectShort } from "@/types/api.types";
 
+import { LoadingOutlined } from '@ant-design/icons';
+import { SubjectService, filtersType } from "@/services/subject.service";
 
 const items: MenuProps['items'] = [
     {
@@ -40,8 +43,33 @@ export default function Subjects() {
 
     const profileRole = useProfileStore(useShallow(state => state.role));
 
+    const [isFetching, setIsFetching] = useState(true);
+    const [isError, setIsError] = useState<string | null>(null);
+    const [subjects, setSubjects] = useState<IAnnouncedSubjectShort[]>([]);
+    const [maximumPages, setMaximumPages] = useState(1);
+
+    const fetch = (page: number, filters?: filtersType) => {
+        SubjectService.getAnnouncedSubjects(page, filters).then(res => {
+            setIsFetching(false);
+            if (!res.success) {
+                // @ts-ignore
+                setIsError(res.error_code);
+                setSubjects([]);
+                return;
+            }
+            
+            // @ts-ignore
+            setSubjects(res.data);
+            // @ts-ignore
+            setMaximumPages(res.count_pages);
+            setIsError(null);
+        })
+    }
+
     useEffect(() => {
-        document.title = `Предмети / Пошук`
+        document.title = `Предмети / Пошук`;
+
+        fetch(1);
     }, [])
 
     const onClick: MenuProps['onClick'] = ({key}) => {
@@ -96,17 +124,41 @@ export default function Subjects() {
                     </Flex>
                 </Flex>
                 <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>}/>
+
+                
+                {isFetching &&
+                <Spin
+                    indicator={<LoadingOutlined style={{fontSize: 60}}/>}
+                    spinning={true}
+                />}
+
+                <p style={{textAlign: "center"}}>
+                    {isError}
+                    {((isError == null && isFetching == false) && subjects.length == 0) && "Поки ще порожньо."}
+                </p>
+
                 <div style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
                     gap: "var(--gap)",
                     gridArea: "content",
                     minWidth: 0,
+                    opacity: isFetching ? 0.4 : 1
                 }}>
-                    {tempSubjects.map(subject => (
+                    {subjects.map(subject => (
                         <SubjectCard key={subject.id} subject={subject}/>
                     ))}
                 </div>
+
+                <Pagination
+                    simple
+                    showSizeChanger={false}
+                    defaultCurrent={1}
+                    total={maximumPages * 10}
+                    pageSize={10}
+                    style={{display: "block", margin: "auto"}}
+                    disabled={isFetching || (isError != null)}
+                />
             </Flex>
             <div style={{
                 background: 'var(--foreground)',

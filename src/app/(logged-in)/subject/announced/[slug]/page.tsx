@@ -1,7 +1,7 @@
 'use client';
 
 import { tempSubjects, tempTeachers } from "@/temporary/data"
-import { IUser, TemporaryAnnoncedSubjectInfo } from "@/types/api.types";
+import { IAnnouncedSubject, IUser, TemporaryAnnoncedSubjectInfo } from "@/types/api.types";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -12,6 +12,8 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
 import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRequestModal";
+import { SubjectService } from "@/services/subject.service";
+import { formatTimeInSeconds } from "@/utils/TimeUtils";
 
 interface DataType {
     key: React.Key,
@@ -91,8 +93,7 @@ export default function AnnouncedSubject() {
     const params = useParams();
     let { slug } = params;
 
-    const [info, setInfo] = useState<TemporaryAnnoncedSubjectInfo>();
-    const [teacherInfo, setTeacherInfo] = useState<IUser>();
+    const [info, setInfo] = useState<IAnnouncedSubject>();
 
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -108,30 +109,34 @@ export default function AnnouncedSubject() {
             notFound();
         }
 
-        let info = tempSubjects[subjectId - 1];
+        SubjectService.getAnnouncedSubjectInfo(subjectId).then(response => {
+            setIsLoaded(true);
 
-        setInfo(info);
-        setTeacherInfo(tempTeachers[info?.teacher_id - 1]);
+            if (!response.success) {
+                notFound();
+            }
 
-        setIsLoaded(true);
+            // @ts-ignore
+            setInfo(response.data);
+        })
     }, [])
 
     if (!isLoaded) {
         return null;
     }
 
-    if (!(info && teacherInfo)) {
+    if (!info) {
         notFound();
     }
 
     return (
         <div className={styles.slot}>
             <div className={styles.banner}>
-                <img src={info.banner} alt="banner" />
+                <img src="https://gstatic.com/classroom/themes/Honors.jpg" alt="banner" />
                 <h1>{info.title}</h1>
                 <Link href={"/profile/"+info.teacher_id}>
                     <LinkOutlined style={{marginRight: 5}} />
-                    {teacherInfo.first_name} {teacherInfo.last_name}
+                    {info.teacher_first_name} {info.teacher_last_name}
                 </Link>
             </div>
 
@@ -153,23 +158,31 @@ export default function AnnouncedSubject() {
 
                 <section>
                     <h1><CheckOutlined style={{color: "#00ff5e"}} /> Вступний екзамен:</h1>
-                    <p>{info.exam ? "Є" : "Немає"}</p>
+                    <p>{info.time_exam_end ? "Є" : "Немає"}</p>
                 </section>
+                
+                {info.time_exam_end &&
+                    <>
+                        <section>
+                            <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Екзамен можна здати до:</h1>
+                            <p>{info.time_exam_end}</p>
+                        </section>
 
-                {info.exam &&
-                    <section>
-                        <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Екзамен можна здати до:</h1>
-                        <p>{info.exam_end_date}</p>
-                    </section>}
+                        <section>
+                            <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Тривалість екзамену:</h1>
+                            <p>{formatTimeInSeconds(info.duration_exam)}</p>
+                        </section>
+                    </>
+                }
                 
                 <section>
                     <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Початок предмету:</h1>
-                    <p>{dayjs(info.start_date).format("D MMMM YYYY року")}</p>
+                    <p>{dayjs(info.time_start).format("D MMMM YYYY року")}</p>
                 </section>
 
                 {!isTeacher && 
                     <Button onClick={() => setModalVisible(true)} style={{display: "block", margin: "auto"}} type="primary">
-                        {info.exam ? "Подати заявку" : "Зареєструвати мене"}
+                        {info.time_exam_end ? "Подати заявку" : "Зареєструвати мене"}
                     </Button>
                 }
 

@@ -45,11 +45,7 @@ const Answer = React.forwardRef((
                 style={{marginRight: 10}}
             />
 
-            {/* <Input
-                placeholder="Вміст..."
-                value={content}
-                onChange={e => setContent(e.target.value)}
-            /> */}
+            
             <Tiptap
                 className="ant-input ant-input-outlined"
                 style={{flex: 1}}
@@ -333,7 +329,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             }
 
             if (question.type == "TEXT") {
-                if (question.answers.length <= 1) {
+                if (question.answers.length < 1) {
                     err(i, "Повина існувати принаймі хоча б одна відповідь.");
                     return false;
                 }

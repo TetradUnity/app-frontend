@@ -1,6 +1,7 @@
 'use client'
 
 import Foreground from "@/components/Foreground";
+import Tiptap from "@/components/Tiptap";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { CreateSubjectParams } from "@/types/api.types";
@@ -161,6 +162,8 @@ export default function CreateSubjectPage() {
     const [teacherModalVisible, setTeacherModalVisible] = useState(false);
     const [testSelectorVisible, setTestSelectorVisible] = useState(false);
 
+    const [duration, setDuration] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([dayjs(), dayjs().add(1, 'month')]);
+
     const testRef = useRef<TestConstructorRef>();
 
     const [isLoading, setLoading] = useState(false);
@@ -192,7 +195,7 @@ export default function CreateSubjectPage() {
                 let start_subject = form.getFieldValue("startDate").unix() * 1000;
                 let end_exam = form.getFieldValue("examEndDate").unix() * 1000;
 
-                if (end_exam > start_subject) {
+                if (end_exam && (end_exam > start_subject)) {
                     err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
                     return;
                 }
@@ -203,7 +206,7 @@ export default function CreateSubjectPage() {
                     short_description: form.getFieldValue("short_desc"),
                     start: start_subject,
                     exam_end: end_exam,
-                    duration: form.getFieldValue("duration"),
+                    duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
                     timetable: form.getFieldValue("timetable"),
                     tags: [],
                     exam: exam,
@@ -265,10 +268,14 @@ export default function CreateSubjectPage() {
                     <i style={{color: "rgb(230,230,230)", fontSize: 16}}>Короткий опис буде видно на сторінці з усіма предметами.</i>
                 </Form.Item>
 
-                <Form.Item name="desc" label="Повний опис предмету:" rules={[
-                    { required: true, message: "Обов'язкове поле!" }
-                ]}>
-                    <TextArea />
+                <Form.Item required label="Повний опис предмету:">
+                    <p>Тут можна форматувати текст. Подробніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
+                    <Tiptap
+                        style={{minHeight: 75}}
+                        className="ant-input ant-input-outlined tiptap-text-area"
+                        listsEnabled={true}
+                        charsLimit={4000}
+                    />
                 </Form.Item>
 
                 <Form.Item name="startDate" label="Початок предмету:" rules={[
@@ -278,17 +285,25 @@ export default function CreateSubjectPage() {
                     />
                 </Form.Item>
 
-                <Form.Item name="examEndDate" label="До якої дати можна буде здати екзамен:" rules={[
-                        { required: true, message: "Обов'язкове поле!" }
-                ]}>
-                    <DatePicker
-                    />
-                </Form.Item>
-
-                <Form.Item required label="Тривалість предмету:" name="duration">
-                    <Input
-                        placeholder="Наприклад: 6 місяців + 1 місяць практика"
-                    />
+                <Form.Item required label="Приблизна тривалість предмету:">
+                    <Form.Item initialValue={duration} noStyle name="duration">
+                        <DatePicker.RangePicker
+                            value={duration}
+                            onChange={(val) => {
+                                if (!val) {
+                                    return;
+                                }
+                                setDuration(val);
+                            }}
+                        />
+                    </Form.Item>
+                    <span style={{marginLeft: 10}}>
+                        {
+                            (duration[0] && duration[1])
+                            ? "(" + formatTimeInSeconds(differenceBetweenTwoDatesInSec(duration[0], duration[1])) + ")"
+                            : ""
+                        }
+                    </span>
                 </Form.Item>
 
                 <Form.Item required name="timetable" label="Розклад заннять:" rules={[
@@ -304,8 +319,19 @@ export default function CreateSubjectPage() {
                         <Switch />
                     </Form.Item>
 
-                    {testSelectorVisible && <TestConstructor ref={testRef} />}
+                    {testSelectorVisible && <>
+                            <Form.Item style={{marginTop: 20}} name="examEndDate" label="До якої дати можна буде здати екзамен:" rules={[
+                                { required: true, message: "Обов'язкове поле!" }
+                            ]}>
+                                <DatePicker
+                                />
+                            </Form.Item>
+
+                            <TestConstructor ref={testRef} />
+                        </>}
                 </Form.Item>
+
+                
 
                 <Form.Item>
                     <Button loading={isLoading} htmlType="submit" type="primary">Створити</Button>
