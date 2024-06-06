@@ -27,7 +27,8 @@ type TiptapProps = React.HTMLAttributes<HTMLDivElement> & {
     content?: string,
     editable?: boolean,
     openImageUploadModal?: (cb: (url: string) => void) => void,
-    listsEnabled?: boolean
+    listsEnabled?: boolean,
+    dontAddMath?: boolean
 };
 
 const BubbleMenuButton = ({editor, property, text, onClick} : {editor: Editor, property: string, text: string, onClick: () => void}) => {
@@ -64,6 +65,10 @@ const getAdditionalExtensions = (props : TiptapProps) => {
         arr.push(OrderedList, BulletList, ListItem)
     }
 
+    if (!props.dontAddMath) {
+        arr.push(MathExtension);
+    }
+
     return arr;
 }
 
@@ -81,7 +86,6 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             }),
             Underline,
             Image,
-            MathExtension,
             ...getAdditionalExtensions(props)
         ],
         content: props.content || "",

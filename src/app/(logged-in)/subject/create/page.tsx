@@ -16,24 +16,6 @@ import { useShallow } from "zustand/react/shallow";
 
 import debounce from 'lodash/debounce';
 
-const mock_teachers = [{
-    email: "teacher@gmail.com"
-}];
-
-const mock_search_teacher_by_email = function(search: string) {
-    let result = [];
-
-    let teacher;
-    for (let i = 0; i < mock_teachers.length; i++) {
-        teacher = mock_teachers[i];
-        if (teacher.email.startsWith(search)) {
-            result.push(teacher.email);
-        }
-    }
-
-    return result;
-}
-
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
 
@@ -123,8 +105,6 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any
             title="Зареєструвати вчителя"
             closable={false}
             open={teacherModalVisible}
-            // onOk={onOk}
-            // onCancel={() => setTeacherModalVisible(false)}
             footer={null}
             maskClosable={false}
             zIndex={1000}
@@ -294,6 +274,7 @@ export default function CreateSubjectPage() {
                         className="ant-input ant-input-outlined tiptap-text-area"
                         listsEnabled={true}
                         charsLimit={4000}
+                        dontAddMath={true}
                     />
                 </Form.Item>
 

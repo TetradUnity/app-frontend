@@ -128,7 +128,7 @@ export default function AnnouncedSubject() {
     if (!info) {
         notFound();
     }
-
+    
     return (
         <div className={styles.slot}>
             <div className={styles.banner}>
@@ -148,7 +148,7 @@ export default function AnnouncedSubject() {
 
                 <section>
                     <h1><ClockCircleOutlined style={{color: "#68a2ed"}} /> Тривалість:</h1>
-                    <p>{info.duration}</p>
+                    <p>{formatTimeInSeconds(info.duration)}</p>
                 </section>
 
                 <section>
@@ -158,14 +158,14 @@ export default function AnnouncedSubject() {
 
                 <section>
                     <h1><CheckOutlined style={{color: "#00ff5e"}} /> Вступний екзамен:</h1>
-                    <p>{info.time_exam_end ? "Є" : "Немає"}</p>
+                    <p>{info.time_exam_end ? "Існує" : "Не існує"}</p>
                 </section>
                 
                 {info.time_exam_end &&
                     <>
                         <section>
                             <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Екзамен можна здати до:</h1>
-                            <p>{info.time_exam_end}</p>
+                            <p>{dayjs(info.time_exam_end).format("D MMMM YYYY року")}</p>
                         </section>
 
                         <section>
