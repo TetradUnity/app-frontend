@@ -24,6 +24,13 @@ export interface IUser {
     role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT"
 }
 
+export interface ISearchUserResult {
+    id: number,
+    first_name: string,
+    last_name: string,
+    email: string
+}
+
 export interface ITeacherShortInfo {
     id: number,
     first_name: string,

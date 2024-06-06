@@ -1,6 +1,9 @@
 const SERVER_ERRORS = {
     "server_error": "Помилка на сервері",
-    "unknown_error": "Невідома помилка"
+    "unknown_error": "Невідома помилка",
+    "no_permission": "У вас немає доступу",
+    "very_short": "Дуже коротко"
+
 } as const;
 
 type ServerErrorKey = keyof typeof SERVER_ERRORS

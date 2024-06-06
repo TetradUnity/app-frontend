@@ -13,6 +13,7 @@ import { IAnnouncedSubjectShort } from "@/types/api.types";
 import { LoadingOutlined } from '@ant-design/icons';
 import { SubjectService, filtersType } from "@/services/subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
+import { ChiefTeacherService } from "@/services/chief_teacher.service";
 
 const items: MenuProps['items'] = [
     {

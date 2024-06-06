@@ -80,7 +80,7 @@ export default function FaqTextFormattingPage() {
 
               <p>
                 Напишіть математичну формулу між знаками долара(нижче посилання на сайт, де подробніше про це),
-                наприклад: <code>$\sqrt{2}$</code>.
+                наприклад: <code>$\sqrt{"{2}"}$</code>.
               </p>
 
               <p>

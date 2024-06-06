@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import debounce from 'lodash/debounce';
+
 const mock_teachers = [{
     email: "teacher@gmail.com"
 }];
@@ -35,14 +37,21 @@ const mock_search_teacher_by_email = function(search: string) {
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
 
-    const search = (text: string) => {
-        if (!text) {
+    const search = async (text: string) => {
+        if (text.length < 2) {
             return [];
         }
+        
+        const response = await ChiefTeacherService.findTeacherByEmail(text);
 
-        return mock_search_teacher_by_email(text).map(email => ({
-            value: email
-        }));
+        if (response.data) {
+            return response.data.map(user => ({
+                label: `${user.email} (${user.first_name} ${user.last_name})`,
+                value: user.email,
+            })) 
+        }
+
+        return [];
     }
 
     const autoComplete = useRef<GetRef<typeof Select>>(null);
@@ -57,7 +66,7 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
         >
             <AutoComplete
                 options={options}
-                onSearch={(text) => setOptions(search(text))}
+                onSearch={debounce(async (text: string) => setOptions(await search(text)), 400)}
                 ref={autoComplete}
                 notFoundContent={
                     <>

@@ -1,9 +1,28 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { CreateSubjectParams, IResponse } from "@/types/api.types";
+import { CreateSubjectParams, IResponse, ISearchUserResult, ITArrResponse } from "@/types/api.types";
 
 export const ChiefTeacherService = {
+    // users
+    async findTeacherByEmail(emailFind: string): Promise<ITArrResponse<ISearchUserResult>> {
+        try {
+            const response = await api.get("/user/get_options", {
+                params: {
+                    email: emailFind,
+                    role: "TEACHER"
+                }
+            });
+
+            return {
+                success: true,
+                data: response.data.users
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
     // auth
     async createUser(firstName: string, lastName: string, email: string, password: string, role: "TEACHER" | "STUDENT"): Promise<IResponse> {
         try {
