@@ -12,6 +12,7 @@ import { IAnnouncedSubjectShort } from "@/types/api.types";
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { SubjectService, filtersType } from "@/services/subject.service";
+import translateRequestError from "@/utils/ErrorUtils";
 
 const items: MenuProps['items'] = [
     {
@@ -133,7 +134,7 @@ export default function Subjects() {
                 />}
 
                 <p style={{textAlign: "center"}}>
-                    {isError}
+                    {isError && translateRequestError(isError)}
                     {((isError == null && isFetching == false) && subjects.length == 0) && "Поки ще порожньо."}
                 </p>
 

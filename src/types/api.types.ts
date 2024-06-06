@@ -14,7 +14,6 @@ export interface ITArrResponse<T> extends IResponse {
     data?: T[]
 }
 
-
 // Model interfaces
 export interface IUser {
     id: number,

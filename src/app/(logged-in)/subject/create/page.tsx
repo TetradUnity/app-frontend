@@ -4,12 +4,15 @@ import Foreground from "@/components/Foreground";
 import Tiptap from "@/components/Tiptap";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
+import { useProfileStore } from "@/stores/profileStore";
 import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
 import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const mock_teachers = [{
     email: "teacher@gmail.com"
@@ -71,6 +74,13 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
 }
 
 const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any) => {
+    const role = useProfileStore(useShallow(selector => selector.role));
+    const { replace } = useRouter();
+    if (role != "CHIEF_TEACHER") {
+        replace("/home");
+        return null;
+    }
+
     const [form] = Form.useForm();
 
     const [loading, setLoading] = useState(false);

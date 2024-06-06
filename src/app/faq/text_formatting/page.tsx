@@ -2,6 +2,7 @@ import { Divider } from "antd";
 import { CSSProperties } from "react";
 
 import styles from "../styles.module.css"
+import Tiptap from "@/components/Tiptap";
 
 export default function FaqTextFormattingPage() {
     // TODO: make it page
@@ -76,6 +77,12 @@ export default function FaqTextFormattingPage() {
 
             <section className={styles.section}>
               <h3>Щодо математичних формул:</h3>
+
+              <p>
+                Напишіть математичну формулу між знаками долара(нижче посилання на сайт, де подробніше про це),
+                наприклад: <code>$\sqrt{2}$</code>.
+              </p>
+
               <p>
                 Ми використовуємо бібліотеку <a href="https://katex.org/">katex</a>.
                 Подробніше про те, які позначення існують, ви можете глянути <a href="https://katex.org/docs/supported.html#operators">тут</a>.
