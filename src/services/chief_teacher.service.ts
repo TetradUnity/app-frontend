@@ -41,7 +41,7 @@ export const ChiefTeacherService = {
     },
 
     // subject
-    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam} : CreateSubjectParams): Promise<IResponse> {
+    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam} : CreateSubjectParams): Promise<IResponse & {subject_id?: number}> {
         try {
             const response = await api.post("/subject/create", {
                 time_start: start, time_exam_end: exam_end,
@@ -51,7 +51,8 @@ export const ChiefTeacherService = {
             });
             
             return {
-                success: true
+                success: true,
+                subject_id: response.data.subject_id
             }
         } catch (error) {
             return catchApiError(error);

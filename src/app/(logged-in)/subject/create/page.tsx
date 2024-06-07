@@ -7,7 +7,7 @@ import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { useProfileStore } from "@/stores/profileStore";
 import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
-import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch, message } from "antd";
+import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, Modal, Select, Switch, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
@@ -65,7 +65,10 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
     )
 }
 
-const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any) => {
+const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible, mainForm} : {
+    teacherModalVisible: boolean, setTeacherModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
+    mainForm: FormInstance<any>
+}) => {
     const role = useProfileStore(useShallow(selector => selector.role));
     const { replace } = useRouter();
     if (role != "CHIEF_TEACHER") {
@@ -97,6 +100,7 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible} : any
             }
 
             api.success("Успішно!");
+            mainForm.setFieldValue("teacher", form.getFieldValue("email"));
             setTeacherModalVisible(false);
         })
     }
@@ -169,6 +173,8 @@ export default function CreateSubjectPage() {
     const [isLoading, setLoading] = useState(false);
 
     const descRef = useRef<TiptapRef>();
+
+    const { push } = useRouter();
 
     const err = (err: string) => {
         modal.error({
@@ -252,7 +258,10 @@ export default function CreateSubjectPage() {
                     modal.success({
                         title: "Успіх!",
                         maskClosable: true,
-                        content: "Тільки що ви створили новий предмет."
+                        content: "Тільки що ви створили новий предмет.",
+                        onOk: () => {
+                            push("/subject/announced/" + resp.subject_id);
+                        }
                     })
                 })
             }
@@ -266,6 +275,7 @@ export default function CreateSubjectPage() {
             <TeacherCreationForm
                 teacherModalVisible={teacherModalVisible}
                 setTeacherModalVisible={setTeacherModalVisible}
+                mainForm={form}
             />
 
             <Form
