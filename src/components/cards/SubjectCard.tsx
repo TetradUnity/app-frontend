@@ -16,7 +16,7 @@ export default function SubjectCard({subject}: {subject: IAnnouncedSubjectShort}
             }} />
             
             <Flex className={styles.card_tags_div} gap="4px 0" wrap="wrap" justify="flex-end">
-                {subject.tags.map(tag => <Tag color="yellow">{tag}</Tag>)}
+                {subject.tags && subject.tags.map(tag => <Tag color="yellow">{tag}</Tag>)}
             </Flex>
 
             <Divider style={{margin: 0}}></Divider>
