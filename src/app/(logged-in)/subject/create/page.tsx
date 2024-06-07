@@ -1,7 +1,7 @@
 'use client'
 
 import Foreground from "@/components/Foreground";
-import Tiptap from "@/components/Tiptap";
+import Tiptap, { TiptapRef } from "@/components/Tiptap";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { useProfileStore } from "@/stores/profileStore";
@@ -168,6 +168,8 @@ export default function CreateSubjectPage() {
 
     const [isLoading, setLoading] = useState(false);
 
+    const descRef = useRef<TiptapRef>();
+
     const err = (err: string) => {
         modal.error({
             title: "Помилка.",
@@ -216,12 +218,18 @@ export default function CreateSubjectPage() {
                     if (start_subject_time - end_exam_time < 86400 * 1000) {
                         err("Різниця між датою закінчення екзамену та початком предмету має бути як мінімум 1 день.");
                         return;
-                    } 
+                    }
+                }
+
+                let descEditor = descRef.current?.getEditor();
+                if (!descEditor) {
+                    err("Спробуйте ще раз.");
+                    return;
                 }
 
                 let info: CreateSubjectParams = {
                     title: form.getFieldValue("title"),
-                    description: form.getFieldValue("desc"),
+                    description: descEditor.getHTML(),
                     short_description: form.getFieldValue("short_desc"),
                     start: start_subject_time,
                     exam_end: end_exam_time,
@@ -290,6 +298,7 @@ export default function CreateSubjectPage() {
                 <Form.Item required label="Повний опис предмету:">
                     <p>Тут можна форматувати текст. Подробніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
                     <Tiptap
+                        ref={descRef}
                         style={{minHeight: 75}}
                         className="ant-input ant-input-outlined tiptap-text-area"
                         listsEnabled={true}
