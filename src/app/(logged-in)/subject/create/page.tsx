@@ -9,12 +9,13 @@ import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
 import { AutoComplete, Button, DatePicker, Form, GetRef, Input, Modal, Select, Switch, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import debounce from 'lodash/debounce';
+import translateRequestError from "@/utils/ErrorUtils";
 
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
@@ -191,20 +192,39 @@ export default function CreateSubjectPage() {
                     exam = JSON.stringify(exam);
                 }
 
-                let start_subject = form.getFieldValue("startDate").unix() * 1000;
-                let end_exam = form.getFieldValue("examEndDate").unix() * 1000;
+                let start_subject_time = form.getFieldValue("startDate").unix() * 1000;
+                let end_exam_time = form.getFieldValue("examEndDate").unix() * 1000;
 
-                if (end_exam && (end_exam > start_subject)) {
-                    err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+                let current_time = Date.now();
+
+                if (start_subject_time < current_time) {
+                    err("Дата початку предмету має бути після поточної дати.");
                     return;
+                }
+
+                if (end_exam_time) {
+                    if (end_exam_time > start_subject_time) {
+                        err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+                        return;
+                    }
+
+                    if (end_exam_time < current_time + (7 * 86400 * 1000)) {
+                        err("Дата закінчення екзамену має бути назначена як мінімум через неділю від поточної дати.")
+                        return;
+                    }
+
+                    if (start_subject_time - end_exam_time < 86400 * 1000) {
+                        err("Різниця між датою закінчення екзамену та початком предмету має бути як мінімум 1 день.");
+                        return;
+                    } 
                 }
 
                 let info: CreateSubjectParams = {
                     title: form.getFieldValue("title"),
                     description: form.getFieldValue("desc"),
                     short_description: form.getFieldValue("short_desc"),
-                    start: start_subject,
-                    exam_end: end_exam,
+                    start: start_subject_time,
+                    exam_end: end_exam_time,
                     duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
                     timetable: form.getFieldValue("timetable"),
                     tags: [],
@@ -217,7 +237,7 @@ export default function CreateSubjectPage() {
                 ChiefTeacherService.createSubject(info).then(resp => {
                     setLoading(false);
                     if (!resp.success) {
-                        err("Не вдалось створити предмет: " + resp.error_code);
+                        err("Не вдалось створити предмет: " + translateRequestError(resp.error_code));
                         return;
                     }
 

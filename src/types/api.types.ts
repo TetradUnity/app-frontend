@@ -129,7 +129,7 @@ export namespace TestsNamespace {
 
     export interface Question {
         title: string,
-        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
         answers: Answer[]
     } 
 
@@ -147,7 +147,7 @@ export namespace TestsNamespace {
 
     export interface ProdQuestion {
         title: string,
-        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
         answers: ProdAnswer[]
     };
 

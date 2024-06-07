@@ -57,7 +57,7 @@ export const SubjectService = {
 
     async getAnnouncedSubjects(page=1, filters?: filtersType): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
         try {
-            const response = await api.get("/subject/get-announce-subjects", {
+            const response = await api.post("/subject/get-announce-subjects", {}, {
                 params: {
                     page,
                     tags: filters?.tags,

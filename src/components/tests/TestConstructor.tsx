@@ -136,9 +136,9 @@ ref) => {
         if (
             (answers.length > 0) && (
             (type == "ONE_ANSWER" && newType == "TEXT") ||
-            (type == "MULTI_ANSWER" && newType == "TEXT") ||
+            (type == "MULTY_ANSWER" && newType == "TEXT") ||
             (type == "TEXT" && newType == "ONE_ANSWER") ||
-            (type == "TEXT" && newType == "MULTI_ANSWER") )
+            (type == "TEXT" && newType == "MULTY_ANSWER") )
         ) {
             modal.confirm({
                 title: "Попередження",
@@ -156,7 +156,7 @@ ref) => {
             return;
         }
 
-        if ((type == "MULTI_ANSWER" && newType == "ONE_ANSWER")) {
+        if ((type == "MULTY_ANSWER" && newType == "ONE_ANSWER")) {
             uncheckAllAnswers(true);
         }
 
@@ -213,7 +213,7 @@ ref) => {
                     onChange={changeQuestionType}
                     options={[
                         {value: "ONE_ANSWER", label: "Одна правильна відповідь"},
-                        {value: "MULTI_ANSWER", label: "Декілька правильних відповідей"},
+                        {value: "MULTY_ANSWER", label: "Декілька правильних відповідей"},
                         {value: "TEXT", label: "Текст"}
                     ]}
                     style={{marginBottom: 10}}
@@ -358,6 +358,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             if (!checkIfCorrectly(data)) {
                 return null;
             }
+
             return [
                 {
                     time: testDuration,
