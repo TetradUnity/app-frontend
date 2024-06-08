@@ -1,47 +1,41 @@
 'use client'
 
-import {Avatar, Button, Input, Modal} from "antd"
-import React, {useState} from "react";
+import {Avatar, Button, Input, Modal, UploadFile} from "antd"
+import React, {useEffect, useState} from "react";
 import {useProfileStore} from "@/stores/profileStore";
 import Dragger from "antd/es/upload/Dragger";
-import {UploadProps} from "antd/lib";
 
 import {CloudUploadOutlined, DeleteOutlined} from "@ant-design/icons";
 import {UserService} from "@/services/user.service";
 import TextArea from "antd/es/input/TextArea";
+import ImgCropModal from "@/components/ImgCropModal";
 
-const props: UploadProps = {
-    name: 'file',
-    multiple: false,
-    action: '/api/upload', //TODO upload avatar
-    onChange(info) {
-        //   const { status } = info.file;
-        //   if (status !== 'uploading') {
-        //     console.log(info.file, info.fileList);
-        //   }
-        //   if (status === 'done') {
-        //     message.success(`${info.file.name} file uploaded successfully.`);
-        //   } else if (status === 'error') {
-        //     message.error(`${info.file.name} file upload failed.`);
-        //   }
-    },
-    onDrop(e) {
-        console.log('Dropped files', e.dataTransfer.files);
-    },
-};
 export default function AccountSettingsPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
     const profile = useProfileStore();
-    const [newProfile, setNewProfile] = useState(profile);
 
-    const [editProfileVisible, setEditProfileVisible] = useState(false);
-    const [editPasswordVisible, setEditPasswordVisible] = useState(false);
+    const [originalFirstName, originalLastName, originalAvatar] = useProfileStore(state => [state.first_name, state.last_name, state.avatar]);
+    const [firstName, setFirstName] = useState(originalFirstName);
+    const [lastName, setLastName] = useState(originalLastName);
+
+    const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+
+    const [avatarURL, setAvatarURL] = useState(originalAvatar);
+
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setFirstName(originalFirstName);
+        setLastName(originalLastName);
+        setFileList([]);
+        setAvatarURL(originalAvatar);
+    }, [originalFirstName, originalLastName, originalAvatar]);
 
     const save = async () => {
         const response = await UserService.editProfile({
-            first_name: newProfile.first_name as string,
-            last_name: newProfile.last_name as string,
-            avatar: newProfile.avatar
+            first_name: firstName,
+            last_name: lastName,
+            avatar: avatarURL
         });
 
         if (response.success) {
@@ -78,20 +72,39 @@ export default function AccountSettingsPage() {
                     gap: "var(--gap-half)",
                     marginBottom: "var(--gap)"
                 }}>
-                    <Dragger style={{
-                        width: 128,
-                        minHeight: 128,
-                        maxHeight: 128,
-                        borderRadius: 8,
-                    }} {...props}>
-                        <p>
-                            <CloudUploadOutlined style={{color: "rgba(255,255,255,0.5)", fontSize: 24}}/>
-                        </p>
-                        <p style={{
-                            fontSize: 13, color: "rgba(255,255,255,0.5)"
-                        }}>Натисніть або перетягніть картинку</p>
+                    <ImgCropModal>
+                        <Dragger
+                            accept=".jpg,.jpeg,.png,.bmp"
+                            fileList={fileList}
+                            customRequest={
+                                ({file, onSuccess}) => {
+                                    // @ts-ignore
+                                    onSuccess("ok");
+                                }}
+                            onChange={(info) => {
+                                if (info.file.status === "uploading" || info.file.status === "done") {
+                                    setFileList([info.file]);
+                                    setAvatarURL(URL.createObjectURL(info.file.originFileObj as Blob));
+                                } else {
+                                    setFileList([]);
+                                    setAvatarURL(originalAvatar);
+                                }
+                            }}
+                            style={{
+                                width: 128,
+                                minHeight: 128,
+                                maxHeight: 128,
+                                borderRadius: 8,
+                            }}>
+                            <p>
+                                <CloudUploadOutlined style={{color: "rgba(255,255,255,0.5)", fontSize: 24}}/>
+                            </p>
+                            <p style={{
+                                fontSize: 13, color: "rgba(255,255,255,0.5)"
+                            }}>Натисніть або перетягніть картинку</p>
 
-                    </Dragger>
+                        </Dragger>
+                    </ImgCropModal>
                     <div style={{
                         position: "relative",
                         width: 128,
@@ -102,10 +115,11 @@ export default function AccountSettingsPage() {
                         <Avatar
                             size={128}
                             shape={"square"}
-                            src={profile.avatar ? profile.avatar : "https://media.licdn.com/dms/image/C5603AQE-LZbyqja3GQ/profile-displayphoto-shrink_800_800/0/1585481402347?e=2147483647&v=beta&t=0jx6LRb9wlnWNVNSWzmXAVnDWwvFGVO_klpqm94TynY"}
+                            src={avatarURL}
                         ></Avatar>
                         <Button type="default" icon={<DeleteOutlined/>} onClick={() => {
-                            newProfile.avatar = "";
+                            setAvatarURL(originalAvatar);
+                            setFileList([]);
                         }} style={{
                             position: "absolute",
                             top: 4,
@@ -129,8 +143,8 @@ export default function AccountSettingsPage() {
                     width: "1000%"
                 }}>
                     <span>Імя</span>
-                    <Input value={newProfile.first_name}
-                           onChange={e => setNewProfile({...newProfile, first_name: e.target.value})}
+                    <Input value={firstName}
+                           onChange={e => setFirstName(e.target.value)}
                     ></Input>
                 </div>
                 <div style={{
@@ -140,8 +154,8 @@ export default function AccountSettingsPage() {
                     width: "1000%"
                 }}>
                     <span>Прізвище</span>
-                    <Input value={newProfile.last_name}
-                           onChange={e => setNewProfile({...newProfile, last_name: e.target.value})}
+                    <Input value={lastName}
+                           onChange={e => setLastName(e.target.value)}
                     ></Input>
                 </div>
             </div>

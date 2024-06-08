@@ -74,3 +74,14 @@ body {
 .tiptap-text-area > div li {
     margin-left: 20px;
 }
+.imgcrop_modal button.\[display\:flex\] {
+    color: white !important;
+}
+
+.imgcrop_modal .ant-slider-track {
+    background: var(--primary) !important;
+}
+
+.imgcrop_modal .ant-slider-handle::after {
+    box-shadow: 0 0 0 2px var(--primary) !important;
+}

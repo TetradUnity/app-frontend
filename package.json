@@ -26,6 +26,7 @@
     "@types/katex": "^0.16.7",
     "@types/lodash": "^4.17.4",
     "antd": "^5.16.5",
+    "antd-img-crop": "^4.22.0",
     "axios": "^1.6.8",
     "dayjs": "^1.11.11",
     "katex": "^0.16.10",
