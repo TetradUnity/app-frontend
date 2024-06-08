@@ -108,7 +108,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
 
     return (
         <>
-            {editor && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
+            {(editor && props.editable) && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
                 <BubbleMenuButton
                     editor={editor}
                     property="bold"
