@@ -456,7 +456,7 @@ export default function CreateSubjectPage() {
             form.setFieldValue("startDate", dayjs(draft.start));
         }
         if (draft.exam_end) {
-            form.setFieldValue("exam_end", dayjs(draft.exam_end));
+            form.setFieldValue("examEndDate", dayjs(draft.exam_end));
         }
         if (draft.duration_dayjs && (draft.duration_dayjs[0] && draft.duration_dayjs[1])) {
             setDuration([dayjs(draft.duration_dayjs[0] * 1000), dayjs(draft.duration_dayjs[1] * 1000)]);
@@ -469,6 +469,19 @@ export default function CreateSubjectPage() {
                 if (draft.exam_plain) {
                     testRef.current.loadFromDraft(draft.exam_plain);
                 }
+                clearInterval(id);
+            }, 10);
+        }
+
+        if (draft.description) {
+            let id = setInterval(() => {
+                let editor = descRef.current?.getEditor();
+                
+                if (!editor) {
+                    return;
+                }
+    
+                editor.commands.setContent(draft.description as string);
                 clearInterval(id);
             }, 10);
         }
@@ -509,7 +522,7 @@ export default function CreateSubjectPage() {
         window.addEventListener("unload", saveDraft);
 
         let intervalId = setInterval(() => {
-            // saveDraft();
+            saveDraft();
         }, 60 * 1000);
 
         return () => {

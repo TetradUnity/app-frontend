@@ -2,14 +2,13 @@ import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "ant
 import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
-import TextArea from "antd/es/input/TextArea";
-import React, { Dispatch, SetStateAction, Suspense, useEffect, useImperativeHandle, useReducer, useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { HookAPI } from "antd/es/modal/useModal";
 
 import { Drafts, TestsNamespace } from "@/types/api.types";
 import Tiptap, { TiptapRef } from "../Tiptap";
 import ImageUploadModal from "../ImageUploadModal";
-import { moveElementInArray, moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
+import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
 import countWordsInHtmlString from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -23,7 +22,7 @@ const Answer = React.forwardRef((
     {deleteAnswer, uncheckAllAnswers, orderAnswer, openImageUploadModal}:
     {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void}, ref) => {
     const [isCorrect, setIsCorrect] = useState(false);
-    const editorRef = React.createRef<TiptapRef>();
+    const editorRef = React.useRef<TiptapRef>();
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
@@ -35,7 +34,17 @@ const Answer = React.forwardRef((
         },
         loadFromDraft: (draft) => {
             setIsCorrect(draft.isCorrect);
-            editorRef.current?.getEditor()?.commands.setContent(draft.content);
+
+            let id = setInterval(() => {
+                let editor = editorRef.current?.getEditor();
+
+                if (!editor) {
+                    return;
+                }
+
+                editor.commands.setContent(draft.content);
+                clearInterval(id);
+            }, 10);
         }
     }) as AnswerRef);
 
@@ -141,8 +150,6 @@ ref) => {
             answers: answers.map(item => item.ref.current?.getData()),
         }),
         loadFromDraft: (draft) => {
-            console.log(draft);
-
             let id = setInterval(() => {
                 let editor = questionTitleEditorRef.current?.getEditor();
                 if (!editor) {
@@ -153,9 +160,8 @@ ref) => {
             }, 10);
             setType(draft.type);
 
+            createAnswerByCount(draft.answers.length);
             for (let i = 0; i < draft.answers.length; i++) {
-                createAnswer();
-
                 let id = setInterval(() => {
                     setAnswers(answers => {
                         let ref = answers[i]?.ref;
@@ -209,6 +215,18 @@ ref) => {
             ref: React.createRef()
         }]);
         setAnswersCount(answersCount + 1);
+    };
+
+     const createAnswerByCount = (count: number) => {
+        let nArr = [...answers];
+        for (let i = 0; i < count; i++) {
+            nArr.push({
+                id: answersCount + i,
+                ref: React.createRef()
+            })
+        }
+        setAnswers(nArr);
+        setAnswersCount(answersCount + count);
     };
 
     const uncheckAllAnswers = (ignore?: boolean) => {
@@ -429,10 +447,10 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             if (generalInfo?.passing_grade) {
                 setPassingGrade(generalInfo.passing_grade);
             }
+            
+            createQuestionsByCount(draft.length-1);
 
             for (let i = 1; i < draft.length; i++) {
-                createNewQuestion();
-
                 let id = setInterval(() => {
                     setQuestions(questions => {
                         let ref = questions[i-1]?.ref;
@@ -457,6 +475,18 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             ref: React.createRef(),
         }]);
         setQuestionCount(questionCount + 1);
+    };
+
+    const createQuestionsByCount = (count: number) => {
+        let nArr = [...questions];
+        for (let i = 0; i < count; i++) {
+            nArr.push({
+                id: questionCount + i,
+                ref: React.createRef()
+            })
+        }
+        setQuestions(nArr);
+        setQuestionCount(questionCount + count);
     };
 
     const deleteQuestion = (question: question) => {

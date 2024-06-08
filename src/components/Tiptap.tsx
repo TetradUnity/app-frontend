@@ -62,9 +62,9 @@ const getStarterKitConfig = (props : TiptapProps) => {
 const getAdditionalExtensions = (props : TiptapProps) => {
     let arr = [];
     
-    // if (props.listsEnabled) {
-    //     arr.push(OrderedList, BulletList, ListItem)
-    // }
+    if (props.listsEnabled) {
+        arr.push(OrderedList, BulletList, ListItem)
+    }
 
     if (!props.dontAddMath) {
         arr.push(MathExtension);
@@ -90,7 +90,6 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             }),
             Underline,
             Image,
-            OrderedList, BulletList, ListItem,
             ...getAdditionalExtensions(props)
         ],
         content: props.content || "",
@@ -99,7 +98,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
 
     useImperativeHandle(ref, () => ({
         getEditor: () => editor
-    } as TiptapRef));
+    }) as TiptapRef);
 
     const callback = (url: string) => {
         editor?.commands.setImage({src: url, alt: "uploaded_img"});
