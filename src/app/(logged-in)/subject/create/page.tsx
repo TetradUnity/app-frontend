@@ -7,7 +7,7 @@ import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { useProfileStore } from "@/stores/profileStore";
 import { CreateSubjectParams, Drafts } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
-import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, InputRef, Modal, Select, Switch, Tag, Tooltip, message } from "antd";
+import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, InputRef, Modal, Select, Spin, Switch, Tag, Tooltip, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -21,18 +21,27 @@ import { PlusOutlined } from "@ant-design/icons";
 import { HookAPI } from "antd/es/modal/useModal";
 import { TweenOneGroup } from "rc-tween-one";
 import { DraftService } from "@/services/draft.service";
+import { countCharactersInHTML } from "@/utils/StringUtils";
 
 const draftStore = DraftService.createStore<Drafts.SubjectParams>("subject_create_draft");
 
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
 
+    const [isFetching, setIsFetching] = useState(false);
+
     const search = async (text: string) => {
         if (text.length < 2) {
+            setIsFetching(false);
             return [];
         }
-        
+
+        setIsFetching(true);
+        setOptions([]);
+
         const response = await ChiefTeacherService.findTeacherByEmail(text);
+
+        setIsFetching(false);
 
         if (response.data) {
             return response.data.map(user => ({
@@ -59,13 +68,15 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
                 onSearch={debounce(async (text: string) => setOptions(await search(text)), 400)}
                 ref={autoComplete}
                 notFoundContent={
-                    <>
-                        <h3>Здається, вчитель з таким email ще не доданий в систему.</h3>
-                        <Button onClick={() => {
-                            autoComplete.current?.blur();
-                            setTeacherModalVisible(true);
-                        }}>Створити</Button>
-                    </>
+                    isFetching
+                        ? <Spin style={{display: "block", margin: "auto"}} />
+                        : <>
+                            <h3>Здається, вчитель з таким email ще не доданий в систему.</h3>
+                            <Button onClick={() => {
+                                autoComplete.current?.blur();
+                                setTeacherModalVisible(true);
+                            }}>Створити</Button>
+                        </>
                 }
             />
         </Form.Item>
@@ -95,12 +106,13 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible, mainF
             setLoading(false);
 
             if (!res.success) {
-                api.error("Трапилась помилка: " + res.error_code);
+                api.error("Трапилась помилка: " + translateRequestError(res.error_code));
                 return;
             }
 
             api.success("Успішно!");
             mainForm.setFieldValue("teacher", form.getFieldValue("email"));
+            mainForm.validateFields();
             setTeacherModalVisible(false);
         })
     }
@@ -305,6 +317,8 @@ export default function CreateSubjectPage() {
 
     const tagsRef = useRef<TagsSelectorRef>();
 
+    const isDraftModalVisible = React.useRef<boolean>();
+
     const err = (err: string) => {
         modal.error({
             title: "Помилка.",
@@ -325,6 +339,7 @@ export default function CreateSubjectPage() {
                     err("Спробуйте ще раз.");
                     return;
                 }
+                
 
                 let examEnabled = form.getFieldValue("examEndDate") !== undefined;
 
@@ -361,6 +376,16 @@ export default function CreateSubjectPage() {
                         err("Різниця між датою закінчення екзамену та початком предмету має бути як мінімум 1 день.");
                         return;
                     }
+                }
+
+                if (countCharactersInHTML(data.description) < 100) {
+                    err("Кількість символів в описі має бути як мінімум 100.");
+                    return;
+                }
+
+                if (data.duration < 3 * 24 * 3600 * 1000) {
+                    err("Тривалість предмету має бути як мінімум 3 дня.");
+                    return;
                 }
 
                 setLoading(true);
@@ -410,7 +435,7 @@ export default function CreateSubjectPage() {
             short_description: form.getFieldValue("short_desc"),
             start: start_subject_time,
             exam_end: end_exam_time,
-            duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
+            duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]) * 1000,
             timetable: form.getFieldValue("timetable"),
             tags: tagsRef.current.getTags(),
             exam: exam,
@@ -490,6 +515,7 @@ export default function CreateSubjectPage() {
     useEffect(() => {
         let modalInstance = null;
         if (draftStore.isExist()) {
+            isDraftModalVisible.current = true;
             modalInstance = modal.confirm({
                 title: "Чернетка",
                 content: <p>Система виявила незбережені дані {dayjs(draftStore.getDraftDate()).format("DD/MM/YYYY о HH:mm")}. Завантажити їх?</p>,
@@ -497,6 +523,7 @@ export default function CreateSubjectPage() {
                 cancelText: "Видалити",
                 
                 onOk: () => {
+                    isDraftModalVisible.current = false;
                     let data = draftStore.load();
                     if (!data) {
                         modal.error({
@@ -508,6 +535,7 @@ export default function CreateSubjectPage() {
                     loadFromDraft(data);
                 },
                 onCancel: () => {
+                    isDraftModalVisible.current = false;
                     draftStore.remove();
                 }
             })
@@ -522,6 +550,9 @@ export default function CreateSubjectPage() {
         window.addEventListener("unload", saveDraft);
 
         let intervalId = setInterval(() => {
+            if (isDraftModalVisible.current) {
+                return;
+            }
             saveDraft();
         }, 60 * 1000);
 

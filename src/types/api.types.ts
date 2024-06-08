@@ -18,7 +18,7 @@ export interface IUser {
     email: string,
     first_name: string | undefined,
     last_name: string | undefined,
-    avatar: string
+    avatar?: string,
     role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT"
 }
 
@@ -86,7 +86,9 @@ export interface IAnnouncedSubjectShort {
 
     teacher_first_name: string,
     teacher_last_name: string,
-    teacher_id: number
+    teacher_id: number,
+
+    banner: string
 }
 
 /* TEMPORARY */

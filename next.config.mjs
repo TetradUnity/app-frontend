@@ -3,7 +3,7 @@ const nextConfig = {
     reactStrictMode: false,
     experimental: {
         optimizePackageImports: ['antd']
-    }
+    },
 };
 
 export default nextConfig;

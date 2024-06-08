@@ -1,48 +1,46 @@
 'use client'
 
 import { AuthTokensService } from "@/services/auth-token.service";
-import { Avatar, Button, Divider, Input, Modal } from "antd"
+import { Button, Divider, Input, Modal, UploadFile } from "antd"
 
 import { useRouter } from "next/navigation";
 
 import styles from "./styles.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profileStore";
 import Dragger from "antd/es/upload/Dragger";
-import { UploadProps } from "antd/lib";
 
 import {InboxOutlined} from "@ant-design/icons";
 import Foreground from "@/components/Foreground";
-
-const props: UploadProps = {
-    name: 'file',
-    multiple: false,
-    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-    onChange(info) {
-    //   const { status } = info.file;
-    //   if (status !== 'uploading') {
-    //     console.log(info.file, info.fileList);
-    //   }
-    //   if (status === 'done') {
-    //     message.success(`${info.file.name} file uploaded successfully.`);
-    //   } else if (status === 'error') {
-    //     message.error(`${info.file.name} file upload failed.`);
-    //   }
-    },
-    onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
-    },
-  };
+import ImgCrop from "antd-img-crop";
+import ImgCropModal from "@/components/ImgCropModal";
 
 const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editProfileVisible: boolean, setEditProfileVisible: (v: boolean) => void}) => {
-    const [originalFirstName, originalLastName] = useProfileStore(state => [state.first_name, state.last_name]);
+    const [originalFirstName, originalLastName, originalAvatar] = useProfileStore(state => [state.first_name, state.last_name, state.avatar]);
 
     const [firstName, setFirstName] = useState(originalFirstName);
     const [lastName, setLastName] = useState(originalLastName);
 
+    const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+
+    const [avatarURL, setAvatarURL] = useState(originalAvatar);
+
+    const [loading, setLoading] = useState(false);
+
     const onOk = () => {
-        setEditProfileVisible(false);
+        setLoading(true);
+        console.log(fileList)
+        // setEditProfileVisible(false);
     }
+
+    useEffect(() => {
+        if (editProfileVisible) {
+            setFirstName(originalFirstName);
+            setLastName(originalLastName);
+            setFileList([]);
+            setAvatarURL(originalAvatar);
+        }
+    }, [editProfileVisible]);
 
     return (
 
@@ -56,20 +54,39 @@ const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editP
             onCancel={() => setEditProfileVisible(false)}
             maskClosable={false}
             className={styles.modal}
+            confirmLoading={loading}
         >
             <button className={styles.modal_avatar_btn}>
-                <img className={styles.modal_avatar} src={"https://media.licdn.com/dms/image/C5603AQE-LZbyqja3GQ/profile-displayphoto-shrink_800_800/0/1585481402347?e=2147483647&v=beta&t=0jx6LRb9wlnWNVNSWzmXAVnDWwvFGVO_klpqm94TynY"} alt="avatar" />
+                <img className={styles.modal_avatar} src={avatarURL} alt="avatar" />
             </button>
 
-            <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                <InboxOutlined style={{color: "white"}} />
-                </p>
-                <p className="ant-upload-text">Натисніть або перетягніть файл у цю область, щоб завантажити</p>
-                <p className="ant-upload-hint">
-                    Суворо заборонено завантажувати дані компанії чи інші заборонені файли.
-                </p>
-            </Dragger>
+            <ImgCropModal>
+                <Dragger
+                    accept=".jpg,.jpeg,.png,.bmp"
+                    fileList={fileList}
+                    customRequest={({file, onSuccess}) => {
+                        // @ts-ignore
+                        onSuccess("ok");
+                    }}
+                    onChange={(info) => {
+                        if (info.file.status == "uploading" || info.file.status == "done") {
+                            setFileList([info.file]);
+                            setAvatarURL(URL.createObjectURL(info.file.originFileObj as Blob))
+                        } else {
+                            setFileList([]);
+                            setAvatarURL(originalAvatar);
+                        }
+                    }}
+                >
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined style={{color: "white"}} />
+                    </p>
+                    <p className="ant-upload-text">Натисніть або перетягніть файл у цю область, щоб завантажити</p>
+                    <p className="ant-upload-hint">
+                        Рекомендуємо завантажувати аватарку розміром 512х512
+                    </p>
+                </Dragger>
+            </ImgCropModal>
 
             <section className={styles.modal_section}>
                 <h3>Ім'я:</h3>

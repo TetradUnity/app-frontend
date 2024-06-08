@@ -1,13 +1,13 @@
 const SERVER_ERRORS = {
-    "server_error": "Помилка на сервері",
-    "unknown_error": "Невідома помилка",
-    "no_permission": "У вас немає доступу",
-    "unathorized": "Ви не увійшли в систему",
-    "incorrect_data": "Неправильні дані",
-    "error_time": "Помилка з указанням часу",
-    "teacher_not_exists": "Вчитель з таким email не існує",
-    "incorrect_format_exam": "Екзамен переданий в некоректній формі",
-    "very_short": "Дуже коротко"
+    "server_error": "помилка на сервері",
+    "unknown_error": "невідома помилка",
+    "no_permission": "у вас немає доступу",
+    "unathorized": "ви не увійшли в систему",
+    "incorrect_data": "неправильні дані",
+    "error_time": "помилка з указанням часу",
+    "teacher_not_exists": "вчитель з таким email не існує",
+    "incorrect_format_exam": "екзамен переданий в некоректній формі",
+    "very_short": "дуже коротко"
 
 } as const;
 

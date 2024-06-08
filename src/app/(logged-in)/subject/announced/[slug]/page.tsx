@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRequestModal";
 import { SubjectService } from "@/services/subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
+import Tiptap from "@/components/Tiptap";
 
 interface DataType {
     key: React.Key,
@@ -143,12 +144,16 @@ export default function AnnouncedSubject() {
            <div className={styles.content}>
                 <section>
                     <h1><ProfileOutlined style={{color: "#eab676"}} /> Опис:</h1>
-                    <p>{info.description}</p>
+                    <Tiptap
+                        editable={false}
+                        content={info.description}
+                        charsLimit={10000}
+                    />
                 </section>
 
                 <section>
                     <h1><ClockCircleOutlined style={{color: "#68a2ed"}} /> Тривалість:</h1>
-                    <p>{formatTimeInSeconds(info.duration)}</p>
+                    <p>{formatTimeInSeconds(info.duration / 1000)}</p>
                 </section>
 
                 <section>

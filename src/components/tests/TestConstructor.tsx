@@ -9,8 +9,9 @@ import { Drafts, TestsNamespace } from "@/types/api.types";
 import Tiptap, { TiptapRef } from "../Tiptap";
 import ImageUploadModal from "../ImageUploadModal";
 import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
-import countWordsInHtmlString from "@/utils/StringUtils";
+import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
+import { TweenOneGroup } from "rc-tween-one";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
@@ -285,8 +286,8 @@ ref) => {
                     
                     {(type != "TEXT") && answers.map(item =>
                         <Answer
-                            ref={item.ref}
                             key={item.id}
+                            ref={item.ref}
                             deleteAnswer={deleteAnswer.bind(null, item)}
                             uncheckAllAnswers={uncheckAllAnswers}
                             orderAnswer={orderAnswer.bind(null, item)}
@@ -295,8 +296,8 @@ ref) => {
                     )}
                     {(type == "TEXT") && answers.map(item =>
                         <TextAnswer
-                            ref={item.ref}
                             key={item.id}
+                            ref={item.ref}
                             deleteAnswer={deleteAnswer.bind(null, item)}
                             orderAnswer={orderAnswer.bind(null, item)}
                         />
