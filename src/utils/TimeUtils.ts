@@ -13,7 +13,7 @@ export const TIME_PLURAL = {
 };
 
 export function pad2Start(input: string | number): string {
-    return new String(input).padStart(2, "0");
+    return String(input).padStart(2, "0");
 }
 
 export function differenceBetweenTwoDatesInSec(d1: dayjs.ConfigType, d2: dayjs.ConfigType): number {

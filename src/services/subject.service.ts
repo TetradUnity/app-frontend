@@ -1,7 +1,16 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { IAnnouncedSubject, IAnnouncedSubjectShort, IStudentShortInfo, ISubject, ITArrResponse, ITResponse, IUser } from "@/types/api.types";
+import {
+    IAnnouncedSubject,
+    IAnnouncedSubjectShort,
+    IStudentShortInfo,
+    ISubject,
+    ITArrResponse,
+    ITResponse,
+    IUser, ProdTest,
+    TestsNamespace
+} from "@/types/api.types";
 
 let subjects: {[id: number]: ISubject} = {
     1: {
@@ -53,7 +62,37 @@ export type filtersType = {
 };
 
 export const SubjectService = {
-    // TODO: Release api calls when it's wiil be ready
+    // TODO: Release api calls when it's will be ready
+
+    async startExam(uid: string | string[]): Promise<ITResponse<TestsNamespace.ProdTest>> {
+        try {
+            const response = await api.post("/subject/start-exam", {
+                uid
+            });
+
+            return {
+                success: true,
+                data: response.data
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
+    async sendAnswerExam(answer: string, uid: string): Promise<ITResponse<TestsNamespace.Test>> {
+        try {
+            const response = await api.post("/subject/send-answer-exam", {
+                answer, uid
+            });
+
+            return {
+                success: true,
+                data: response.data
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
 
     async getAnnouncedSubjects(page=1, filters?: filtersType): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
         try {
@@ -126,5 +165,26 @@ export const SubjectService = {
                 }, 500 + (Math.random() * 700));
             });
         }
-    }
+    },
+    async createLinkExam(
+        subjectId: number,
+        email: string,
+        first_name: string,
+        last_name: string,
+    ): Promise<ITResponse<>> {
+        try {
+            const response = await api.post("/subject/create-link-exam", {
+                subjectId,
+                email,
+                first_name,
+                last_name,
+            });
+
+            return {
+                success: true
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
 };

@@ -1,19 +1,23 @@
 'use client'
 
-import {Button, Dropdown, Flex, Input, MenuProps, Pagination, Radio, Space, Spin} from "antd";
+import {Button, Dropdown, Empty, Flex, Input, MenuProps, Pagination, Radio, Space, Spin} from "antd";
 import {useEffect, useState} from "react";
-import { PlusCircleFilled, CaretDownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
-import { tempSubjects } from "@/temporary/data";
+import {
+    PlusCircleFilled,
+    CaretDownOutlined,
+    SearchOutlined,
+    SortAscendingOutlined,
+    SortDescendingOutlined
+} from "@ant-design/icons";
 import SubjectCard from "@/components/cards/SubjectCard";
 import Link from "next/link";
-import { useProfileStore } from "@/stores/profileStore";
-import { useShallow } from "zustand/react/shallow";
-import { IAnnouncedSubjectShort } from "@/types/api.types";
+import {useProfileStore} from "@/stores/profileStore";
+import {useShallow} from "zustand/react/shallow";
+import {IAnnouncedSubjectShort} from "@/types/api.types";
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { SubjectService, filtersType } from "@/services/subject.service";
+import {LoadingOutlined} from '@ant-design/icons';
+import {SubjectService, filtersType} from "@/services/subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
-import { ChiefTeacherService } from "@/services/chief_teacher.service";
 
 const items: MenuProps['items'] = [
     {
@@ -59,7 +63,7 @@ export default function Subjects() {
                 setSubjects([]);
                 return;
             }
-            
+
             // @ts-ignore
             setSubjects(res.data);
             // @ts-ignore
@@ -106,13 +110,13 @@ export default function Subjects() {
                     <h2 style={{fontWeight: 350}}>Предмети</h2>
                     <Flex gap={15}>
                         {profileRole == "CHIEF_TEACHER" &&
-                            <Button size="small" type="primary" style={{fontSize: 15}} icon={<PlusCircleFilled />}>
+                            <Button size="small" type="primary" style={{fontSize: 15}} icon={<PlusCircleFilled/>}>
                                 <Link href="/subject/create">Створити новий предмет</Link>
                             </Button>
                         }
 
                         <Dropdown menu={{items, onClick}} trigger={["click"]} overlayStyle={{paddingTop: 12}}
-                                placement="bottomRight">
+                                  placement="bottomRight">
                             <Button size="small" style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -127,16 +131,17 @@ export default function Subjects() {
                 </Flex>
                 <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>}/>
 
-                
+
                 {isFetching &&
-                <Spin
-                    indicator={<LoadingOutlined style={{fontSize: 60}}/>}
-                    spinning={true}
-                />}
+                    <Spin
+                        indicator={<LoadingOutlined style={{fontSize: 60}}/>}
+                        spinning={true}
+                    />}
 
                 <p style={{textAlign: "center"}}>
                     {isError && translateRequestError(isError)}
-                    {((isError == null && isFetching == false) && subjects.length == 0) && "Поки ще порожньо."}
+                    {((isError == null && !isFetching) && subjects.length == 0) &&
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"Поки що порожньо"}/>}
                 </p>
 
                 <div style={{
