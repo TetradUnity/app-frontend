@@ -1,13 +1,13 @@
 import {Divider, Flex, Image, Tag} from "antd";
 import styles from "./subject.module.css";
 import Link from "next/link";
-import {tempTeachers} from "@/temporary/data";
 import { IAnnouncedSubjectShort } from "@/types/api.types";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 export default function SubjectCard({subject}: {subject: IAnnouncedSubjectShort}) {
     return (
         <Link className={styles.Card} href={"/subject/announced/" + subject.id} key={subject.id}>
-            <Image src="https://gstatic.com/classroom/themes/Honors.jpg" alt="subject banner"
+            <Image src={UploadService.getImageURL(UploadType.BANNER, "base1.jpg")} alt="subject banner"
                    preview={false} style={{
                 width: "100%",
                 height: "100px",
@@ -27,11 +27,10 @@ export default function SubjectCard({subject}: {subject: IAnnouncedSubjectShort}
             }}>
                 <h3 className={styles.subjectTitle}>{subject.title}</h3>
                 <Link className={styles.teacherLink} href={"/profile/" + subject.teacher_id}>{
-                    tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.first_name + " " +
-                    tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.last_name
+                    subject.teacher_first_name + " " + subject.teacher_last_name
                 }</Link>
 
-                <p style={{marginTop: 10, fontSize: 15}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius voluptatem enim nisi sequi dicta repellendus voluptates magnam animi obcaecati? Nihil blanditiis aut inventore, ut vel numquam in sunt placeat facere.</p>
+                <p style={{marginTop: 10, fontSize: 15}}>{subject.short_description}</p>
             </Flex>
         </Link>
     )

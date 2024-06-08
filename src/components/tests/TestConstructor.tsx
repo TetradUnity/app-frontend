@@ -2,26 +2,28 @@ import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "ant
 import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
-import TextArea from "antd/es/input/TextArea";
-import React, { Dispatch, SetStateAction, Suspense, useEffect, useImperativeHandle, useReducer, useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { HookAPI } from "antd/es/modal/useModal";
 
-import { TestsNamespace } from "@/types/api.types";
+import { Drafts, TestsNamespace } from "@/types/api.types";
 import Tiptap, { TiptapRef } from "../Tiptap";
 import ImageUploadModal from "../ImageUploadModal";
-import { moveElementInArray, moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
-import countWordsInHtmlString from "@/utils/StringUtils";
+import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
+import { countWordsInHtmlString } from "@/utils/StringUtils";
+import dayjs, { Dayjs } from "dayjs";
+import { TweenOneGroup } from "rc-tween-one";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
-    uncheck: () => void
+    uncheck: () => void,
+    loadFromDraft: (draft: TestsNamespace.Answer) => void
 };
 
 const Answer = React.forwardRef((
     {deleteAnswer, uncheckAllAnswers, orderAnswer, openImageUploadModal}:
     {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void}, ref) => {
     const [isCorrect, setIsCorrect] = useState(false);
-    const editorRef = React.createRef<TiptapRef>();
+    const editorRef = React.useRef<TiptapRef>();
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
@@ -30,8 +32,22 @@ const Answer = React.forwardRef((
         }),
         uncheck: () => {
             setIsCorrect(false)
+        },
+        loadFromDraft: (draft) => {
+            setIsCorrect(draft.isCorrect);
+
+            let id = setInterval(() => {
+                let editor = editorRef.current?.getEditor();
+
+                if (!editor) {
+                    return;
+                }
+
+                editor.commands.setContent(draft.content);
+                clearInterval(id);
+            }, 10);
         }
-    } as AnswerRef));
+    }) as AnswerRef);
 
     return (
         <div className={styles.answer}>
@@ -79,8 +95,11 @@ const TextAnswer = React.forwardRef((
             isCorrect: true,
             content: content
         }),
-        uncheck: () => {}
-    } as AnswerRef));
+        uncheck: () => {},
+        loadFromDraft: (draft) => {
+            setContent(draft.content);
+        }
+    }) as AnswerRef);
 
     return (
         <div className={styles.answer}>
@@ -106,7 +125,8 @@ const TextAnswer = React.forwardRef((
 })
 
 type QuestionRef = {
-    getData: () => TestsNamespace.Question
+    getData: () => TestsNamespace.Question,
+    loadFromDraft: (draft: TestsNamespace.Question) => void
 };
 
 const Question = React.forwardRef((
@@ -129,16 +149,43 @@ ref) => {
             title: questionTitleEditorRef.current?.getEditor()?.getHTML(),
             type: type,
             answers: answers.map(item => item.ref.current?.getData()),
-        })
-    } as QuestionRef));
+        }),
+        loadFromDraft: (draft) => {
+            let id = setInterval(() => {
+                let editor = questionTitleEditorRef.current?.getEditor();
+                if (!editor) {
+                    return;
+                }
+                editor.commands.setContent(draft.title);
+                clearInterval(id);
+            }, 10);
+            setType(draft.type);
+
+            createAnswerByCount(draft.answers.length);
+            for (let i = 0; i < draft.answers.length; i++) {
+                let id = setInterval(() => {
+                    setAnswers(answers => {
+                        let ref = answers[i]?.ref;
+                        if (!(ref && ref.current)) {
+                            return answers;
+                        }
+
+                        ref.current.loadFromDraft(draft.answers[i]);
+                        clearInterval(id);
+                        return answers;
+                    })
+                }, 10);
+            }
+        },
+    }) as QuestionRef);
 
     const changeQuestionType = (newType: TestsNamespace.Question["type"]) => {
         if (
             (answers.length > 0) && (
             (type == "ONE_ANSWER" && newType == "TEXT") ||
-            (type == "MULTI_ANSWER" && newType == "TEXT") ||
+            (type == "MULTY_ANSWER" && newType == "TEXT") ||
             (type == "TEXT" && newType == "ONE_ANSWER") ||
-            (type == "TEXT" && newType == "MULTI_ANSWER") )
+            (type == "TEXT" && newType == "MULTY_ANSWER") )
         ) {
             modal.confirm({
                 title: "Попередження",
@@ -156,7 +203,7 @@ ref) => {
             return;
         }
 
-        if ((type == "MULTI_ANSWER" && newType == "ONE_ANSWER")) {
+        if ((type == "MULTY_ANSWER" && newType == "ONE_ANSWER")) {
             uncheckAllAnswers(true);
         }
 
@@ -169,6 +216,18 @@ ref) => {
             ref: React.createRef()
         }]);
         setAnswersCount(answersCount + 1);
+    };
+
+     const createAnswerByCount = (count: number) => {
+        let nArr = [...answers];
+        for (let i = 0; i < count; i++) {
+            nArr.push({
+                id: answersCount + i,
+                ref: React.createRef()
+            })
+        }
+        setAnswers(nArr);
+        setAnswersCount(answersCount + count);
     };
 
     const uncheckAllAnswers = (ignore?: boolean) => {
@@ -213,7 +272,7 @@ ref) => {
                     onChange={changeQuestionType}
                     options={[
                         {value: "ONE_ANSWER", label: "Одна правильна відповідь"},
-                        {value: "MULTI_ANSWER", label: "Декілька правильних відповідей"},
+                        {value: "MULTY_ANSWER", label: "Декілька правильних відповідей"},
                         {value: "TEXT", label: "Текст"}
                     ]}
                     style={{marginBottom: 10}}
@@ -227,8 +286,8 @@ ref) => {
                     
                     {(type != "TEXT") && answers.map(item =>
                         <Answer
-                            ref={item.ref}
                             key={item.id}
+                            ref={item.ref}
                             deleteAnswer={deleteAnswer.bind(null, item)}
                             uncheckAllAnswers={uncheckAllAnswers}
                             orderAnswer={orderAnswer.bind(null, item)}
@@ -237,8 +296,8 @@ ref) => {
                     )}
                     {(type == "TEXT") && answers.map(item =>
                         <TextAnswer
-                            ref={item.ref}
                             key={item.id}
+                            ref={item.ref}
                             deleteAnswer={deleteAnswer.bind(null, item)}
                             orderAnswer={orderAnswer.bind(null, item)}
                         />
@@ -257,7 +316,9 @@ ref) => {
 
 
 export type TestConstructorRef = {
-    getData: () => TestsNamespace.Test[] | null;
+    getData: () => TestsNamespace.Test | undefined,
+    getDataAsDraft: () => Drafts.Test | undefined,
+    loadFromDraft: (draft: Drafts.Test) => void
 }
 
 export const TestConstructor = React.forwardRef((props, ref) => {
@@ -270,7 +331,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
     const [modal, modalCtxHolder] = Modal.useModal();
 
-    const [testDuration, setTestDuration] = useState<number | null>(null);
+    const [testDuration, setTestDuration] = useState<Dayjs | null>(null);
     const [passingGrade, setPassingGrade] = useState(70);
 
     const err = (ind: number, str: string) => {
@@ -358,15 +419,56 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             if (!checkIfCorrectly(data)) {
                 return null;
             }
+
             return [
                 {
-                    time: testDuration,
+                    time: testDuration ? (testDuration.unix() * 1000) : undefined,
                     passing_grade: passingGrade
                 },
                 ...data
             ];
-        } 
-    }));
+        },
+
+        getDataAsDraft: () => {
+            return [
+                {
+                    time: testDuration ? (testDuration.unix() * 1000) : undefined,
+                    passing_grade: passingGrade
+                },
+                ...questions.map(item => item.ref.current?.getData())
+            ];
+        },
+
+        loadFromDraft: (draft) => {
+            let generalInfo = draft[0];
+
+            if (generalInfo?.time) {
+                setTestDuration(dayjs(generalInfo.time));
+            }
+            if (generalInfo?.passing_grade) {
+                setPassingGrade(generalInfo.passing_grade);
+            }
+            
+            createQuestionsByCount(draft.length-1);
+
+            for (let i = 1; i < draft.length; i++) {
+                let id = setInterval(() => {
+                    setQuestions(questions => {
+                        let ref = questions[i-1]?.ref;
+                        if (!(ref && ref.current)) {
+                            return questions;
+                        }
+
+                        ref.current.loadFromDraft(draft[i] as TestsNamespace.Question);
+                        clearInterval(id);
+
+                        return questions;
+                    })
+                }, 10);
+            }
+
+        }
+    }) as TestConstructorRef);
 
     const createNewQuestion = () => {
         setQuestions([...questions, {
@@ -374,6 +476,18 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             ref: React.createRef(),
         }]);
         setQuestionCount(questionCount + 1);
+    };
+
+    const createQuestionsByCount = (count: number) => {
+        let nArr = [...questions];
+        for (let i = 0; i < count; i++) {
+            nArr.push({
+                id: questionCount + i,
+                ref: React.createRef()
+            })
+        }
+        setQuestions(nArr);
+        setQuestionCount(questionCount + count);
     };
 
     const deleteQuestion = (question: question) => {
@@ -422,8 +536,9 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                             setTestDuration(null);
                             return;
                         }
-                        setTestDuration(e.unix() * 1000)
+                        setTestDuration(e)
                     }}
+                    value={testDuration}
                     showNow={false}
                 />
             </section>

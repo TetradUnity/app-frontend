@@ -1,17 +1,26 @@
 const SERVER_ERRORS = {
-    "server_error": "Помилка на сервері",
-    "unknown_error": "Невідома помилка",
-    "no_permission": "У вас немає доступу",
-    "very_short": "Дуже коротко"
+    "server_error": "помилка на сервері",
+    "unknown_error": "невідома помилка",
+    "no_permission": "у вас немає доступу",
+    "unathorized": "ви не увійшли в систему",
+    "incorrect_data": "неправильні дані",
+    "error_time": "помилка з указанням часу",
+    "teacher_not_exists": "вчитель з таким email не існує",
+    "incorrect_format_exam": "екзамен переданий в некоректній формі",
+    "very_short": "дуже коротко"
 
 } as const;
 
 type ServerErrorKey = keyof typeof SERVER_ERRORS
 
-export default function translateRequestError(error: ServerErrorKey | string) {
+export default function translateRequestError(error: ServerErrorKey | string | undefined) {
+    if (error == undefined) {
+        return "<:";
+    }
+
     if (error in SERVER_ERRORS) {
         return SERVER_ERRORS[error as ServerErrorKey];
     }
 
-    return SERVER_ERRORS.unknown_error;
+    return `${SERVER_ERRORS.unknown_error} (${error})`;
 }

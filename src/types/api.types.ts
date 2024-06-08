@@ -1,5 +1,3 @@
-import { title } from "process";
-
 // Response interfaces
 export interface IResponse {
     success: boolean,
@@ -20,7 +18,7 @@ export interface IUser {
     email: string,
     first_name: string | undefined,
     last_name: string | undefined,
-    avatar: string
+    avatar?: string,
     role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT"
 }
 
@@ -88,7 +86,9 @@ export interface IAnnouncedSubjectShort {
 
     teacher_first_name: string,
     teacher_last_name: string,
-    teacher_id: number
+    teacher_id: number,
+
+    banner: string
 }
 
 /* TEMPORARY */
@@ -123,13 +123,14 @@ export namespace TestsNamespace {
     export type Test = [
         {
             time: number,
+            passing_grade: number,
         },
         ...Question[]
     ]
 
     export interface Question {
         title: string,
-        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
         answers: Answer[]
     } 
 
@@ -147,7 +148,7 @@ export namespace TestsNamespace {
 
     export interface ProdQuestion {
         title: string,
-        type: "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT",
+        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
         answers: ProdAnswer[]
     };
 
@@ -166,5 +167,14 @@ export interface CreateSubjectParams {
     timetable: string,
     teacherEmail: string,
     tags: string[],
-    exam: string | null
+    exam?: string
+}
+
+export namespace Drafts {
+    export type SubjectParams = Partial<CreateSubjectParams & {
+        duration_dayjs: [number | undefined, number | undefined],
+        exam_plain: Drafts.Test,
+        isExamRequired: boolean
+    }>;
+    export type Test = Partial<TestsNamespace.Test>;
 }

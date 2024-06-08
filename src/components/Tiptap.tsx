@@ -17,6 +17,7 @@ import Image from "@tiptap/extension-image";
 import OrderedList from "@tiptap/extension-ordered-list";
 import BulletList from "@tiptap/extension-bullet-list";
 import ListItem from "@tiptap/extension-list-item";
+import { isNullOrUndefined } from "@/utils/OtherUtils";
 
 export type TiptapRef = {
     getEditor: () => Editor | null
@@ -73,7 +74,10 @@ const getAdditionalExtensions = (props : TiptapProps) => {
 }
 
 const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
-    
+    let isEditable = props.editable;
+    if (isNullOrUndefined(isEditable)) {
+        isEditable = true;
+    }
 
     const editor = useEditor({
         extensions: [
@@ -89,12 +93,12 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             ...getAdditionalExtensions(props)
         ],
         content: props.content || "",
-        editable: props.editable
+        editable: isEditable
     });
 
     useImperativeHandle(ref, () => ({
         getEditor: () => editor
-    } as TiptapRef));
+    }) as TiptapRef);
 
     const callback = (url: string) => {
         editor?.commands.setImage({src: url, alt: "uploaded_img"});
@@ -106,9 +110,27 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
         editor.commands.setContent(props.content);
     }, [props.content]);
 
+
+    let dontInclude = ['charsLimit', 'content', 'editable', 'openImageUploadModal', 'listsEnabled', 'dontAddMath'];
+    const tiptapDivAttributes = (() => {
+        let attribs = {};
+        let keys = Object.keys(props);
+
+        let key = null;
+        for (let i = 0; i < keys.length; i++) {
+            key = keys[i];
+            if (!dontInclude.includes(key)) {
+                // @ts-ignore
+                attribs[key] = props[key];
+            }
+        }
+
+        return attribs;
+    })();
+
     return (
-        <>
-            {editor && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
+        <>  
+            {(editor && editor.isEditable) && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
                 <BubbleMenuButton
                     editor={editor}
                     property="bold"
@@ -155,7 +177,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
             </BubbleMenu>}
 
             <EditorContent
-                {...props}
+                {...tiptapDivAttributes}
                 editor={editor}
             />
 

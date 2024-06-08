@@ -281,8 +281,8 @@ const Question = React.forwardRef(({question, index}: QuestionRenderParams, ref)
                 <OneAnswerRender ref={answerRef} question={question} index={index}/>
             }
 
-            {question.type == "MULTI_ANSWER" &&
-                <MultiAnswersRender ref={answerRef} question={question} index={index}/>
+            {question.type == "MULTY_ANSWER" &&
+                <MultiAnswersRender ref={answerRef} question={question} index={index} />
             }
 
             {question.type == "TEXT" &&
