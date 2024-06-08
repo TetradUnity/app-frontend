@@ -166,5 +166,5 @@ export interface CreateSubjectParams {
     timetable: string,
     teacherEmail: string,
     tags: string[],
-    exam: string | null
+    exam?: string
 }

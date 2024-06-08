@@ -7,15 +7,19 @@ import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { useProfileStore } from "@/stores/profileStore";
 import { CreateSubjectParams } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
-import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, Modal, Select, Switch, message } from "antd";
+import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, InputRef, Modal, Select, Switch, Tag, Tooltip, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import debounce from 'lodash/debounce';
 import translateRequestError from "@/utils/ErrorUtils";
+
+import { PlusOutlined } from "@ant-design/icons";
+import { HookAPI } from "antd/es/modal/useModal";
+import { TweenOneGroup } from "rc-tween-one";
 
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
@@ -69,13 +73,6 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible, mainF
     teacherModalVisible: boolean, setTeacherModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
     mainForm: FormInstance<any>
 }) => {
-    const role = useProfileStore(useShallow(selector => selector.role));
-    const { replace } = useRouter();
-    if (role != "CHIEF_TEACHER") {
-        replace("/home");
-        return null;
-    }
-
     const [form] = Form.useForm();
 
     const [loading, setLoading] = useState(false);
@@ -159,7 +156,132 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible, mainF
     )
 }
 
+type TagsSelectorRef = {
+    getTags: () => string[]
+}
+
+const TagsSelector = React.forwardRef(({modal} : {modal: HookAPI}, ref) => {
+    const [tags, setTags] = useState<string[]>([]);
+    
+    const [inputVisible, setInputVisible] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const inputRef = React.useRef<InputRef>(null);
+
+    useImperativeHandle(ref, () => ({
+        getTags: () => tags
+    }));
+
+    useEffect(() => {
+        if (inputVisible) {
+            inputRef.current?.focus();
+        }
+    }, [inputVisible]);
+
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+
+    const onInputConfirm = () => {
+        let tag = inputValue.trim();
+        if (tag.length > 0 && tags.indexOf(tag) === -1) {
+            setTags([...tags, tag]);
+        }
+
+        setInputVisible(false);
+        setInputValue('');
+    }
+
+    const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        let value = e.target.value.substring(0, 20);
+        setInputValue(value);
+
+        let input = inputRef.current?.input
+        if (input) {
+            input.style.width = value.length + 3 + "ch"
+        }
+    }
+
+    const showInput = () => {
+        if (tags.length == 5) {
+            return;
+        }
+        setInputVisible(true);
+    }
+
+    return (
+        <div style={{margin: "20px 0"}}>
+            <p>Теги:</p>
+
+           <TweenOneGroup
+                appear={false}
+                enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100 }}
+                leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                style={{display: "inline-block"}}
+                onEnd={(e) => {
+                    if (e.type === 'appear' || e.type === 'enter') {
+                    (e.target as any).style = 'display: inline-block';
+                    }
+                }}
+            >
+                {tags.map(tag => 
+                   <span key={tag} style={{display: "inline-block"}}>
+                        <Tag
+                            closable
+                            onClose={(e) => {
+                                e.preventDefault();
+                                removeTag(tag)
+                            }}
+                        >
+                            {tag}
+                        </Tag>
+                   </span>
+                )}
+            </TweenOneGroup>
+
+           {
+            inputVisible
+
+            ? <Input
+                ref={inputRef}
+                type="text"
+                size="small"
+                style={{width: 0, minWidth: 90, maxWidth: 200, height: 25}}
+                value={inputValue}
+                onChange={onInputChange}
+                onBlur={onInputConfirm}
+                onPressEnter={onInputConfirm}
+            />
+
+            :  <Tooltip
+                    title={tags.length == 5 ? "Прикріпити можна максимум 5 тегів." : ""}
+                    arrow
+                    style={{display: "inline-block"}}
+                >
+                    <Tag
+                        onClick={showInput}
+                        style={{
+                            borderStyle: "dashed",
+                            cursor: tags.length == 5 ? "not-allowed" : "pointer",
+                            display: "inline-block"
+                        }}
+                        color={tags.length == 5 ? "cyan" : "cyan-inverse"}
+                    >
+                        <PlusOutlined /> Новий тег
+                    </Tag>
+                </Tooltip>
+           }
+        </div>
+    )
+})
+
 export default function CreateSubjectPage() {
+    const role = useProfileStore(useShallow(selector => selector.role));
+    const { replace } = useRouter();
+    if (role != "CHIEF_TEACHER") {
+        replace("/");
+        return null;
+    }
+
     const [form] = Form.useForm();
     const [modal, modalCtxHolder] = Modal.useModal();
 
@@ -176,6 +298,8 @@ export default function CreateSubjectPage() {
 
     const { push } = useRouter();
 
+    const tagsRef = useRef<TagsSelectorRef>();
+
     const err = (err: string) => {
         modal.error({
             title: "Помилка.",
@@ -191,18 +315,21 @@ export default function CreateSubjectPage() {
             title: "Підтвердження",
             content: <p>Всі поля заповнені правильно щоб створити предмет?</p>,
             onOk: () => {
-                let exam = null;
-                if (testRef.current) {
+                let examEnabled = form.getFieldValue("examEndDate") !== undefined;
+
+                let exam = undefined;
+                if (testRef.current && examEnabled) {
                     exam = testRef.current.getData();
-                    if (exam == null) {
+                    if (exam == undefined) {
+                        err("Спробуйте ще раз.");
                         return;
                     }
                     exam = JSON.stringify(exam);
                 }
 
                 let start_subject_time = form.getFieldValue("startDate").unix() * 1000;
-                let end_exam_time = form.getFieldValue("examEndDate").unix() * 1000;
-
+                let end_exam_time = examEnabled ? (form.getFieldValue("examEndDate").unix() * 1000) : undefined;
+                
                 let current_time = Date.now();
 
                 if (start_subject_time < current_time) {
@@ -228,7 +355,7 @@ export default function CreateSubjectPage() {
                 }
 
                 let descEditor = descRef.current?.getEditor();
-                if (!descEditor) {
+                if (!(descEditor && tagsRef.current)) {
                     err("Спробуйте ще раз.");
                     return;
                 }
@@ -241,11 +368,11 @@ export default function CreateSubjectPage() {
                     exam_end: end_exam_time,
                     duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
                     timetable: form.getFieldValue("timetable"),
-                    tags: [],
+                    tags: tagsRef.current.getTags(),
                     exam: exam,
                     teacherEmail: form.getFieldValue("teacher")
                 }
-                
+
                 setLoading(true);
 
                 ChiefTeacherService.createSubject(info).then(resp => {
@@ -353,6 +480,8 @@ export default function CreateSubjectPage() {
 
                 <TeacherSelector setTeacherModalVisible={setTeacherModalVisible} />
 
+                <TagsSelector modal={modal} ref={tagsRef} />
+
                 <Form.Item label="Вступний тест:">
                     <Form.Item noStyle name="isExamRequired">
                         <Switch />
@@ -369,8 +498,6 @@ export default function CreateSubjectPage() {
                             <TestConstructor ref={testRef} />
                         </>}
                 </Form.Item>
-
-                
 
                 <Form.Item>
                     <Button loading={isLoading} htmlType="submit" type="primary">Створити</Button>
