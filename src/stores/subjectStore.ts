@@ -1,4 +1,3 @@
-import { SubjectService } from "@/services/subject.service";
 import { ISubject, IStudentShortInfo, IGrade } from "@/types/api.types";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";

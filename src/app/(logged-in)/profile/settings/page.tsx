@@ -12,8 +12,8 @@ import Dragger from "antd/es/upload/Dragger";
 
 import {InboxOutlined} from "@ant-design/icons";
 import Foreground from "@/components/Foreground";
-import ImgCrop from "antd-img-crop";
 import ImgCropModal from "@/components/ImgCropModal";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editProfileVisible: boolean, setEditProfileVisible: (v: boolean) => void}) => {
     const [originalFirstName, originalLastName, originalAvatar] = useProfileStore(state => [state.first_name, state.last_name, state.avatar]);
@@ -28,9 +28,14 @@ const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editP
     const [loading, setLoading] = useState(false);
 
     const onOk = () => {
-        setLoading(true);
-        console.log(fileList)
-        // setEditProfileVisible(false);
+        // setLoading(true);
+        if (!(fileList[0] && fileList[0].originFileObj)) {
+            return;
+        }
+
+        UploadService.upload(UploadType.AVATAR, fileList[0].originFileObj).then(resp => {
+            console.log(resp);
+        })
     }
 
     useEffect(() => {
@@ -56,9 +61,7 @@ const ProfileChangeModal = ({editProfileVisible, setEditProfileVisible} : {editP
             className={styles.modal}
             confirmLoading={loading}
         >
-            <button className={styles.modal_avatar_btn}>
-                <img className={styles.modal_avatar} src={avatarURL} alt="avatar" />
-            </button>
+            <img className={styles.modal_avatar} src={avatarURL} alt="avatar" />
 
             <ImgCropModal>
                 <Dragger

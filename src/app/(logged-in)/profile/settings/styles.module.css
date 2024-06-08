@@ -21,6 +21,9 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    display: block;
+    margin: auto;
+    margin-bottom: 10px;
 }
 .modal_section {
     margin: 20px 0;

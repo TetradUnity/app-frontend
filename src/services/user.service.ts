@@ -1,10 +1,10 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { IProfileResponse, ITResponse } from "@/types/api.types";
+import { ITResponse, IUser } from "@/types/api.types";
 
 export const UserService = {
-    async getProfile(userId?: number): Promise<ITResponse<IProfileResponse>> {
+    async getProfile(userId?: number): Promise<ITResponse<IUser>> {
         try {
             const response = await api.get("/user/get", {
                 params: {
