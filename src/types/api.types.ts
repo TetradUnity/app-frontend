@@ -1,5 +1,3 @@
-import { title } from "process";
-
 // Response interfaces
 export interface IResponse {
     success: boolean,
@@ -123,6 +121,7 @@ export namespace TestsNamespace {
     export type Test = [
         {
             time: number,
+            passing_grade: number,
         },
         ...Question[]
     ]
@@ -167,4 +166,13 @@ export interface CreateSubjectParams {
     teacherEmail: string,
     tags: string[],
     exam?: string
+}
+
+export namespace Drafts {
+    export type SubjectParams = Partial<CreateSubjectParams & {
+        duration_dayjs: [number | undefined, number | undefined],
+        exam_plain: Drafts.Test,
+        isExamRequired: boolean
+    }>;
+    export type Test = Partial<TestsNamespace.Test>;
 }

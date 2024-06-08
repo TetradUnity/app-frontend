@@ -6,7 +6,7 @@ import TextArea from "antd/es/input/TextArea";
 import React, { Dispatch, SetStateAction, Suspense, useEffect, useImperativeHandle, useReducer, useState } from "react";
 import { HookAPI } from "antd/es/modal/useModal";
 
-import { TestsNamespace } from "@/types/api.types";
+import { Drafts, TestsNamespace } from "@/types/api.types";
 import Tiptap, { TiptapRef } from "../Tiptap";
 import ImageUploadModal from "../ImageUploadModal";
 import { moveElementInArray, moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
@@ -14,7 +14,8 @@ import countWordsInHtmlString from "@/utils/StringUtils";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
-    uncheck: () => void
+    uncheck: () => void,
+    loadFromDraft: (draft: TestsNamespace.Answer) => void
 };
 
 const Answer = React.forwardRef((
@@ -30,8 +31,12 @@ const Answer = React.forwardRef((
         }),
         uncheck: () => {
             setIsCorrect(false)
+        },
+        loadFromDraft: (draft) => {
+            setIsCorrect(draft.isCorrect);
+            editorRef.current?.getEditor()?.commands.setContent(draft.content);
         }
-    } as AnswerRef));
+    }) as AnswerRef);
 
     return (
         <div className={styles.answer}>
@@ -79,8 +84,11 @@ const TextAnswer = React.forwardRef((
             isCorrect: true,
             content: content
         }),
-        uncheck: () => {}
-    } as AnswerRef));
+        uncheck: () => {},
+        loadFromDraft: (draft) => {
+            setContent(draft.content);
+        }
+    }) as AnswerRef);
 
     return (
         <div className={styles.answer}>
@@ -106,7 +114,8 @@ const TextAnswer = React.forwardRef((
 })
 
 type QuestionRef = {
-    getData: () => TestsNamespace.Question
+    getData: () => TestsNamespace.Question,
+    loadFromDraft: (draft: TestsNamespace.Question) => void
 };
 
 const Question = React.forwardRef((
@@ -129,8 +138,38 @@ ref) => {
             title: questionTitleEditorRef.current?.getEditor()?.getHTML(),
             type: type,
             answers: answers.map(item => item.ref.current?.getData()),
-        })
-    } as QuestionRef));
+        }),
+        loadFromDraft: (draft) => {
+            console.log(draft);
+
+            let id = setInterval(() => {
+                let editor = questionTitleEditorRef.current?.getEditor();
+                if (!editor) {
+                    return;
+                }
+                editor.commands.setContent(draft.title);
+                clearInterval(id);
+            }, 10);
+            setType(draft.type);
+
+            for (let i = 0; i < draft.answers.length; i++) {
+                createAnswer();
+
+                let id = setInterval(() => {
+                    setAnswers(answers => {
+                        let ref = answers[i]?.ref;
+                        if (!(ref && ref.current)) {
+                            return answers;
+                        }
+
+                        ref.current.loadFromDraft(draft.answers[i]);
+                        clearInterval(id);
+                        return answers;
+                    })
+                }, 10);
+            }
+        },
+    }) as QuestionRef);
 
     const changeQuestionType = (newType: TestsNamespace.Question["type"]) => {
         if (
@@ -257,7 +296,9 @@ ref) => {
 
 
 export type TestConstructorRef = {
-    getData: () => TestsNamespace.Test[] | null;
+    getData: () => TestsNamespace.Test | undefined,
+    getDataAsDraft: () => Drafts.Test | undefined,
+    loadFromDraft: (draft: Drafts.Test) => void
 }
 
 export const TestConstructor = React.forwardRef((props, ref) => {
@@ -366,8 +407,48 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                 },
                 ...data
             ];
-        } 
-    }));
+        },
+
+        getDataAsDraft: () => {
+            return [
+                {
+                    time: testDuration,
+                    passing_grade: passingGrade
+                },
+                ...questions.map(item => item.ref.current?.getData())
+            ];
+        },
+
+        loadFromDraft: (draft) => {
+            let generalInfo = draft[0];
+
+            if (generalInfo?.time) {
+                setTestDuration(generalInfo.time);
+            }
+            if (generalInfo?.passing_grade) {
+                setPassingGrade(generalInfo.passing_grade);
+            }
+
+            for (let i = 1; i < draft.length; i++) {
+                createNewQuestion();
+
+                let id = setInterval(() => {
+                    setQuestions(questions => {
+                        let ref = questions[i-1]?.ref;
+                        if (!(ref && ref.current)) {
+                            return questions;
+                        }
+
+                        ref.current.loadFromDraft(draft[i] as TestsNamespace.Question);
+                        clearInterval(id);
+
+                        return questions;
+                    })
+                }, 10);
+            }
+
+        }
+    }) as TestConstructorRef);
 
     const createNewQuestion = () => {
         setQuestions([...questions, {

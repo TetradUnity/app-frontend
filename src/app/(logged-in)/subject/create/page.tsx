@@ -5,7 +5,7 @@ import Tiptap, { TiptapRef } from "@/components/Tiptap";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { ChiefTeacherService } from "@/services/chief_teacher.service";
 import { useProfileStore } from "@/stores/profileStore";
-import { CreateSubjectParams } from "@/types/api.types";
+import { CreateSubjectParams, Drafts } from "@/types/api.types";
 import { differenceBetweenTwoDatesInSec, formatTimeInSeconds } from "@/utils/TimeUtils";
 import { AutoComplete, Button, DatePicker, Form, FormInstance, GetRef, Input, InputRef, Modal, Select, Switch, Tag, Tooltip, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
@@ -20,6 +20,9 @@ import translateRequestError from "@/utils/ErrorUtils";
 import { PlusOutlined } from "@ant-design/icons";
 import { HookAPI } from "antd/es/modal/useModal";
 import { TweenOneGroup } from "rc-tween-one";
+import { DraftService } from "@/services/draft.service";
+
+const draftStore = DraftService.createStore<Drafts.SubjectParams>("subject_create_draft");
 
 const TeacherSelector = function({setTeacherModalVisible} : any) {
     const [options, setOptions] = useState<{value: string}[]>([]);
@@ -157,7 +160,8 @@ const TeacherCreationForm = ({teacherModalVisible, setTeacherModalVisible, mainF
 }
 
 type TagsSelectorRef = {
-    getTags: () => string[]
+    getTags: () => string[],
+    setTags: (tags: string[]) => void
 }
 
 const TagsSelector = React.forwardRef(({modal} : {modal: HookAPI}, ref) => {
@@ -168,8 +172,9 @@ const TagsSelector = React.forwardRef(({modal} : {modal: HookAPI}, ref) => {
     const inputRef = React.useRef<InputRef>(null);
 
     useImperativeHandle(ref, () => ({
-        getTags: () => tags
-    }));
+        getTags: () => tags,
+        setTags: tags => setTags(tags)
+    }) as TagsSelectorRef);
 
     useEffect(() => {
         if (inputVisible) {
@@ -315,20 +320,24 @@ export default function CreateSubjectPage() {
             title: "Підтвердження",
             content: <p>Всі поля заповнені правильно щоб створити предмет?</p>,
             onOk: () => {
+                let data = getData();
+                if (!data) {
+                    err("Спробуйте ще раз.");
+                    return;
+                }
+
                 let examEnabled = form.getFieldValue("examEndDate") !== undefined;
 
-                let exam = undefined;
+                let exam = data.exam;
                 if (testRef.current && examEnabled) {
-                    exam = testRef.current.getData();
                     if (exam == undefined) {
                         err("Спробуйте ще раз.");
                         return;
                     }
-                    exam = JSON.stringify(exam);
                 }
 
-                let start_subject_time = form.getFieldValue("startDate").unix() * 1000;
-                let end_exam_time = examEnabled ? (form.getFieldValue("examEndDate").unix() * 1000) : undefined;
+                let start_subject_time = data.start;
+                let end_exam_time = data.exam_end;
                 
                 let current_time = Date.now();
 
@@ -354,28 +363,9 @@ export default function CreateSubjectPage() {
                     }
                 }
 
-                let descEditor = descRef.current?.getEditor();
-                if (!(descEditor && tagsRef.current)) {
-                    err("Спробуйте ще раз.");
-                    return;
-                }
-
-                let info: CreateSubjectParams = {
-                    title: form.getFieldValue("title"),
-                    description: descEditor.getHTML(),
-                    short_description: form.getFieldValue("short_desc"),
-                    start: start_subject_time,
-                    exam_end: end_exam_time,
-                    duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
-                    timetable: form.getFieldValue("timetable"),
-                    tags: tagsRef.current.getTags(),
-                    exam: exam,
-                    teacherEmail: form.getFieldValue("teacher")
-                }
-
                 setLoading(true);
 
-                ChiefTeacherService.createSubject(info).then(resp => {
+                ChiefTeacherService.createSubject(data).then(resp => {
                     setLoading(false);
                     if (!resp.success) {
                         err("Не вдалось створити предмет: " + translateRequestError(resp.error_code));
@@ -387,6 +377,7 @@ export default function CreateSubjectPage() {
                         maskClosable: true,
                         content: "Тільки що ви створили новий предмет.",
                         onOk: () => {
+                            draftStore.remove();
                             push("/subject/announced/" + resp.subject_id);
                         }
                     })
@@ -394,6 +385,139 @@ export default function CreateSubjectPage() {
             }
         })
     }
+
+    const getData = () => {
+        let examEnabled = form.getFieldValue("examEndDate") !== undefined;
+        let exam = undefined;
+        if (testRef.current && examEnabled) {
+            exam = testRef.current.getData();
+            if (!exam) {
+                return;
+            }
+            exam = JSON.stringify(exam);
+        }
+
+        let start_subject_time = form.getFieldValue("startDate") ? form.getFieldValue("startDate").unix() * 1000 : -1;
+        let end_exam_time = examEnabled ? (form.getFieldValue("examEndDate").unix() * 1000) : undefined;
+        let descEditor = descRef.current?.getEditor();
+        if (!(descEditor && tagsRef.current)) {
+            return;
+        }
+
+        let info: CreateSubjectParams = {
+            title: form.getFieldValue("title"),
+            description: descEditor.getHTML(),
+            short_description: form.getFieldValue("short_desc"),
+            start: start_subject_time,
+            exam_end: end_exam_time,
+            duration: differenceBetweenTwoDatesInSec(duration[0], duration[1]),
+            timetable: form.getFieldValue("timetable"),
+            tags: tagsRef.current.getTags(),
+            exam: exam,
+            teacherEmail: form.getFieldValue("teacher")
+        }
+        return info;
+    }
+
+    const saveDraft = () => {
+        let descEditor = descRef.current?.getEditor();
+
+        let exam = undefined;
+        if (testRef.current && form.getFieldValue("isExamRequired")) {
+            exam = testRef.current.getDataAsDraft();
+        }
+
+        draftStore.save({
+            title: form.getFieldValue("title"),
+            description: descEditor?.getHTML(),
+            short_description: form.getFieldValue("short_desc"),
+            start: form.getFieldValue("startDate") && (form.getFieldValue("startDate").unix() * 1000) || undefined,
+            exam_end: form.getFieldValue("examEndDate") ? (form.getFieldValue("examEndDate").unix() * 1000) : undefined,
+            duration_dayjs: [duration[0]?.unix(), duration[1]?.unix()],
+            timetable: form.getFieldValue("timetable"),
+            tags: tagsRef.current?.getTags(),
+            exam_plain: exam,
+            teacherEmail: form.getFieldValue("teacher"),
+            isExamRequired: form.getFieldValue("isExamRequired")
+        })
+    }
+
+    const loadFromDraft = (draft: Drafts.SubjectParams) => {
+        form.setFieldValue("title", draft.title);
+        form.setFieldValue("short_desc", draft.short_description);
+        form.setFieldValue("timetable", draft.timetable);
+        form.setFieldValue("teacher", draft.teacherEmail);
+        form.setFieldValue("isExamRequired", draft.isExamRequired);
+        setTestSelectorVisible(draft.isExamRequired == true);
+        
+        tagsRef.current?.setTags(draft.tags || []);
+
+        if (draft.start) {
+            form.setFieldValue("startDate", dayjs(draft.start));
+        }
+        if (draft.exam_end) {
+            form.setFieldValue("exam_end", dayjs(draft.exam_end));
+        }
+        if (draft.duration_dayjs && (draft.duration_dayjs[0] && draft.duration_dayjs[1])) {
+            setDuration([dayjs(draft.duration_dayjs[0] * 1000), dayjs(draft.duration_dayjs[1] * 1000)]);
+        }
+        if (draft.exam_plain) {
+            let id = setInterval(() => {
+                if (!testRef.current) {
+                    return;
+                }
+                if (draft.exam_plain) {
+                    testRef.current.loadFromDraft(draft.exam_plain);
+                }
+                clearInterval(id);
+            }, 10);
+        }
+    }
+
+    useEffect(() => {
+        let modalInstance = null;
+        if (draftStore.isExist()) {
+            modalInstance = modal.confirm({
+                title: "Чернетка",
+                content: <p>Система виявила незбережені дані {dayjs(draftStore.getDraftDate()).format("DD/MM/YYYY о HH:mm")}. Завантажити їх?</p>,
+                okText: "Так",
+                cancelText: "Видалити",
+                
+                onOk: () => {
+                    let data = draftStore.load();
+                    if (!data) {
+                        modal.error({
+                            title: "Помилка",
+                            content: <p>Не вдалось загрузити чорновик. Пошкоджені дані.</p>
+                        });
+                        return;
+                    }
+                    loadFromDraft(data);
+                },
+                onCancel: () => {
+                    draftStore.remove();
+                }
+            })
+        }
+
+        const beforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = true;
+        }
+
+        window.addEventListener("beforeunload", beforeUnload);
+        window.addEventListener("unload", saveDraft);
+
+        let intervalId = setInterval(() => {
+            // saveDraft();
+        }, 60 * 1000);
+
+        return () => {
+            window.removeEventListener("beforeunload", beforeUnload);
+            clearInterval(intervalId);
+            modalInstance?.destroy();
+        }
+    }, [])
 
     return (
         <Foreground>
