@@ -11,6 +11,7 @@ import Tiptap, { TiptapRef } from "../Tiptap";
 import ImageUploadModal from "../ImageUploadModal";
 import { moveElementInArray, moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
 import countWordsInHtmlString from "@/utils/StringUtils";
+import dayjs, { Dayjs } from "dayjs";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
@@ -311,7 +312,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
     const [modal, modalCtxHolder] = Modal.useModal();
 
-    const [testDuration, setTestDuration] = useState<number | null>(null);
+    const [testDuration, setTestDuration] = useState<Dayjs | null>(null);
     const [passingGrade, setPassingGrade] = useState(70);
 
     const err = (ind: number, str: string) => {
@@ -402,7 +403,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
             return [
                 {
-                    time: testDuration,
+                    time: testDuration ? (testDuration.unix() * 1000) : undefined,
                     passing_grade: passingGrade
                 },
                 ...data
@@ -412,7 +413,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
         getDataAsDraft: () => {
             return [
                 {
-                    time: testDuration,
+                    time: testDuration ? (testDuration.unix() * 1000) : undefined,
                     passing_grade: passingGrade
                 },
                 ...questions.map(item => item.ref.current?.getData())
@@ -423,7 +424,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             let generalInfo = draft[0];
 
             if (generalInfo?.time) {
-                setTestDuration(generalInfo.time);
+                setTestDuration(dayjs(generalInfo.time));
             }
             if (generalInfo?.passing_grade) {
                 setPassingGrade(generalInfo.passing_grade);
@@ -504,8 +505,9 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                             setTestDuration(null);
                             return;
                         }
-                        setTestDuration(e.unix() * 1000)
+                        setTestDuration(e)
                     }}
+                    value={testDuration}
                     showNow={false}
                 />
             </section>
