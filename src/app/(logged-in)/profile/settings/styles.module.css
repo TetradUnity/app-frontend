@@ -1,27 +1,21 @@
-.setting_div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-}
-
-.setting_div p {
-    font-size: 20px;
-}
-
-.modal_avatar_btn {
-    display: block;
-    margin: auto;
-    width: fit-content; height: fit-content;
-    background: none; outline: none; border: none;
+.Link {
+    color: var(--text-primary);
+    text-decoration: none;
     cursor: pointer;
+    opacity: 0.7;
+    transition: color 0.3s ease;
+    padding: 6px 8px;
+    border-radius: 4px;
 }
-.modal_avatar {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
+
+.Link:hover {
+    background: var(--foreground-lighter-1_5);
+    color: var(--text-primary);
+    opacity: 1;
 }
-.modal_section {
-    margin: 20px 0;
+
+.Link.isActive {
+    opacity: 1;
+    background: var(--foreground-lighter);
+    color: var(--text-primary);
 }
