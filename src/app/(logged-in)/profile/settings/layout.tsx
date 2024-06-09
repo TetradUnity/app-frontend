@@ -31,7 +31,7 @@ export default function ILayout({children,}: Readonly<{ children: React.ReactNod
                 borderRadius: 8,
                 padding: "12px 16px",
             }}>
-                <Link className={styles.Link + " " + (selectedLink === "/about" ? styles.isActive : "")} href="profile/settings/about">
+                <Link className={styles.Link + " " + (selectedLink === "/about" ? styles.isActive : "")} href="about">
                     <div style={{
                         display: "flex",
                         gap: "var(--gap)",
@@ -39,7 +39,7 @@ export default function ILayout({children,}: Readonly<{ children: React.ReactNod
                     }}><SolutionOutlined/> Інформація
                     </div>
                 </Link>
-                <Link className={styles.Link + " " + (selectedLink === "/security" ? styles.isActive : "")} href="profile/settings/security">
+                <Link className={styles.Link + " " + (selectedLink === "/security" ? styles.isActive : "")} href="security">
                     <div style={{
                         display: "flex",
                         gap: "var(--gap)",
