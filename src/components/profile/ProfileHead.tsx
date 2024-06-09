@@ -33,7 +33,7 @@ export default function ProfileHead() {
                         <div>
                             <strong>{profile.first_name + " " + profile.last_name}</strong>
                             <p style={{color: 'var(--text-secondary)'}}>{profile.role}</p>
-                            {myRole === "teacher" || profile.isMe ? <p style={{color: 'var(--text-secondary)', fontSize:16}}>{profile.email}</p> : null}
+                            {myRole === "TEACHER" || myRole === "CHIEF_TEACHER" || profile.isMe ? <p style={{color: 'var(--text-secondary)', fontSize:16}}>{profile.email}</p> : null}
                         </div>
                     </Flex>
                     {profile.isMe &&

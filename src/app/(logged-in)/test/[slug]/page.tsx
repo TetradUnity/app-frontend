@@ -7,7 +7,7 @@ import {useParams} from "next/navigation";
 import styles from "./styles.module.css";
 import React, {useEffect, useImperativeHandle, useState} from "react";
 import Tiptap from "@/components/Tiptap";
-import countWordsInHtmlString from "@/utils/StringUtils";
+import {countWordsInHtmlString} from "@/utils/StringUtils";
 
 import {ClockCircleOutlined} from "@ant-design/icons";
 import {formatTimeInSeconds2} from "@/utils/TimeUtils";
@@ -16,6 +16,7 @@ import {SubjectService, filtersType} from "@/services/subject.service";
 
 // TODO: Content Security Policy
 
+//@ts-ignore
 const MOCK_TEST_INFO: TestsNamespace.ProdTest = [
     {
         time: 40 * 60
@@ -352,13 +353,14 @@ export default function TestPage() {
     const timerStart = () => {
         const interval = setInterval(() => {
             setTestInfo(prev => {
+                // @ts-ignore
                 if (prev.time == 0) {
                     clearInterval(interval);
                     setIsTimeUp(true);
                     return prev;
                 }
-
                 return {
+                    // @ts-ignore
                     time: prev.time - 1
                 }
             })
