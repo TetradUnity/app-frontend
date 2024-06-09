@@ -1,6 +1,7 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
+<<<<<<< HEAD
 import {
     IAnnouncedSubject,
     IAnnouncedSubjectShort,
@@ -11,6 +12,9 @@ import {
     IUser, ProdTest,
     TestsNamespace
 } from "@/types/api.types";
+=======
+import { IAnnouncedSubject, IAnnouncedSubjectShort, IResponse, IStudentShortInfo, ISubject, ITArrResponse, ITResponse } from "@/types/api.types";
+>>>>>>> nicell_dev
 
 let subjects: {[id: number]: ISubject} = {
     1: {
@@ -125,6 +129,21 @@ export const SubjectService = {
             return {
                 success: true,
                 data: response.data.subject,
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
+    async register(subjectId: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
+        try {
+            const response = await api.post("/subject/create-link-exam", {
+                subjectId, email,
+                first_name, last_name
+            });
+
+            return {
+                success: true
             }
         } catch (e) {
             return catchApiError(e);

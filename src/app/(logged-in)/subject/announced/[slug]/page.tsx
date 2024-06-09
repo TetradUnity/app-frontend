@@ -6,7 +6,7 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { DeleteOutlined, ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { Button, Divider, Table, TableColumnsType, Tooltip } from "antd";
+import { Button, Divider, Modal, Spin, Table, TableColumnsType, Tooltip } from "antd";
 
 import styles from "./styles.module.css";
 import Link from "next/link";
@@ -15,6 +15,10 @@ import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRe
 import { SubjectService } from "@/services/subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
 import Tiptap from "@/components/Tiptap";
+import { useProfileStore } from "@/stores/profileStore";
+import { useShallow } from "zustand/react/shallow";
+import useModal from "antd/es/modal/useModal";
+import translateRequestError from "@/utils/ErrorUtils";
 
 interface DataType {
     key: React.Key,
@@ -100,8 +104,53 @@ export default function AnnouncedSubject() {
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    /* Temporary */
-    const isTeacher = false;
+    const [loading, setLoading] = useState(false);
+
+    const [modal, ctx] = useModal();
+
+    const role = useProfileStore(useShallow(state => state.role));
+    const email = useProfileStore(useShallow(state => state.email));
+
+    const register = (email: string, first_name?: string, last_name?: string) => {
+        if (!first_name) {
+            first_name = undefined;
+        }
+        if (!last_name) {
+            last_name = undefined;
+        }
+        
+        setLoading(true);
+
+        SubjectService.register(parseInt(slug as string), email, first_name, last_name).then(response => {
+            setLoading(false);
+
+            if (!response.success) {
+                modal.error({
+                    title: "Помилка.",
+                    content: <p>{translateRequestError(response.error_code)}</p>
+                })
+                return;
+            }
+
+            modal.success({
+                title: "Успіх!",
+                content: <p>Протягом найближчого часу очікуйте лист в своїй поштовій скринькі.</p>
+            })
+        })
+    }
+
+    const onClickedRegister = () => {
+        if (role == "GUEST") {
+            setModalVisible(true);
+            return;
+        }
+
+        if (!email) {
+            return;
+        }
+
+        register(email);
+    }
 
     useEffect(() => {
         let subjectId = parseInt(slug as string);
@@ -185,20 +234,23 @@ export default function AnnouncedSubject() {
                     <p>{dayjs(info.time_start).format("D MMMM YYYY року")}</p>
                 </section>
 
-                {!isTeacher && 
-                    <Button onClick={() => setModalVisible(true)} style={{display: "block", margin: "auto"}} type="primary">
+                {(role == "STUDENT" || role == "GUEST") && 
+                    <Button onClick={onClickedRegister} style={{display: "block", margin: "auto"}} type="primary">
                         {info.time_exam_end ? "Подати заявку" : "Зареєструвати мене"}
                     </Button>
                 }
 
-                {isTeacher &&
+                {role == "TEACHER" &&
                     <ForTeacherRender />
                 }
            </div>
 
+           {loading && <Spin fullscreen />}
+           {ctx}
            <AnnouncedSubjectRequestModal
             isOpen={modalVisible}
             close={() => setModalVisible(false)}
+            callback={register}
            />
         </div>
     )

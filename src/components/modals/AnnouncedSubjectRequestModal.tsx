@@ -1,25 +1,26 @@
 import { validateEmail } from "@/utils/OtherUtils";
 import { Input, Modal, Segmented, message } from "antd";
-import { CSSProperties, SetStateAction, useState } from "react";
+import { CSSProperties, useState } from "react";
 
 const sectionStyle: CSSProperties = {
     marginTop: 10
 }
 
-export default function AnnouncedSubjectRequestModal({isOpen, close}: {isOpen: boolean, close: () => void}) {
+export default function AnnouncedSubjectRequestModal(
+    {isOpen, close, callback}
+    :
+    {isOpen: boolean, close: () => void, callback: (email: string, first_name?: string, last_name?: string) => void}
+){
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
 
     type chooseType = "registered" | "not_registered";
     const [choose, setChoose] = useState<chooseType>("not_registered");
-    const [isLoading, setIsLoading] = useState(false);
     
     const [messageApi, contextHolder] = message.useMessage();
 
     const onOk = () => {
-        setIsLoading(true);
-
         let data = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
@@ -29,22 +30,18 @@ export default function AnnouncedSubjectRequestModal({isOpen, close}: {isOpen: b
         if (choose == "not_registered") {
             if (!(data.firstName && data.lastName)) {
                 messageApi.error("Введіть корректні дані.");
-                setIsLoading(false);
                 return;
             }
         }
 
         if (!validateEmail(data.email)) {
             messageApi.error("Введіть правильний email!");
-            setIsLoading(false);
             return;
         }
 
-        setTimeout(() => {
-            messageApi.success("Найближчим часом на вашу пошту прийде повідомлення з силкою на вступний іспит!");
-            close();
-            setIsLoading(false);
-        }, 400);
+        callback(email, firstName, lastName)
+        close();
+        setFirstName(''); setLastName(''); setEmail('');
     }
 
     return (
@@ -54,7 +51,6 @@ export default function AnnouncedSubjectRequestModal({isOpen, close}: {isOpen: b
             okText="Подати заявку"
             onOk={onOk}
             onCancel={close}
-            confirmLoading={isLoading}
         >
             <Segmented
                 value={choose}

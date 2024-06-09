@@ -19,7 +19,7 @@ export interface IUser {
     first_name: string | undefined,
     last_name: string | undefined,
     avatar?: string,
-    role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT"
+    role: "CHIEF_TEACHER" | "TEACHER" | "STUDENT" | "GUEST"
 }
 
 export interface ISearchUserResult {

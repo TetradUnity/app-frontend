@@ -19,3 +19,12 @@
     background: var(--foreground-lighter);
     color: var(--text-primary);
 }
+
+.modal_avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+    margin-bottom: 10px;
+}

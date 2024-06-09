@@ -9,6 +9,7 @@ import {CloudUploadOutlined, DeleteOutlined} from "@ant-design/icons";
 import {UserService} from "@/services/user.service";
 import TextArea from "antd/es/input/TextArea";
 import ImgCropModal from "@/components/ImgCropModal";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 export default function AccountSettingsPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
@@ -32,6 +33,14 @@ export default function AccountSettingsPage() {
     }, [originalFirstName, originalLastName, originalAvatar]);
 
     const save = async () => {
+        // if (!(fileList[0] && fileList[0].originFileObj)) {
+        //     return;
+        // }
+
+        // UploadService.upload(UploadType.AVATAR, fileList[0].originFileObj).then(resp => {
+        //     console.log(resp);
+        // })
+
         const response = await UserService.editProfile({
             first_name: firstName,
             last_name: lastName,
