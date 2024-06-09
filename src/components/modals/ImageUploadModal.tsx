@@ -27,7 +27,7 @@ const FileUploadForm = ({callback, close} : {callback: (url: string) => void, cl
 
     return (
         <>
-            <ImgCropModal quality={0.8} aspectSlider aspect={512/237}>
+            <ImgCropModal quality={0.8} aspectSlider aspect={1}>
                 <Dragger
                     style={{marginTop: 20}}
                     accept=".jpg,.jpeg,.png,.bmp"

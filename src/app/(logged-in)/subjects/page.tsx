@@ -161,10 +161,13 @@ export default function Subjects() {
                     simple
                     showSizeChanger={false}
                     defaultCurrent={1}
-                    total={maximumPages * 10}
-                    pageSize={10}
+                    total={maximumPages * 12}
+                    pageSize={12}
                     style={{display: "block", margin: "auto"}}
                     disabled={isFetching || (isError != null)}
+                    onChange={page => {
+                        fetch(page);
+                    }}
                 />
             </Flex>
             <div style={{

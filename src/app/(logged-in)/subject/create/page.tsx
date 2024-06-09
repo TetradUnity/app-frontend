@@ -611,8 +611,8 @@ export default function CreateSubjectPage() {
             >
                 <Form.Item name="title" label="Назва предмету:" rules={[
                     { required: true, message: "Обов'язкове поле!" },
-                    { min: 5, message: "Назва курсу повина мати більше ніж 4 символа." },
-                    { max: 50, message: "Назва курсу не може мати більше аніж 50 символів." }
+                    { min: 2, message: "Назва курсу повина мати більше ніж 2 символа." },
+                    { max: 25, message: "Назва курсу не може мати більше аніж 25 символів." }
                 ]}>
                     <Input />
                 </Form.Item>
@@ -627,7 +627,7 @@ export default function CreateSubjectPage() {
                     <i style={{color: "rgb(230,230,230)", fontSize: 16}}>Короткий опис буде видно на сторінці з усіма предметами.</i>
                 </Form.Item>
 
-                <Form.Item label="Баннер:" required>
+                <Form.Item label="Баннер:">
                     <ImgCropModal aspect={4.04}>
                         <Dragger
                             accept=".jpg,.jpeg,.png,.bmp"
@@ -658,13 +658,15 @@ export default function CreateSubjectPage() {
 
                 <Form.Item required label="Повний опис предмету:">
                     <p>Тут можна форматувати текст. Подробніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
+                    <p>Опис має складатись як мінімум з 50 символів.</p>
                     <Tiptap
                         ref={descRef}
                         style={{minHeight: 75}}
                         className="ant-input ant-input-outlined tiptap-text-area"
                         listsEnabled={true}
-                        charsLimit={4000}
+                        charsLimit={1500}
                         dontAddMath={true}
+                        showCharCounter
                     />
                 </Form.Item>
 

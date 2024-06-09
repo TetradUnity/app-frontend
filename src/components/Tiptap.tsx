@@ -29,7 +29,8 @@ type TiptapProps = React.HTMLAttributes<HTMLDivElement> & {
     editable?: boolean,
     openImageUploadModal?: (cb: (url: string) => void) => void,
     listsEnabled?: boolean,
-    dontAddMath?: boolean
+    dontAddMath?: boolean,
+    showCharCounter?: boolean
 };
 
 const BubbleMenuButton = ({editor, property, text, onClick} : {editor: Editor, property: string, text: string, onClick: () => void}) => {
@@ -73,11 +74,19 @@ const getAdditionalExtensions = (props : TiptapProps) => {
     return arr;
 }
 
+type ImageAttributes = {
+    src: string
+    alt?: string
+    title?: string
+    style?: string
+};
+
 const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
     let isEditable = props.editable;
     if (isNullOrUndefined(isEditable)) {
         isEditable = true;
     }
+    let charsLimit = props.charsLimit || 300
 
     const editor = useEditor({
         extensions: [
@@ -86,10 +95,29 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
                 types: ['textStyle']
             }),
             CharacterCount.configure({
-                limit: props.charsLimit || 300
+                limit: charsLimit
             }),
             Underline,
-            Image,
+            Image.extend({
+                addAttributes() {
+                    return {
+                        src: {
+                          default: '',
+                        },
+                        alt: {
+                          default: undefined,
+                        },
+                        title: {
+                          default: undefined,
+                        },
+                        style: {
+                          default: undefined,
+                        }
+                      }
+                },
+            }).configure({
+                inline: true
+            }),
             ...getAdditionalExtensions(props)
         ],
         content: props.content || "",
@@ -101,7 +129,10 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
     }) as TiptapRef);
 
     const callback = (url: string) => {
-        editor?.commands.setImage({src: url, alt: "uploaded_img"});
+        editor?.commands.setImage({
+            src: url, alt: "uploaded_img",
+            style: "max-width: 100%; height: 100px; max-height: 180px;"
+        } as ImageAttributes);
     };
 
     useEffect(() => {
@@ -128,58 +159,85 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
         return attribs;
     })();
 
+    // const selection = editor?.state.selection;
+    // console.log(selection);
+
+    // if (selection.node) {
+    //     console.log(selection.node.type.name)
+    //     selection.node.attrs.height="300px"
+    // }
+
+    //@ts-ignore
+    const isTextSelected = (editor && !editor.state.selection.node);
+
     return (
         <>  
-            {(editor && editor.isEditable) && <BubbleMenu editor={editor} tippyOptions={{duration: 50}} shouldShow={({from, to}) => from != to}>
-                <BubbleMenuButton
-                    editor={editor}
-                    property="bold"
-                    text="Жирний"
-                    onClick={() => editor.chain().focus().toggleBold().run()}
-                />
+            {(editor && editor.isEditable) && <BubbleMenu editor={editor} tippyOptions={{duration: 10}} shouldShow={({from, to}) => from != to}>
+                {isTextSelected
+                ?     <>
+                        <BubbleMenuButton
+                            editor={editor}
+                            property="bold"
+                            text="Жирний"
+                            onClick={() => editor.chain().focus().toggleBold().run()}
+                        />
 
-                <BubbleMenuButton
-                    editor={editor}
-                    property="italic"
-                    text="Курсив"
-                    onClick={() => editor.chain().focus().toggleItalic().run()}
-                />
+                        <BubbleMenuButton
+                            editor={editor}
+                            property="italic"
+                            text="Курсив"
+                            onClick={() => editor.chain().focus().toggleItalic().run()}
+                        />
 
-                <BubbleMenuButton
-                    editor={editor}
-                    property="strike"
-                    text="Закреслити"
-                    onClick={() => editor.chain().focus().toggleStrike().run()}
-                />
+                        <BubbleMenuButton
+                            editor={editor}
+                            property="strike"
+                            text="Закреслити"
+                            onClick={() => editor.chain().focus().toggleStrike().run()}
+                        />
 
-                <BubbleMenuButton
-                    editor={editor}
-                    property="underline"
-                    text="Підчеркнути"
-                    onClick={() => editor.chain().focus().toggleUnderline().run()}
-                />
+                        <BubbleMenuButton
+                            editor={editor}
+                            property="underline"
+                            text="Підчеркнути"
+                            onClick={() => editor.chain().focus().toggleUnderline().run()}
+                        />
 
-                {props.listsEnabled && <>
-                    <BubbleMenuButton
-                        editor={editor}
-                        property="orderedList"
-                        text="Впорядкований список"
-                        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                    />
+                        {props.listsEnabled && <>
+                                <BubbleMenuButton
+                                    editor={editor}
+                                    property="orderedList"
+                                    text="Впорядкований список"
+                                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                                />
 
-                    <BubbleMenuButton
-                        editor={editor}
-                        property="bulletList"
-                        text="Маркований список"
-                        onClick={() => editor.chain().focus().toggleBulletList().run()}
-                    />
-                </>}
+                                <BubbleMenuButton
+                                    editor={editor}
+                                    property="bulletList"
+                                    text="Маркований список"
+                                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                                />
+                            </>
+                        }
+                    </>
+
+                    : <>
+                        <Button
+                            onClick={() => editor.commands.deleteSelection()}
+                            type="default"
+                            danger
+                        >Видалити</Button>
+                    </>
+                }
             </BubbleMenu>}
 
             <EditorContent
                 {...tiptapDivAttributes}
                 editor={editor}
             />
+            {props.showCharCounter &&
+                <p>{editor ? (editor.storage.characterCount.characters()) : 0}/{charsLimit}</p>
+            }
 
             {props.openImageUploadModal && 
             <Button
