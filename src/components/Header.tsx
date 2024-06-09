@@ -37,7 +37,7 @@ const items: MenuProps['items'] = [
         label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
         icon: <RiseOutlined/>,
         key: '2',
-},
+    },
     {
         label: <Link href={`/profile/settings`}>Налаштування</Link>,
         icon: <SettingOutlined/>,
@@ -54,7 +54,7 @@ const items: MenuProps['items'] = [
     },
 ]
 
-function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, text: string}) {
+function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
     const pathname = usePathname();
 
     return (
@@ -170,7 +170,7 @@ export default function AppHeader() {
 
     ]
 
-    const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
+    const gridTemplateColumns = isLoggedIn ? "220px 1fr 140px" : "250px 1fr";
     return (
         <div style={{
             background: 'var(--header)',
@@ -182,45 +182,58 @@ export default function AppHeader() {
             backdropFilter: "blur(10px)",
             borderBottom: "solid 1px #444",
         }}>
-            <div style={{
-                maxWidth: "1200px",
-                width: "100%",
-                display: "grid",
-                gridTemplateColumns: gridTemplateColumns,
-                alignItems: "center",
-                margin: "0 auto",
-                height: "100%",
-            }}>
+            <div className="header-grid">
                 <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
-                    <Image src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image className="logo-big" src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image className="logo-small" src="/logo.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
                 {isLoggedIn ?
-                    <Space style={{display: "flex", justifyContent: "center"}}>
-                        <NavButton
-                            path="/subjects"
-                            icon={<BookOutlined/>}
-                            text="Предмети"
-                        />
-                        <NavButton
-                            path="/students"
-                            icon={<IdcardOutlined/>}
-                            text="Студенти"
-                        />
-                        <NavButton
-                            path="/teachers"
-                            icon={<TeamOutlined/>}
-                            text="Вчителі"
-                        />
-                    </Space> : null}
+                    <>
+                        <div className="nav-buttons">
+                            <NavButton
+                                path="/subjects"
+                                icon={<BookOutlined/>}
+                                text="Предмети"
+                            />
+                            <NavButton
+                                path="/students"
+                                icon={<IdcardOutlined/>}
+                                text="Студенти"
+                            />
+                            <NavButton
+                                path="/teachers"
+                                icon={<TeamOutlined/>}
+                                text="Вчителі"
+                            />
+                        </div>
+                        <div className="nav-buttons-short">
+                            <NavButton
+                                path="/subjects"
+                                icon={<BookOutlined/>}
+                                text=""
+                            />
+                            <NavButton
+                                path="/students"
+                                icon={<IdcardOutlined/>}
+                                text=""
+                            />
+                            <NavButton
+                                path="/teachers"
+                                icon={<TeamOutlined/>}
+                                text=""
+                            />
+                        </div>
+                    </> : <div/>}
                 {isLoggedIn ?
                     <Space align="center" style={{
                         display: "flex",
                         position: "relative",
                         justifyContent: "flex-end",
-                        marginRight: 20
+                        marginRight: 20,
+                        marginLeft: "20px"
                     }}>
                         <Link href={`/profile/${profile.id}`}>
-                            <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
+                            <Avatar shape="square" alt="avatar" size={32} style={{margin: 0, padding: 0}}
                                     icon={<UserOutlined/>}/>
                         </Link>
 
@@ -228,13 +241,12 @@ export default function AppHeader() {
                             <Button type="text" icon={<MenuOutlined/>}/>
                         </Dropdown>
 
-                    </Space>
-
-                    : <Space
+                    </Space> :
+                    <div
                         style={{display: "flex", position: "relative", justifyContent: "flex-end", padding: "10px 0"}}>
                         <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
                         <Link href="/register">Реєстрація</Link>
-                    </Space>}
+                    </div>}
             </div>
         </div>
     )
