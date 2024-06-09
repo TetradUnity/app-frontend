@@ -91,6 +91,7 @@ export default function ILayout({
             <Content>
                 {(!isAppLoading && !isFailedToLoad) && children}
                 {(!isAppLoading && !isFailedToLoad) && <UploadProgressOuter />}
+                
                 {(isAppLoading || isLoading) && <Spin
                     indicator={<LoadingOutlined style={{fontSize: 60}}/>}
                     spinning={true}

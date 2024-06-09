@@ -13,16 +13,16 @@ const FileUploadForm = ({callback, close} : {callback: (url: string) => void, cl
         if (!(fileList[0] && fileList[0].originFileObj)) {
             return;
         }
+        
+        close();
 
         let resp = await UploadService.upload(UploadType.EXAM_RESOURCE, fileList[0].originFileObj);
         if (!resp.success) {
-            close();
             return;
         }
 
-        callback(UploadService.getImageURLByPath(resp.data));
+        callback(UploadService.getImageURL(UploadType.EXAM_RESOURCE, resp.data));
         setFileList([]);
-        close();
     }
 
     return (
