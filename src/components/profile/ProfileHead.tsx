@@ -22,11 +22,8 @@ export default function ProfileHead() {
     return (
         <>
             <Space direction="vertical" style={{display: "flex", background: "var(--foreground)", borderRadius: 8}}>
-                <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "12px 16px"
+                <div className={styles.Head} style={{
+
                 }}>
                     <Flex gap='var(--gap)' align="center">
                         <Avatar shape="square" size={56} icon={<UserOutlined/>}/>
