@@ -12,6 +12,7 @@ import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUt
 import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { TweenOneGroup } from "rc-tween-one";
+import { Reorder } from "framer-motion";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
@@ -284,24 +285,46 @@ ref) => {
                 <div className={styles.answers_div}>
                     {(type == "TEXT") && <p style={{marginBottom: 10}}>Під час перевірки відповіді нижній та верхній регістр не враховується.</p>}
                     
-                    {(type != "TEXT") && answers.map(item =>
-                        <Answer
-                            key={item.id}
-                            ref={item.ref}
-                            deleteAnswer={deleteAnswer.bind(null, item)}
-                            uncheckAllAnswers={uncheckAllAnswers}
-                            orderAnswer={orderAnswer.bind(null, item)}
-                            openImageUploadModal={openImageUploadModal}
-                        />
-                    )}
-                    {(type == "TEXT") && answers.map(item =>
-                        <TextAnswer
-                            key={item.id}
-                            ref={item.ref}
-                            deleteAnswer={deleteAnswer.bind(null, item)}
-                            orderAnswer={orderAnswer.bind(null, item)}
-                        />
-                    )}
+                    <Reorder.Group
+                        axis="y"
+                        values={answers}
+                        onReorder={setAnswers}
+                    >
+                        {(type != "TEXT") && answers.map(item =>
+                            <Reorder.Item
+                                as="div"
+                                key={item.id}
+                                value={item}
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0 }}
+                            >
+                                <Answer
+                                    ref={item.ref}
+                                    deleteAnswer={deleteAnswer.bind(null, item)}
+                                    uncheckAllAnswers={uncheckAllAnswers}
+                                    orderAnswer={orderAnswer.bind(null, item)}
+                                    openImageUploadModal={openImageUploadModal}
+                                />
+                            </Reorder.Item>
+                        )}
+                        {(type == "TEXT") && answers.map(item =>
+                            <Reorder.Item
+                                as="div"
+                                key={item.id}
+                                value={item}
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0 }}
+                            >
+                                <TextAnswer
+                                    ref={item.ref}
+                                    deleteAnswer={deleteAnswer.bind(null, item)}
+                                    orderAnswer={orderAnswer.bind(null, item)}
+                                />
+                            </Reorder.Item>
+                        )}
+                    </Reorder.Group>
 
                     <div className={styles.center_btn}>
                         <Button onClick={createAnswer} size="large" type="dashed" shape="circle" icon={<PlusCircleFilled />} />
@@ -555,17 +578,34 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
             <p>В заголовках запитання, або в текстових відповідях можна форматувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
-            {questions.map((item,i) => 
-                <Question
-                    key={item.id}
-                    index={i}
-                    ref={item.ref}
-                    deleteQuestion={deleteQuestion.bind(null, item)}
-                    orderQuestion={orderQuestion.bind(null, item)}
-                    modal={modal}
-                    openImageUploadModal={openImageUploadModal}
-                />
-            )}
+            
+            
+            <Reorder.Group
+                axis="y"
+                values={questions}
+                onReorder={setQuestions}
+            >
+                {questions.map((item,i) => 
+                    <Reorder.Item
+                        as="div"
+                        key={item.id}
+                        value={item}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        style={{marginBottom: 20}}
+                    >
+                        <Question
+                            index={i}
+                            ref={item.ref}
+                            deleteQuestion={deleteQuestion.bind(null, item)}
+                            orderQuestion={orderQuestion.bind(null, item)}
+                            modal={modal}
+                            openImageUploadModal={openImageUploadModal}
+                        />
+                    </Reorder.Item>
+                )}
+            </Reorder.Group>
             
             <Button
                 block

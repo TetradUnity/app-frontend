@@ -83,6 +83,7 @@ export default function AccountSettingsPage() {
                 }}>
                     <ImgCropModal>
                         <Dragger
+                            showUploadList={false}
                             accept=".jpg,.jpeg,.png,.bmp"
                             fileList={fileList}
                             customRequest={
