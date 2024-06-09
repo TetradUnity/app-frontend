@@ -159,14 +159,6 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
         return attribs;
     })();
 
-    // const selection = editor?.state.selection;
-    // console.log(selection);
-
-    // if (selection.node) {
-    //     console.log(selection.node.type.name)
-    //     selection.node.attrs.height="300px"
-    // }
-
     //@ts-ignore
     const isTextSelected = (editor && !editor.state.selection.node);
 

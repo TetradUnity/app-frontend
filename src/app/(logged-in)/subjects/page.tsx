@@ -1,14 +1,13 @@
 'use client'
 
-import {Button, Dropdown, Empty, Flex, Input, MenuProps, Pagination, Radio, Space, Spin} from "antd";
-import {useEffect, useState} from "react";
+import {Button, Divider, Empty, Flex, Input, InputRef, Pagination, Radio, Spin, Tag} from "antd";
+import React, {useEffect, useState} from "react";
+
 import {
     PlusCircleFilled,
-    CaretDownOutlined,
-    SearchOutlined,
-    SortAscendingOutlined,
-    SortDescendingOutlined
+    SearchOutlined
 } from "@ant-design/icons";
+
 import SubjectCard from "@/components/cards/SubjectCard";
 import Link from "next/link";
 import {useProfileStore} from "@/stores/profileStore";
@@ -16,37 +15,13 @@ import {useShallow} from "zustand/react/shallow";
 import {IAnnouncedSubjectShort} from "@/types/api.types";
 
 import {LoadingOutlined} from '@ant-design/icons';
-import {SubjectService, filtersType} from "@/services/subject.service";
+import {SubjectService, filterProps} from "@/services/subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
+import { TweenOneGroup } from "rc-tween-one";
 
-const items: MenuProps['items'] = [
-    {
-        label: "По назві",
-        key: '0',
-    },
-    {
-        label: "По даті початку",
-        key: '1',
-    },
-    {
-        label: "По кількості студентів",
-        key: '2',
-    },
-    {key: 'divider', type: 'divider'},
-    {
-        label: "За зростанням",
-        key: '3',
-    },
-    {
-        label: "За спаданням",
-        key: '4',
-    },
-]
+import { PlusOutlined } from "@ant-design/icons";
 
 export default function Subjects() {
-    const [sortBy, setSortBy] = useState("По назві");
-    const [sortOrder, setSortOrder] = useState("asc");
-
     const profileRole = useProfileStore(useShallow(state => state.role));
 
     const [isFetching, setIsFetching] = useState(true);
@@ -54,8 +29,39 @@ export default function Subjects() {
     const [subjects, setSubjects] = useState<IAnnouncedSubjectShort[]>([]);
     const [maximumPages, setMaximumPages] = useState(1);
 
-    const fetch = (page: number, filters?: filtersType) => {
-        SubjectService.getAnnouncedSubjects(page, filters).then(res => {
+    /* Filters */
+    const [withExam, setWithExam] = useState<number | undefined>(undefined);
+    const [teacherFirstName, setTeacherFirstName] = useState('');
+    const [teacherLastName, setTeacherLastName] = useState('');
+    const [titleSearch, setTitleSearch] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+
+    const getFilters = () => {
+        let filters: filterProps = {};
+
+        if (withExam != undefined) {
+            filters.has_exam = (withExam == 1);
+        }
+        if (titleSearch) {
+            filters.title = titleSearch;
+        }
+        if (teacherFirstName) {
+            filters.first_name_teacher = teacherFirstName;
+        }
+        if (teacherLastName) {
+            filters.last_name_teacher = teacherLastName;
+        }
+        if (tags.length > 0) {
+            filters.tags = tags;
+        }
+
+        return filters;
+    }
+
+    const fetch = (page: number) => {
+        
+
+        SubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
             setIsFetching(false);
             if (!res.success) {
                 // @ts-ignore
@@ -72,30 +78,62 @@ export default function Subjects() {
         })
     }
 
+    const [tagInputVisible, setTagInputVisible] = useState(false);
+    const [tagInputValue, setTagInputValue] = useState('');
+    const tagInputRef = React.useRef<InputRef>(null);
+
+    useEffect(() => {
+        if (tagInputVisible) {
+            tagInputRef.current?.focus();
+        }
+    }, [tagInputVisible]);
+
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+
+    const onInputConfirm = () => {
+        let tag = tagInputValue.trim();
+        if (tag.length > 0 && tags.indexOf(tag) === -1) {
+            setTags([...tags, tag]);
+        }
+
+        setTagInputVisible(false);
+        setTagInputValue('');
+    }
+
+    const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        let value = e.target.value.substring(0, 20);
+        setTagInputValue(value);
+
+        let input = tagInputRef.current?.input
+        if (input) {
+            input.style.width = value.length + 3 + "ch"
+        }
+    }
+
+    const showInput = () => {
+        if (tags.length == 5) {
+            return;
+        }
+        setTagInputVisible(true);
+    }
+
     useEffect(() => {
         document.title = `Предмети / Пошук`;
 
         fetch(1);
     }, [])
 
-    const onClick: MenuProps['onClick'] = ({key}) => {
-        switch (key) {
-            case '0':
-                setSortBy("По назві");
-                break;
-            case '1':
-                setSortBy("По даті початку");
-                break;
-            case '2':
-                setSortBy("По кількості студентів");
-                break;
-            case '3':
-                setSortOrder("asc");
-                break;
-            case '4':
-                setSortOrder("desc");
-                break;
-        }
+    const resetFilters = () => {
+        setWithExam(undefined); setTeacherFirstName(''); setTeacherLastName(''); setTags([]);
+        setMaximumPages(1);
+        fetch(1);
+    }
+
+    const applyFilters = () => {
+        setMaximumPages(1);
+        fetch(1);
     }
 
     return (
@@ -114,22 +152,16 @@ export default function Subjects() {
                                 <Link href="/subject/create">Створити новий предмет</Link>
                             </Button>
                         }
-
-                        <Dropdown menu={{items, onClick}} trigger={["click"]} overlayStyle={{paddingTop: 12}}
-                                  placement="bottomRight">
-                            <Button size="small" style={{
-                                display: "flex",
-                                alignItems: "center",
-                                borderRadius: 8,
-                            }}>
-                                {sortOrder === "asc" ? <SortAscendingOutlined/> : <SortDescendingOutlined/>}
-                                {sortBy}
-                                <CaretDownOutlined style={{fontSize: 12}}/>
-                            </Button>
-                        </Dropdown>
                     </Flex>
                 </Flex>
-                <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>}/>
+
+                <Input
+                    placeholder="Пошук по назві"
+                    prefix={<SearchOutlined/>}
+                    onPressEnter={applyFilters}
+                    value={titleSearch}
+                    onChange={e => setTitleSearch(e.target.value)}
+                />
 
 
                 {isFetching &&
@@ -153,7 +185,7 @@ export default function Subjects() {
                     opacity: isFetching ? 0.4 : 1
                 }}>
                     {subjects.map(subject => (
-                        <SubjectCard key={subject.id} subject={subject}/>
+                        <SubjectCard key={subject.id} subject={subject} filters={getFilters()} />
                     ))}
                 </div>
 
@@ -177,23 +209,108 @@ export default function Subjects() {
                 position: "sticky",
                 top: 'calc(58px + var(--gap))',
                 height: "fit-content",
-                maxWidth: "330px",
+                width: "270px",
             }}>
-                <h2>Фільтри (TODO)</h2>
-                <Space direction="vertical" size="large">
-                    <Radio.Group>
-                        <Radio value={1}>Активні</Radio>
-                        <Radio value={2}>Неактивні</Radio>
-                    </Radio.Group>
-                    <Radio.Group>
-                        <Radio value={1}>З екзаменом</Radio>
-                        <Radio value={2}>Без екзамену</Radio>
-                    </Radio.Group>
-                    <Radio.Group>
-                        <Radio value={1}>Завершені</Radio>
-                        <Radio value={2}>Не завершені</Radio>
-                    </Radio.Group>
-                </Space>
+                <h2>Фільтри</h2>
+                
+                <Divider style={{margin: "10px 0"}} />
+
+                <h4 style={{marginBottom: 5}}>Екзамен:</h4>
+                <Radio.Group
+                    value={withExam}
+                    onChange={e => {
+                        setWithExam(e.target.value);
+                    }}
+                >
+                    <Radio value={1}>З</Radio>
+                    <Radio value={2}>Без</Radio>
+                </Radio.Group>
+
+                <Divider style={{margin: "10px 0"}} />
+
+                <h4 style={{marginBottom: 5}}>Вчитель:</h4>
+                <div>
+                    <Flex gap={38}>
+                        <p>Ім'я:</p>
+                        <Input
+                            value={teacherFirstName}
+                            onChange={e => setTeacherFirstName(e.target.value)}
+                            size="small"
+                        />
+                    </Flex>
+
+                    <Flex style={{marginTop: 10}} gap={10}>
+                        <p>Фамілія:</p>
+                        <Input
+                            value={teacherLastName}
+                            onChange={e => setTeacherLastName(e.target.value)}
+                            size="small"
+                        />
+                    </Flex>
+                </div>
+
+                <Divider style={{margin: "10px 0"}} />
+
+                <h4>Теги:</h4>
+                <div>
+                    <TweenOneGroup
+                        appear={false}
+                        enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100 }}
+                        leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                        style={{display: "inline-block"}}
+                        onEnd={(e) => {
+                            if (e.type === 'appear' || e.type === 'enter') {
+                            (e.target as any).style = 'display: inline-block';
+                            }
+                        }}
+                    >
+                        {tags.map(tag => 
+                        <span key={tag} style={{display: "inline-block"}}>
+                                <Tag
+                                    closable
+                                    onClose={(e) => {
+                                        e.preventDefault();
+                                        removeTag(tag)
+                                    }}
+                                >
+                                    {tag}
+                                </Tag>
+                        </span>
+                        )}
+                    </TweenOneGroup>
+
+                    {tagInputVisible
+                        ? <Input
+                            ref={tagInputRef}
+                            type="text"
+                            size="small"
+                            style={{width: 0, minWidth: 90, maxWidth: 200, height: 25, marginTop: 10}}
+                            value={tagInputValue}
+                            onChange={onInputChange}
+                            onBlur={onInputConfirm}
+                            onPressEnter={onInputConfirm}
+                        />
+                        :  <Tag
+                                    onClick={showInput}
+                                    style={{
+                                        borderStyle: "dashed",
+                                        cursor: "pointer",
+                                        display: "inline-block",
+                                        marginTop: 10
+                                    }}
+                                    color="cyan"
+                                >
+                                    <PlusOutlined /> Добавити
+                            </Tag>
+                    }
+                </div>
+
+                <Divider style={{margin: "10px 0"}} />
+
+                <div style={{width: "fit-content", display: "block", marginLeft: "auto"}}>
+                    <Button onClick={resetFilters} size="small" style={{fontSize: 14, marginRight: 5}}>Скинути</Button>
+                    <Button onClick={applyFilters} size="small" style={{fontSize: 14}} type="primary">Застосувати</Button>
+                </div>
             </div>
         </Flex>
     );

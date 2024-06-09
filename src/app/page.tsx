@@ -28,9 +28,6 @@ export default function LandPage() {
         <Link href="/login">
           <Button type="primary">Увійти в акаунт</Button>
         </Link>
-        <Link href="/register">
-          <Button type="primary">Створити новий акаунт</Button>
-        </Link>
       </Flex>
       {contextHolder}
     </Content>

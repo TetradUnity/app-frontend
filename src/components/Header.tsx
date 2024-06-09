@@ -232,7 +232,6 @@ export default function AppHeader() {
                     : <Space
                         style={{display: "flex", position: "relative", justifyContent: "flex-end", padding: "10px 0"}}>
                         <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
-                        <Link href="/register">Реєстрація</Link>
                     </Space>}
             </div>
         </div>

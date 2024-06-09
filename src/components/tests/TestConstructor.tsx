@@ -444,7 +444,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
 
             return [
                 {
-                    time: testDuration ? (testDuration.unix() * 1000) : undefined,
+                    time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
                     passing_grade: passingGrade
                 },
                 ...data
@@ -553,7 +553,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             <section>
                 <h2 style={{marginBottom: 10}}>Тривалість тесту:</h2>
                 <TimePicker
-                    onChange={e => {
+                    onChange={(e,e2) => {
                         if (!e) {
                             setTestDuration(null);
                             return;

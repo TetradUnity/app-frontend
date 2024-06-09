@@ -56,9 +56,12 @@ let subject_students: {[id: number]: IStudentShortInfo[]} = {
     ]
 };
 
-export type filtersType = {
+export type filterProps = {
     tags?: string[],
-    hasExam?: boolean
+    has_exam?: boolean,
+    first_name_teacher?: string,
+    last_name_teacher?: string,
+    title?: string
 };
 
 export const SubjectService = {
@@ -94,14 +97,16 @@ export const SubjectService = {
         }
     },
 
-    async getAnnouncedSubjects(page=1, filters?: filtersType): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
+    async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
         try {
-            const response = await api.post("/subject/get-announce-subjects", {}, {
-                params: {
-                    page,
-                    tags: filters?.tags,
-                    hasExam: filters?.hasExam
-                }
+            const response = await api.post("/subject/get-announce-subjects", {
+                title: filters?.title,
+                first_name_teacher: filters?.first_name_teacher,
+                last_name_teacher: filters?.last_name_teacher,
+                has_exam: filters?.has_exam,
+                tags: filters?.tags
+            }, {
+                params: { page }
             });
 
             return {
