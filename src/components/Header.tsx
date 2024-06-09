@@ -169,8 +169,6 @@ export default function AppHeader() {
 
 
     ]
-
-    const gridTemplateColumns = isLoggedIn ? "220px 1fr 140px" : "250px 1fr";
     return (
         <div style={{
             background: 'var(--header)',
