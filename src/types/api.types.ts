@@ -67,6 +67,8 @@ type IAnnouncedSubjectBase = {
     teacher_first_name: string;
     teacher_last_name: string;
     teacher_id: number;
+
+    banner: string
 }
 
 export type IAnnouncedSubject = 
@@ -167,7 +169,8 @@ export interface CreateSubjectParams {
     timetable: string,
     teacherEmail: string,
     tags: string[],
-    exam?: string
+    exam?: string,
+    banner: string
 }
 
 export namespace Drafts {

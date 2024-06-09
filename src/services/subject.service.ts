@@ -133,7 +133,7 @@ export const SubjectService = {
 
     async register(subjectId: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
         try {
-            const response = await api.post("/subject/create-link-exam", {
+            const response = await api.post("/subject/apply-subject", {
                 subjectId, email,
                 first_name, last_name
             });

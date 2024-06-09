@@ -13,12 +13,11 @@ export default function ProfileHead() {
     const [selectedLink, setSelectedLink] = useState(pathname.substring(pathname.lastIndexOf("/"), pathname.length));
     const myRole = useProfileStore(store => store.role);
     const profile = useQueryProfileStore();
-    console.log(selectedLink)
 
     const handleLinkClick = (link: string) => {
         setSelectedLink(link);
     }
-
+    
     return (
         <>
             <Space direction="vertical" style={{display: "flex", background: "var(--foreground)", borderRadius: 8}}>
@@ -29,11 +28,11 @@ export default function ProfileHead() {
                     padding: "12px 16px"
                 }}>
                     <Flex gap='var(--gap)' align="center">
-                        <Avatar shape="square" size={56} icon={<UserOutlined/>}/>
+                        <Avatar src={profile.avatar_url} shape="square" size={56} icon={<UserOutlined/>}/>
                         <div>
                             <strong>{profile.first_name + " " + profile.last_name}</strong>
                             <p style={{color: 'var(--text-secondary)'}}>{profile.role}</p>
-                            {myRole === "teacher" || profile.isMe ? <p style={{color: 'var(--text-secondary)', fontSize:16}}>{profile.email}</p> : null}
+                            {myRole === "TEACHER" || profile.isMe ? <p style={{color: 'var(--text-secondary)', fontSize:16}}>{profile.email}</p> : null}
                         </div>
                     </Flex>
                     {profile.isMe &&

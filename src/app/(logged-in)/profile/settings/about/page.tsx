@@ -6,22 +6,22 @@ import {useProfileStore} from "@/stores/profileStore";
 import Dragger from "antd/es/upload/Dragger";
 
 import {CloudUploadOutlined, DeleteOutlined} from "@ant-design/icons";
-import {UserService} from "@/services/user.service";
+import {EditProfileProps, UserService} from "@/services/user.service";
 import TextArea from "antd/es/input/TextArea";
 import ImgCropModal from "@/components/ImgCropModal";
 import { UploadService, UploadType } from "@/services/upload.service";
+import translateRequestError from "@/utils/ErrorUtils";
 
 export default function AccountSettingsPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
     const profile = useProfileStore();
 
-    const [originalFirstName, originalLastName, originalAvatar] = useProfileStore(state => [state.first_name, state.last_name, state.avatar]);
+    const [originalFirstName, originalLastName, originalAvatarURL] = useProfileStore(state => [state.first_name, state.last_name, state.avatar_url]);
     const [firstName, setFirstName] = useState(originalFirstName);
     const [lastName, setLastName] = useState(originalLastName);
 
     const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
-
-    const [avatarURL, setAvatarURL] = useState(originalAvatar);
+    const [avatarURL, setAvatarURL] = useState(originalAvatarURL);
 
     const [loading, setLoading] = useState(false);
 
@@ -29,23 +29,50 @@ export default function AccountSettingsPage() {
         setFirstName(originalFirstName);
         setLastName(originalLastName);
         setFileList([]);
-        setAvatarURL(originalAvatar);
-    }, [originalFirstName, originalLastName, originalAvatar]);
+        setAvatarURL(originalAvatarURL);
+    }, [originalFirstName, originalLastName, originalAvatarURL]);
+
+    const uploadFile = async (): Promise<string | null> => {
+        if (!(fileList[0] && fileList[0].originFileObj)) {
+            return null;
+        }
+
+        const resp = await UploadService.upload(UploadType.AVATAR, fileList[0].originFileObj);
+        if (!resp.success) {
+            return null;
+        }
+
+        return resp.data;
+    }
 
     const save = async () => {
-        // if (!(fileList[0] && fileList[0].originFileObj)) {
-        //     return;
-        // }
+        setLoading(true);
 
-        // UploadService.upload(UploadType.AVATAR, fileList[0].originFileObj).then(resp => {
-        //     console.log(resp);
-        // })
+        let toEdit: EditProfileProps = {};
 
-        const response = await UserService.editProfile({
-            first_name: firstName,
-            last_name: lastName,
-            avatar: avatarURL
-        });
+        if (avatarURL != originalAvatarURL) {
+            if (avatarURL) {
+                let uploadedAvatarPath = await uploadFile();
+                if (!uploadedAvatarPath) {
+                    setLoading(false);
+                    return;
+                }
+                toEdit.avatar = uploadedAvatarPath;
+            } else {
+                toEdit.avatar = "";
+            }
+        }
+
+        if (firstName != originalFirstName) {
+            toEdit.first_name = firstName;
+        }
+        if (lastName != originalLastName) {
+            toEdit.last_name = lastName;
+        }
+
+        const response = await UserService.editProfile(toEdit);
+
+        setLoading(false);
 
         if (response.success) {
             modal.success({
@@ -55,7 +82,7 @@ export default function AccountSettingsPage() {
         } else {
             modal.error({
                 title: "Помилка зміни профілю",
-                content: response.error_code
+                content: translateRequestError(response.error_code)
             });
         }
     }
@@ -97,7 +124,8 @@ export default function AccountSettingsPage() {
                                     setAvatarURL(URL.createObjectURL(info.file.originFileObj as Blob));
                                 } else {
                                     setFileList([]);
-                                    setAvatarURL(originalAvatar);
+                                    URL.revokeObjectURL(avatarURL);
+                                    setAvatarURL(originalAvatarURL);
                                 }
                             }}
                             style={{
@@ -127,8 +155,8 @@ export default function AccountSettingsPage() {
                             shape={"square"}
                             src={avatarURL}
                         ></Avatar>
-                        <Button type="default" icon={<DeleteOutlined/>} onClick={() => {
-                            setAvatarURL(originalAvatar);
+                        <Button disabled={avatarURL === ""} type="default" icon={<DeleteOutlined/>} onClick={() => {
+                            setAvatarURL("");
                             setFileList([]);
                         }} style={{
                             position: "absolute",
@@ -179,7 +207,9 @@ export default function AccountSettingsPage() {
                 <TextArea rows={4} value={"NOT IMPLEMENTED"}></TextArea>
             </div>
 
-            <Button type="primary" style={{marginLeft: "auto"}} onClick={save}>Зберегти</Button>
+            <Button loading={loading} disabled={loading} type="primary" style={{marginLeft: "auto"}} onClick={save}>Зберегти</Button>
+
+            {modalCtxHolder}
         </div>
 
     )

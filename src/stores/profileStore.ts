@@ -1,7 +1,8 @@
+import { UploadService, UploadType } from "@/services/upload.service";
 import { IUser } from "@/types/api.types";
 import { create } from "zustand";
 
-type State = IUser;
+type State = IUser & {avatar_url: string};
 
 type Action = {
     updateProfile: (profile: IUser | undefined) => void
@@ -13,9 +14,20 @@ export const useProfileStore = create<State & Action>(set => ({
     first_name: "",
     last_name: "",
     role: "GUEST",
-    avatar: "/imgs/no_avatar.png",
+    avatar: "",
+    avatar_url: "/imgs/no_avatar.png",
 
     updateProfile: (profile) => set(state => {
-        return profile || state;
+        if (!profile) {
+            return state;
+        }
+
+        let newState = {...state, ...profile};
+
+        if (profile && profile.avatar) {
+            newState.avatar_url = UploadService.getImageURL(UploadType.AVATAR, profile.avatar);
+        }
+
+        return newState;
     })
 }));

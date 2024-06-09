@@ -7,7 +7,7 @@ import { UploadService, UploadType } from "@/services/upload.service";
 export default function SubjectCard({subject}: {subject: IAnnouncedSubjectShort}) {
     return (
         <Link className={styles.Card} href={"/subject/announced/" + subject.id} key={subject.id}>
-            <Image src={UploadService.getImageURL(UploadType.BANNER, "base1.jpg")} alt="subject banner"
+            <Image src={UploadService.getImageURL(UploadType.BANNER, subject.banner)} alt="subject banner"
                    preview={false} style={{
                 width: "100%",
                 height: "100px",

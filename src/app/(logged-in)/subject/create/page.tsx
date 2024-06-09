@@ -22,6 +22,12 @@ import { HookAPI } from "antd/es/modal/useModal";
 import { TweenOneGroup } from "rc-tween-one";
 import { DraftService } from "@/services/draft.service";
 import { countCharactersInHTML } from "@/utils/StringUtils";
+import ImgCropModal from "@/components/ImgCropModal";
+import Dragger from "antd/es/upload/Dragger";
+
+import { CloudUploadOutlined } from "@ant-design/icons";
+import { UploadFile } from "antd/lib";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 const draftStore = DraftService.createStore<Drafts.SubjectParams>("subject_create_draft");
 
@@ -319,6 +325,8 @@ export default function CreateSubjectPage() {
 
     const isDraftModalVisible = React.useRef<boolean>();
 
+    const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+
     const err = (err: string) => {
         modal.error({
             title: "Помилка.",
@@ -333,10 +341,13 @@ export default function CreateSubjectPage() {
         modal.confirm({
             title: "Підтвердження",
             content: <p>Всі поля заповнені правильно щоб створити предмет?</p>,
-            onOk: () => {
-                let data = getData();
+            onOk: async () => {
+                setLoading(true);
+
+                let data = await getData();
                 if (!data) {
                     err("Спробуйте ще раз.");
+                    setLoading(false);
                     return;
                 }
                 
@@ -347,6 +358,7 @@ export default function CreateSubjectPage() {
                 if (testRef.current && examEnabled) {
                     if (exam == undefined) {
                         err("Спробуйте ще раз.");
+                        setLoading(false);
                         return;
                     }
                 }
@@ -358,37 +370,41 @@ export default function CreateSubjectPage() {
 
                 if (start_subject_time < current_time) {
                     err("Дата початку предмету має бути після поточної дати.");
+                    setLoading(false);
                     return;
                 }
 
                 if (end_exam_time) {
                     if (end_exam_time > start_subject_time) {
                         err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+                        setLoading(false);
                         return;
                     }
 
                     if (end_exam_time < current_time + (7 * 86400 * 1000)) {
                         err("Дата закінчення екзамену має бути назначена як мінімум через неділю від поточної дати.")
+                        setLoading(false);
                         return;
                     }
 
                     if (start_subject_time - end_exam_time < 86400 * 1000) {
                         err("Різниця між датою закінчення екзамену та початком предмету має бути як мінімум 1 день.");
+                        setLoading(false);
                         return;
                     }
                 }
 
                 if (countCharactersInHTML(data.description) < 100) {
                     err("Кількість символів в описі має бути як мінімум 100.");
+                    setLoading(false);
                     return;
                 }
 
                 if (data.duration < 3 * 24 * 3600 * 1000) {
                     err("Тривалість предмету має бути як мінімум 3 дня.");
+                    setLoading(false);
                     return;
                 }
-
-                setLoading(true);
 
                 ChiefTeacherService.createSubject(data).then(resp => {
                     setLoading(false);
@@ -411,7 +427,7 @@ export default function CreateSubjectPage() {
         })
     }
 
-    const getData = () => {
+    const getData = async () => {
         let examEnabled = form.getFieldValue("examEndDate") !== undefined;
         let exam = undefined;
         if (testRef.current && examEnabled) {
@@ -429,6 +445,15 @@ export default function CreateSubjectPage() {
             return;
         }
 
+        let banner = "";
+        if (fileList[0] && fileList[0].originFileObj) {
+            const resp = await UploadService.upload(UploadType.BANNER, fileList[0].originFileObj);
+            if (!resp.success) {
+                return;
+            }
+            banner = resp.data;
+        }
+
         let info: CreateSubjectParams = {
             title: form.getFieldValue("title"),
             description: descEditor.getHTML(),
@@ -439,7 +464,8 @@ export default function CreateSubjectPage() {
             timetable: form.getFieldValue("timetable"),
             tags: tagsRef.current.getTags(),
             exam: exam,
-            teacherEmail: form.getFieldValue("teacher")
+            teacherEmail: form.getFieldValue("teacher"),
+            banner: banner
         }
         return info;
     }
@@ -591,6 +617,7 @@ export default function CreateSubjectPage() {
                     <Input />
                 </Form.Item>
 
+
                 <Form.Item label="Короткий опис предмету:" required>
                     <Form.Item noStyle name="short_desc" rules={[
                         { required: true, message: "Обов'язкове поле!" }
@@ -598,6 +625,35 @@ export default function CreateSubjectPage() {
                         <TextArea />
                     </Form.Item>
                     <i style={{color: "rgb(230,230,230)", fontSize: 16}}>Короткий опис буде видно на сторінці з усіма предметами.</i>
+                </Form.Item>
+
+                <Form.Item label="Баннер:" required>
+                    <ImgCropModal aspect={4.04}>
+                        <Dragger
+                            accept=".jpg,.jpeg,.png,.bmp"
+                            fileList={fileList}
+                            customRequest={
+                                ({file, onSuccess}) => {
+                                    // @ts-ignore
+                                    onSuccess("ok");
+                                }}
+                            onChange={(info) => {
+                                if (info.file.status === "uploading" || info.file.status === "done") {
+                                    setFileList([info.file]);
+                                } else {
+                                    setFileList([]);
+                                }
+                            }}
+                        >
+                            <p>
+                                <CloudUploadOutlined style={{color: "rgba(255,255,255,0.5)", fontSize: 30}}/>
+                            </p>
+                            <p style={{
+                                fontSize: 17, color: "rgba(255,255,255,0.5)"
+                            }}>Натисніть або перетягніть картинку</p>
+
+                        </Dragger>
+                    </ImgCropModal>
                 </Form.Item>
 
                 <Form.Item required label="Повний опис предмету:">

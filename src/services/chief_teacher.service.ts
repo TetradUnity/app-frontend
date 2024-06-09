@@ -41,13 +41,13 @@ export const ChiefTeacherService = {
     },
 
     // subject
-    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam} : CreateSubjectParams): Promise<IResponse & {subject_id?: number}> {
+    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam, banner} : CreateSubjectParams): Promise<IResponse & {subject_id?: number}> {
         try {
             const response = await api.post("/subject/create", {
                 time_start: start, time_exam_end: exam_end,
                 title: title, description, short_description,
                 duration: duration, timetable: timetable, teacher_email: teacherEmail,
-                tags: tags, exam: exam
+                tags: tags, exam: exam, banner: banner
             });
             
             return {

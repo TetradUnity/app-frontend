@@ -25,6 +25,7 @@ export default function ProfileLayout({
     const updateQueryProfile = useQueryProfileStore(store => store.updateProfile);
 
     const myProfileId = useProfileStore(store => store.id);
+    const [isNotFound, setNotFound] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -32,21 +33,22 @@ export default function ProfileLayout({
         let profileId = parseInt(slug as string);
 
         if (!profileId || profileId < 0) {
-            notFound();
+            setNotFound(true);
+            return;
         }
 
         UserService.getProfile(profileId).then(response => {
+            setIsLoading(false);
             if (!response.success) {
                 if (response.error_code == "user_not_found") {
-                    notFound();
+                    setNotFound(true);
+                    return;
                 }
                 setFailedToLoad(true);
                 return;
             }
 
             if (response.data) {
-                console.log(response.data)
-                setIsLoading(false);
                 setProfileLoaded(true);
                 updateQueryProfile({
                     ...response.data,
@@ -55,6 +57,10 @@ export default function ProfileLayout({
             }
         })
     }, []);
+    
+    if (isNotFound) {
+        notFound();
+    }
 
     if (!profileLoaded) {
         return null;

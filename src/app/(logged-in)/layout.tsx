@@ -1,5 +1,5 @@
 'use client'
-import {Button, Layout, Result} from "antd";
+import {Button, Layout, Progress, Result} from "antd";
 import {Content} from "antd/es/layout/layout";
 
 import { Spin } from "antd";
@@ -10,18 +10,42 @@ import { useProfileStore } from "@/stores/profileStore";
 import { useAppStore } from "@/stores/appStore";
 import { usePathname } from "next/navigation";
 import { AuthTokensService } from "@/services/auth-token.service";
+import { useUploadStore } from "@/stores/uploadStore";
 
-const contentStyle: CSSProperties = {
-  width: 1200,
-  margin: "20px auto",
-  background: "rgb(28,28,28)",
-  padding: 40,
-  borderRadius: 10,
-  boxShadow: "10px 10px 78px -19px rgba(20,20,20,0.9)",
-  display: "block",
-};
+import { motion } from "framer-motion";
 
 const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/"];
+
+const UploadProgressOuter = () => {
+    const uploadStore = useUploadStore();
+
+    const shouldShowText = uploadStore.error || (uploadStore.progress == 100)
+
+    return (
+        <motion.div
+            className={"upload_outer" + (uploadStore.isVisible ? "" : " uo_hidden")}
+            animate={{opacity: uploadStore.isVisible ? 1 : 0}}
+            initial={{opacity: 0}}
+        >
+            <Progress
+                percent={uploadStore.progress}
+                type="circle"
+                status={uploadStore.error ? "exception" : undefined}
+            />
+
+            <motion.div
+                className="uo_error_wrapper"
+                animate={{height: shouldShowText ? 30 : 0, opacity: shouldShowText ? 1 : 0}}
+                transition={{type: "tween"}}
+            >
+                {uploadStore.error
+                    ? <p>Щось пішло не так: {uploadStore.error}</p>
+                    : <p>Файл завантажився на сервер!</p>
+                }
+            </motion.div>
+        </motion.div>
+    )
+}
 
 export default function ILayout({
                                     children,
@@ -65,13 +89,16 @@ export default function ILayout({
     return (
         <Layout style={{flex: 1}}>
             <Content>
-                {!isAppLoading && !isFailedToLoad && children}
+                {(!isAppLoading && !isFailedToLoad) && children}
+                {(!isAppLoading && !isFailedToLoad) && <UploadProgressOuter />}
                 {(isAppLoading || isLoading) && <Spin
                     indicator={<LoadingOutlined style={{fontSize: 60}}/>}
                     spinning={true}
                     fullscreen
                     tip={<h1>Завантаження...</h1>}
                 />}
+                
+                
                 {isFailedToLoad &&
                     <Result
                         status="error"

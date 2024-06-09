@@ -7,11 +7,10 @@ import { HookAPI } from "antd/es/modal/useModal";
 
 import { Drafts, TestsNamespace } from "@/types/api.types";
 import Tiptap, { TiptapRef } from "../Tiptap";
-import ImageUploadModal from "../ImageUploadModal";
+import ImageUploadModal from "../modals/ImageUploadModal";
 import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
 import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { TweenOneGroup } from "rc-tween-one";
 import { Reorder } from "framer-motion";
 
 type AnswerRef = {

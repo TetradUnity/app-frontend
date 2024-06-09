@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import {Avatar, Button, Dropdown, Flex, Image, MenuProps, Space} from "antd";
+import {Avatar, Button, Dropdown, Image, MenuProps, Space} from "antd";
 import {AuthTokensService} from "@/services/auth-token.service";
 import {
     ArrowRightOutlined,
@@ -19,7 +19,6 @@ import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
-import {IUser} from "@/types/api.types";
 
 let myProfileId = -1;
 const items: MenuProps['items'] = [
@@ -66,7 +65,7 @@ function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, te
 
 export default function AppHeader() {
     const [isLoggedIn, setLoggedIn] = useState(false)
-    const profile: IUser = useProfileStore();
+    const profile = useProfileStore();
 
 
     useEffect(() => {
@@ -108,7 +107,7 @@ export default function AppHeader() {
                     </div>
                 </Link>
             ),
-            icon: <Avatar shape="square" alt="user avatar" icon={profile.avatar}/>,
+            icon: <Avatar src={profile.avatar_url} shape="square" alt="user avatar" icon={profile.avatar}/>,
             key: '0',
         },
         {key: 'divider', type: 'divider'},
@@ -221,7 +220,7 @@ export default function AppHeader() {
                     }}>
                         <Link href={`/profile/${profile.id}`}>
                             <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
-                                    icon={<UserOutlined/>}/>
+                                src={profile.avatar_url} icon={<UserOutlined/>}/>
                         </Link>
 
                         <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12, minWidth: 230}}>

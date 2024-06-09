@@ -19,6 +19,7 @@ import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
 import useModal from "antd/es/modal/useModal";
 import translateRequestError from "@/utils/ErrorUtils";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 interface DataType {
     key: React.Key,
@@ -182,7 +183,7 @@ export default function AnnouncedSubject() {
     return (
         <div className={styles.slot}>
             <div className={styles.banner}>
-                <img src="https://gstatic.com/classroom/themes/Honors.jpg" alt="banner" />
+                <img src={UploadService.getImageURL(UploadType.BANNER, info.banner)} alt="banner" />
                 <h1>{info.title}</h1>
                 <Link href={"/profile/"+info.teacher_id}>
                     <LinkOutlined style={{marginRight: 5}} />

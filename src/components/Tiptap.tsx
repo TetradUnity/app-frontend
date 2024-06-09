@@ -86,7 +86,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
                 types: ['textStyle']
             }),
             CharacterCount.configure({
-                limit: props.charsLimit || 100
+                limit: props.charsLimit || 300
             }),
             Underline,
             Image,
