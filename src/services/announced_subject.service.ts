@@ -24,7 +24,7 @@ export const AnnouncedSubjectService = {
         }
     },
 
-    async updateAnswers(answers: TestsNamespace.AnswerType[], uid: string): Promise<IResponse> {
+    async updateAnswers(uid: string, answers: TestsNamespace.AnswerType[]): Promise<IResponse> {
         try {
             await api.post("/subject/update-answer", {
                 answer: JSON.stringify(answers), uid
@@ -38,7 +38,7 @@ export const AnnouncedSubjectService = {
         }
     },
 
-    async finishExam(answers: TestsNamespace.AnswerType[], uid: string): Promise<IResponse> {
+    async finishExam(uid: string, answers: TestsNamespace.AnswerType[]): Promise<IResponse> {
         try {
             await api.post("/subject/send-answer-exam", {
                 answer: JSON.stringify(answers), uid

@@ -16,6 +16,7 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import { SaveFilled } from "@ant-design/icons";
 
 import { motion } from "framer-motion";
+import translateRequestError from "@/utils/ErrorUtils";
 
 // TODO: Content Security Policy
 
@@ -72,10 +73,6 @@ const TextAnswerRender = ({question, index}: QuestionRenderParams) => {
 };
 
 const Question = ({question, index}: QuestionRenderParams) => {
-    if (!question) {
-        return null;
-    }
-
     return (
         <>
             <Tiptap style={{marginBottom: 10, fontSize: 23}}
@@ -135,6 +132,8 @@ export default function TestPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isNotFound, setNotFound] = useState(false);
 
+    const [modal, modalCtx] = Modal.useModal();
+
     const testStore = useTestStore();
 
     const fetch = (uid: string | string[]) => {
@@ -174,17 +173,24 @@ export default function TestPage() {
     }
 
     useEffect(() => {
-
         fetch(testUID);
-        setIsLoaded(true);
     }, []);
 
-    const save = () => {
+    const save = async () => {
         if (currentAnswer == testStore.answers[selectedQuestion]) {
             return;
         }
 
-        
+        console.log(JSON.stringify(testStore.answers));
+
+        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.answers).then(resp => {
+            if (!resp.success) {
+                modal.error({
+                    title: "Помилка при зберіганні",
+                    content: <p>При зберіганні відповіді трапилась помилка: {translateRequestError(resp.error_code)}</p>
+                })
+            }
+        })
     }
 
     const nextQuestion = () => {
@@ -200,13 +206,15 @@ export default function TestPage() {
     }
 
 
-
     if (!isLoaded) {
+        console.log("not loaded.")
         return <Spin fullscreen spinning />;
     }
+
     if (isNotFound) {
         notFound();
     }
+
     return (
         <>
             {!isTimeUp ?
@@ -257,10 +265,6 @@ export default function TestPage() {
                         <div className={styles.content_inner}>
                             <div className={styles.upRight}>
                                 <Timer timeEnd={timeEnd} />
-                                
-                                {/* <motion.span animate={{width: 30}}>
-                                    <SaveFilled style={{fontSize: 30, color: "#77a2e6"}} />
-                                </motion.span> */}
                             </div>
 
                             <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>Питання
@@ -309,6 +313,7 @@ export default function TestPage() {
                     <p>Відповіді, які ви обрали були передани. Очікуйте лист який прийде до вашої скринькі коли почнеться предмет.</p>
                 </div>
             }
+            {modalCtx}
         </>
     )
 }
