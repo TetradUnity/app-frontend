@@ -14,6 +14,7 @@ import { useTestStore } from "@/stores/testStore";
 import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 
 import translateRequestError from "@/utils/ErrorUtils";
+import { pluralize } from "@/utils/InternalizationUtils";
 
 // TODO: Content Security Policy
 
@@ -113,7 +114,7 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
     return (
         <div className={styles.clock}>
             <ClockCircleOutlined style={{color: "#349feb"}}/>
-            <p>{formatTimeInSeconds2(Math.round(Math.max(timeEnd - Date.now(), 0) / 1000))}</p>
+            <p>{formatTimeInSeconds2(Math.max(timeEnd - Date.now(), 0) / 1000)}</p>
         </div>
     )
 }
@@ -177,7 +178,7 @@ export default function TestPage() {
     };
 
     const submit = () => {
-        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(resp => {
+        AnnouncedSubjectService.finishExam(testUID as string, testStore.getAnswers()).then(resp => {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка",
@@ -187,10 +188,11 @@ export default function TestPage() {
             }
 
             modal.success({
-                title: "Успіх!",
-                content: <p>Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!</p>,
-                onOk: () => window.location.href = "/",
-                onCancel: () => window.location.href = "/"
+                title: "Успіх",
+                // @ts-ignore
+                content: <p>Ви здали на {pluralize(Math.round(resp.result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}). Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!</p>,
+                onOk: () => window.location.href = "/subjects",
+                onCancel: () => window.location.href = "/subjects"
             })
         })
     }

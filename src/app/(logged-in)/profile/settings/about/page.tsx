@@ -25,6 +25,8 @@ export default function AccountSettingsPage() {
 
     const [loading, setLoading] = useState(false);
 
+    const updateProfileStore = useProfileStore(selector => selector.updateProfile);
+
     useEffect(() => {
         setFirstName(originalFirstName);
         setLastName(originalLastName);
@@ -79,6 +81,10 @@ export default function AccountSettingsPage() {
                 title: "Профіль успішно змінено",
                 content: "Ваш профіль успішно змінено."
             });
+
+            UserService.getProfile().then(response => {
+                updateProfileStore(response.data);
+            })
         } else {
             modal.error({
                 title: "Помилка зміни профілю",

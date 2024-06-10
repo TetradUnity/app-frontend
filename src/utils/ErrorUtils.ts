@@ -8,7 +8,8 @@ const SERVER_ERRORS = {
     "teacher_not_exists": "вчитель з таким email не існує",
     "incorrect_format_exam": "екзамен переданий в некоректній формі",
     "very_short": "дуже коротко",
-    "late": "пізно"
+    "late": "пізно",
+    "you_already_tried ": "ви вже зареєструвались"
 
 } as const;
 

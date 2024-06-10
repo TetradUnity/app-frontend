@@ -282,8 +282,6 @@ ref) => {
             <section>
                 <h3>Варіанти відповідей:</h3>
                 <div className={styles.answers_div}>
-                    {(type == "TEXT") && <p style={{marginBottom: 10}}>Під час перевірки відповіді нижній та верхній регістр не враховується.</p>}
-                    
                     <Reorder.Group
                         axis="y"
                         values={answers}

@@ -50,6 +50,7 @@ export function formatTimeInSeconds(seconds: number): string {
 }
 
 export function formatTimeInSeconds2(sec: number): string {
+    sec = Math.round(sec);
     let seconds = sec % 60;
     let minutes = Math.floor(sec / 60) % 60;
     let hours = Math.floor(sec / 3600) % 24;

@@ -1,14 +1,13 @@
 'use client';
 
-import { tempSubjects, tempTeachers } from "@/temporary/data"
-import { IAnnouncedSubject, IUser, TemporaryAnnoncedSubjectInfo } from "@/types/api.types";
+import { IAnnouncedSubject } from "@/types/api.types";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { DeleteOutlined, ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { Button, Divider, Modal, Spin, Table, TableColumnsType, Tooltip } from "antd";
+import { ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
+import { Button, Spin } from "antd";
 
-import styles from "./styles.module.css";
+import styles from "@/styles/announced_subject.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
 import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRequestModal";
@@ -20,80 +19,6 @@ import { useShallow } from "zustand/react/shallow";
 import useModal from "antd/es/modal/useModal";
 import translateRequestError from "@/utils/ErrorUtils";
 import { UploadService, UploadType } from "@/services/upload.service";
-
-interface DataType {
-    key: React.Key,
-    firstNameAndLastName: string,
-    grade: number,
-}
-
-const MOCK_ANNOUNCED_SUBJECT_STUDENTS_DATA: DataType[] = [
-    {
-        key: '1',
-        firstNameAndLastName: "Іван Верба",
-        grade: 60
-    },
-    {
-        key: '2',
-        firstNameAndLastName: "Федір Остапчий",
-        grade: 80
-    },
-    {
-        key: '3',
-        firstNameAndLastName: "Галина Кущ",
-        grade: 30
-    }
-];
-
-const announcedSubjectStudentsColumns: TableColumnsType<DataType> = [
-    {
-        title: "Ім'я та фамілія",
-        dataIndex: "firstNameAndLastName",
-    },
-    {
-        title: "Бал",
-        dataIndex: "grade",
-        showSorterTooltip: { target: 'full-header' },
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.grade - b.grade,
-    },
-    {
-        title: "Операція",
-        width: 1,
-        render: (_, record) => {
-            return (
-                <Tooltip title="Відказати студенту бути участником вашого предмету">
-                    <Button
-                        type="primary"
-                        shape="circle"
-                        danger
-                        icon={<DeleteOutlined />}
-                        style={{display: "block", margin: "auto"}}
-                    />
-                </Tooltip>
-            )
-        }
-    }
-];
-
-const ForTeacherRender = () => {
-    const examEnded = true;
-    return (
-        <>
-            <Divider />
-
-            {
-                !examEnded
-                ? <p style={{textAlign: "center"}}>Ви побачите список студентів, які подали заявку на вступ до вашого предмета і зможете видаляти тих, які на вашу думку не підходять, після того, як закінчиться іспит.</p>
-                : <Table
-                    dataSource={MOCK_ANNOUNCED_SUBJECT_STUDENTS_DATA}
-                    columns={announcedSubjectStudentsColumns}
-                    bordered
-                />
-            }
-        </>
-    );
-}
 
 export default function AnnouncedSubject() {
     const params = useParams();
@@ -179,7 +104,7 @@ export default function AnnouncedSubject() {
     if (!info) {
         notFound();
     }
-    
+
     return (
         <div className={styles.slot}>
             <div className={styles.banner}>
@@ -242,7 +167,7 @@ export default function AnnouncedSubject() {
                 }
 
                 {role == "TEACHER" &&
-                    <ForTeacherRender />
+                    <p style={{textAlign: "center"}}>Ви побачите список студентів, які подали заявку на вступ до вашого предмета і зможете видаляти тих, які на вашу думку не підходять, після того, як закінчиться іспит.</p>
                 }
            </div>
 

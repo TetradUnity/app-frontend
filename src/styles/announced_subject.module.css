@@ -62,3 +62,9 @@
 .content section p {
     color: rgb(230,230,230);
 }
+
+
+.modal_p {
+    color: rgb(210, 210, 210);
+    font-style: italic;
+}

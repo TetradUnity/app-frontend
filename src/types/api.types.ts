@@ -151,6 +151,13 @@ export namespace TestsNamespace {
         answers: string[]
     };
     export type ProdTest = ProdQuestion[];
+
+    export interface CandidateQuestion {
+        title: string,
+        type:  QuestionType,
+        answers: Answer[],
+        your_answer: string[] | number[] | []
+    };
 }
 
 export interface CreateSubjectParams {
@@ -174,4 +181,13 @@ export namespace Drafts {
         isExamRequired: boolean
     }>;
     export type Test = Partial<TestsNamespace.Test>;
+}
+
+export interface ICandidate {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    result: number;
+    duration?: number;
 }

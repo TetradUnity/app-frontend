@@ -13,7 +13,7 @@ export default function TeacherHomePage() {
                 <div className={styles.SubjectsContainer}>
                     {tempSubjects.map(item => (
                         <div key={item.id} className={styles.Subject}>
-                            <SubjectCard subject={item}/>
+                            {/* <SubjectCard subject={item} filters={{}} /> */}
                         </div>
                     ))}
                 </div>
