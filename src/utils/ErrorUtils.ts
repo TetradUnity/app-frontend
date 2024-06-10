@@ -7,7 +7,8 @@ const SERVER_ERRORS = {
     "error_time": "помилка з указанням часу",
     "teacher_not_exists": "вчитель з таким email не існує",
     "incorrect_format_exam": "екзамен переданий в некоректній формі",
-    "very_short": "дуже коротко"
+    "very_short": "дуже коротко",
+    "late": "пізно"
 
 } as const;
 

@@ -13,9 +13,6 @@ import { formatTimeInSeconds2 } from "@/utils/TimeUtils";
 import { useTestStore } from "@/stores/testStore";
 import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 
-import { SaveFilled } from "@ant-design/icons";
-
-import { motion } from "framer-motion";
 import translateRequestError from "@/utils/ErrorUtils";
 
 // TODO: Content Security Policy
@@ -93,7 +90,7 @@ const Question = ({question, index}: QuestionRenderParams) => {
     )
 };
 
-const Timer = ({timeEnd}: {timeEnd: number | undefined}) => {
+const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp: React.Dispatch<React.SetStateAction<boolean>>}) => {
     if (!timeEnd) {
         return null;
     }
@@ -103,7 +100,12 @@ const Timer = ({timeEnd}: {timeEnd: number | undefined}) => {
     useEffect(() => {
         let id = setInterval(() => {
             setForce(v => !v);
-        }, 1000);
+            
+            if (Date.now() > timeEnd) {
+                setIsTimeUp(true);
+                clearInterval(id);
+            }
+        }, 100);
 
         return () => clearInterval(id);
     }, []);
@@ -111,7 +113,7 @@ const Timer = ({timeEnd}: {timeEnd: number | undefined}) => {
     return (
         <div className={styles.clock}>
             <ClockCircleOutlined style={{color: "#349feb"}}/>
-            <p>{formatTimeInSeconds2(Math.max(timeEnd - Date.now(), 0) / 1000)}</p>
+            <p>{formatTimeInSeconds2(Math.round(Math.max(timeEnd - Date.now(), 0) / 1000))}</p>
         </div>
     )
 }
@@ -138,15 +140,22 @@ export default function TestPage() {
 
     const fetch = (uid: string | string[]) => {
         AnnouncedSubjectService.startExam(uid as string).then(res => {
-            if (!res.data) {
+            if (!(res.data && res.time_end)) {
                 setIsLoaded(true);
                 setNotFound(true);
                 return;
             }
             
-            let testInfo = res.data;
+            let questions = res.data;
 
-            setQuestions(testInfo);
+            if (Date.now() > res.time_end) {
+                setIsTimeUp(true);
+                setIsLoaded(true);
+                return;
+            }
+
+            testStore.setTotalQuestions(questions.length);
+            setQuestions(questions);
             setTimeEnd(res.time_end);
             
             setIsLoaded(true);
@@ -168,8 +177,22 @@ export default function TestPage() {
     };
 
     const submit = () => {
-        alert(JSON.stringify(testStore.answers));
-        // TODO next router push to result page
+        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(resp => {
+            if (!resp.success) {
+                modal.error({
+                    title: "Помилка",
+                    content: <p>Закінчити тест не вдалось: {translateRequestError(resp.error_code)}</p>
+                })
+                return;
+            }
+
+            modal.success({
+                title: "Успіх!",
+                content: <p>Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!</p>,
+                onOk: () => window.location.href = "/",
+                onCancel: () => window.location.href = "/"
+            })
+        })
     }
 
     useEffect(() => {
@@ -177,13 +200,12 @@ export default function TestPage() {
     }, []);
 
     const save = async () => {
+        console.log(currentAnswer, testStore.answers[selectedQuestion])
         if (currentAnswer == testStore.answers[selectedQuestion]) {
             return;
         }
 
-        console.log(JSON.stringify(testStore.answers));
-
-        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.answers).then(resp => {
+        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(resp => {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка при зберіганні",
@@ -264,7 +286,7 @@ export default function TestPage() {
                     <div className={styles.content}>
                         <div className={styles.content_inner}>
                             <div className={styles.upRight}>
-                                <Timer timeEnd={timeEnd} />
+                                <Timer timeEnd={timeEnd} setIsTimeUp={setIsTimeUp} />
                             </div>
 
                             <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>Питання
@@ -291,7 +313,7 @@ export default function TestPage() {
                                         Закінчити спробу
                                     </Button>
 
-                                    <Modal title="Confirm Submission" visible={isModalVisible} onOk={handleOk}
+                                    <Modal title="Підтвердження" open={isModalVisible} onOk={handleOk}
                                            onCancel={hideModal}>
                                         <p>Ви впевнені?</p>
                                     </Modal>
@@ -310,7 +332,7 @@ export default function TestPage() {
                     gap: "var(--gap)"
                 }}>
                     <h1>Час вийшов</h1>
-                    <p>Відповіді, які ви обрали були передани. Очікуйте лист який прийде до вашої скринькі коли почнеться предмет.</p>
+                    <p>Відповіді, які ви встигли обрати були передані вчителю. Слідкуйте за почтовою скриньою!</p>
                 </div>
             }
             {modalCtx}
