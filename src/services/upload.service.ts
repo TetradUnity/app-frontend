@@ -15,6 +15,7 @@ export enum UploadType {
     EXAM_RESOURCE = "exam_resources",
     HOMEWORK_RESOURCE = "homework_resources",
     HOMEWORK = "homework",
+    CERTIFICATES = "certificates"
 }
 
 export const UploadService = {

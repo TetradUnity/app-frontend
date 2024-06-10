@@ -11,7 +11,7 @@ const Highlight = ({source, toFind} : {source: string, toFind: string}) => {
 
     if (!toFind || from == -1) {
         return <>{source}</>;
-    }//
+    }
 
     return (
         <>

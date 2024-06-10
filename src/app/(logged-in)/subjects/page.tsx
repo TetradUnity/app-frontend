@@ -1,6 +1,6 @@
 'use client'
 
-import {Button, Divider, Empty, Flex, Input, InputRef, Pagination, Radio, Spin, Tag} from "antd";
+import {AutoComplete, Button, Divider, Empty, Flex, GetRef, Input, InputRef, Pagination, Radio, Select, Spin, Tag} from "antd";
 import React, {useEffect, useState} from "react";
 
 import {
@@ -20,6 +20,8 @@ import translateRequestError from "@/utils/ErrorUtils";
 import { TweenOneGroup } from "rc-tween-one";
 
 import { PlusOutlined } from "@ant-design/icons";
+import { TagsService } from "@/services/tags.service";
+import { debounce } from "lodash";
 
 export default function Subjects() {
     const profileRole = useProfileStore(useShallow(state => state.role));
@@ -59,8 +61,8 @@ export default function Subjects() {
     }
 
     const fetch = (page: number) => {
+        setIsFetching(true);
         
-
         SubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
             setIsFetching(false);
             if (!res.success) {
@@ -80,7 +82,10 @@ export default function Subjects() {
 
     const [tagInputVisible, setTagInputVisible] = useState(false);
     const [tagInputValue, setTagInputValue] = useState('');
-    const tagInputRef = React.useRef<InputRef>(null);
+    const tagInputRef = React.useRef<GetRef<typeof Select>>(null);
+    const [tagDropdownVisible, setTagDropdownVisible] = useState(false);
+    const [tagOptions, setTagOptions] = useState<{ value: string }[]>([]);
+    const [tagsLoading, setTagsLoading] = useState(false);
 
     useEffect(() => {
         if (tagInputVisible) {
@@ -102,14 +107,9 @@ export default function Subjects() {
         setTagInputValue('');
     }
 
-    const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        let value = e.target.value.substring(0, 20);
+    const onInputChange = (query: string) => {
+        let value = query.substring(0, 20);
         setTagInputValue(value);
-
-        let input = tagInputRef.current?.input
-        if (input) {
-            input.style.width = value.length + 3 + "ch"
-        }
     }
 
     const showInput = () => {
@@ -117,6 +117,30 @@ export default function Subjects() {
             return;
         }
         setTagInputVisible(true);
+    }
+
+    const searchTags = async (query: string) => {
+        if (tagInputValue.length < 1) {
+            setTagOptions([]);
+            return;
+        }
+        if (tagsLoading) {
+            return;
+        }
+
+        setTagsLoading(true);
+
+        let response = await TagsService.search(query);
+
+        setTagsLoading(false);
+
+        if (!response.success) {
+            setTagOptions([]);
+            return;
+        }
+
+        // @ts-ignore
+        setTagOptions(response.data?.map(tag => ({value: tag})));
     }
 
     useEffect(() => {
@@ -267,6 +291,7 @@ export default function Subjects() {
                         {tags.map(tag => 
                         <span key={tag} style={{display: "inline-block"}}>
                                 <Tag
+                                    style={{marginTop: 10}}
                                     closable
                                     onClose={(e) => {
                                         e.preventDefault();
@@ -280,27 +305,35 @@ export default function Subjects() {
                     </TweenOneGroup>
 
                     {tagInputVisible
-                        ? <Input
+                        ? <AutoComplete
                             ref={tagInputRef}
-                            type="text"
-                            size="small"
-                            style={{width: 0, minWidth: 90, maxWidth: 200, height: 25, marginTop: 10}}
+                            style={{width: 140, height: 25, marginTop: 10}}
                             value={tagInputValue}
                             onChange={onInputChange}
                             onBlur={onInputConfirm}
-                            onPressEnter={onInputConfirm}
+                            backfill
+                            options={tagOptions}
+                            onSelect={tag => setTagInputValue(tag)}
+                            onDropdownVisibleChange={open => setTagDropdownVisible(open)}
+                            onSearch={debounce(searchTags, 400)}
+                            onKeyDown={e => {
+                                if (e.key == "Enter" && !tagDropdownVisible) {
+                                    onInputConfirm();
+                                }
+                            }}
+                            notFoundContent={tagsLoading && <Spin spinning style={{display: "block", margin: "auto"}} />}
                         />
                         :  <Tag
-                                    onClick={showInput}
-                                    style={{
-                                        borderStyle: "dashed",
-                                        cursor: "pointer",
-                                        display: "inline-block",
-                                        marginTop: 10
-                                    }}
-                                    color="cyan"
-                                >
-                                    <PlusOutlined /> Добавити
+                                onClick={showInput}
+                                style={{
+                                    borderStyle: "dashed",
+                                    cursor: "pointer",
+                                    display: "inline-block",
+                                    marginTop: 10
+                                }}
+                                color="cyan"
+                            >
+                                <PlusOutlined /> Добавити
                             </Tag>
                     }
                 </div>
