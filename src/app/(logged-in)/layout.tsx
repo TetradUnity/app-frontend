@@ -4,7 +4,7 @@ import {Content} from "antd/es/layout/layout";
 
 import { Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserService } from "@/services/user.service";
 import { useProfileStore } from "@/stores/profileStore";
 import { useAppStore } from "@/stores/appStore";
@@ -14,7 +14,7 @@ import { useUploadStore } from "@/stores/uploadStore";
 
 import { motion } from "framer-motion";
 
-const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/"];
+const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/", "/profile/"];
 
 const UploadProgressOuter = () => {
     const uploadStore = useUploadStore();
@@ -54,6 +54,7 @@ export default function ILayout({
 }>) {
     const [isLoading, setIsLoading] = useAppStore(store => [store.isLoading, store.setLoading]);
     const [isFailedToLoad, setIsFailedToLoad] = useAppStore(store => [store.isFailedToLoad, store.setFailedToLoad]);
+    const [noAccess, setNoAccess] = useState(false);
 
     const [isAppLoading, setAppLoading] = useState(true);
 
@@ -72,6 +73,11 @@ export default function ILayout({
 
         if (isNotRequired && !AuthTokensService.getAuthToken()) {
             setAppLoading(false);
+            return;
+        } else if (!isNotRequired && !AuthTokensService.getAuthToken()) {
+            setAppLoading(false);
+            setIsFailedToLoad(true);
+            setNoAccess(true);
             return;
         }
         
@@ -100,7 +106,7 @@ export default function ILayout({
                 />}
                 
                 
-                {isFailedToLoad &&
+                {(isFailedToLoad && !noAccess) &&
                     <Result
                         status="error"
                         title="Не вдалося завантажити сайт"
@@ -112,6 +118,22 @@ export default function ILayout({
                                 onClick={() => window.location.reload()}
                             >
                                 Спробувати ще раз
+                            </Button>,
+                        ]}
+                    />
+                }
+                 {(isFailedToLoad && noAccess) &&
+                    <Result
+                        status="403"
+                        title="У вас немає доступу до цієї сторінки"
+                        subTitle="Щоб зайти на цю сторінку, вам потрібно зайти в свій аккаунт."
+                        extra={[
+                            <Button
+                                type="primary"
+                                key="tryagain"
+                                onClick={() => window.location.href = "/login"}
+                            >
+                                Авторизація
                             </Button>,
                         ]}
                     />

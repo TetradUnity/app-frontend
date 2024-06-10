@@ -206,7 +206,7 @@ export default function Subjects() {
                     gap: "var(--gap)",
                     gridArea: "content",
                     minWidth: 0,
-                    opacity: isFetching ? 0.4 : 1
+                    opacity: isFetching ? 0.4 : 1,
                 }}>
                     {subjects.map(subject => (
                         <SubjectCard key={subject.id} subject={subject} filters={getFilters()} />

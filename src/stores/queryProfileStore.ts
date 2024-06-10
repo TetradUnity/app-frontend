@@ -17,7 +17,7 @@ export const useQueryProfileStore = create<State & Action>(set => ({
     last_name: "",
     role: "STUDENT",
     isMe: false,
-    avatar: "/imgs/no_avatar.png",
+    avatar: "",
     avatar_url: "/imgs/no_avatar.png",
 
     updateProfile: (profile) => set(state => {
@@ -29,6 +29,8 @@ export const useQueryProfileStore = create<State & Action>(set => ({
 
         if (profile && profile.avatar) {
             newState.avatar_url = UploadService.getImageURL(UploadType.AVATAR, profile.avatar);
+        } else {
+            newState.avatar_url = "/imgs/no_avatar.png";
         }
 
         return newState;

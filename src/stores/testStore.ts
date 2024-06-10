@@ -1,14 +1,12 @@
+import { TestsNamespace } from "@/types/api.types";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-
-type answerType = number | number[] | string | null;
 
 type State = {
-    answers: answerType[]
+    answers: TestsNamespace.AnswerType[]
 };
 
 type Action = {
-    setAnswer: (questionId: number, value: answerType) => void
+    setAnswer: (questionId: number, value: TestsNamespace.AnswerType) => void
 };
 
 export const useTestStore = create<State & Action>(set => ({

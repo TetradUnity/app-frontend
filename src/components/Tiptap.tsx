@@ -17,7 +17,6 @@ import Image from "@tiptap/extension-image";
 import OrderedList from "@tiptap/extension-ordered-list";
 import BulletList from "@tiptap/extension-bullet-list";
 import ListItem from "@tiptap/extension-list-item";
-import { isNullOrUndefined } from "@/utils/OtherUtils";
 
 export type TiptapRef = {
     getEditor: () => Editor | null
@@ -83,7 +82,7 @@ type ImageAttributes = {
 
 const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
     let isEditable = props.editable;
-    if (isNullOrUndefined(isEditable)) {
+    if (props.editable == null || props.editable == undefined) {
         isEditable = true;
     }
     let charsLimit = props.charsLimit || 300

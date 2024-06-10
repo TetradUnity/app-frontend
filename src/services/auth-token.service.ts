@@ -32,4 +32,9 @@ export const AuthTokensService = {
     deleteRefreshToken() {
         deleteCookie(REFRESH_COOKIE_NAME);
     },
+
+    logout() {
+        this.deleteAuthToken();
+        this.deleteRefreshToken();
+    }
 };

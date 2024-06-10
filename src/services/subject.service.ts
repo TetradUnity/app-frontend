@@ -65,38 +65,6 @@ export type filterProps = {
 };
 
 export const SubjectService = {
-    // TODO: Release api calls when it's will be ready
-
-    async startExam(uid: string | string[]): Promise<ITResponse<TestsNamespace.ProdTest>> {
-        try {
-            const response = await api.post("/subject/start-exam", {
-                uid
-            });
-
-            return {
-                success: true,
-                data: response.data
-            }
-        } catch (e) {
-            return catchApiError(e);
-        }
-    },
-
-    async sendAnswerExam(answer: string, uid: string): Promise<ITResponse<TestsNamespace.Test>> {
-        try {
-            const response = await api.post("/subject/send-answer-exam", {
-                answer, uid
-            });
-
-            return {
-                success: true,
-                data: response.data
-            }
-        } catch (e) {
-            return catchApiError(e);
-        }
-    },
-
     async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
         try {
             const response = await api.post("/subject/get-announce-subjects", {
@@ -136,10 +104,10 @@ export const SubjectService = {
         }
     },
 
-    async register(subjectId: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
+    async register(subject_id: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
         try {
             const response = await api.post("/subject/apply-subject", {
-                subjectId, email,
+                subject_id, email,
                 first_name, last_name
             });
 

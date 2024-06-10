@@ -1,239 +1,47 @@
 'use client';
 
 import {TestsNamespace} from "@/types/api.types";
-import {Button, Checkbox, Input, Modal, Radio, Space} from "antd";
-import {useParams} from "next/navigation";
+import { Button, Checkbox, Input, Modal, Radio, Space, Spin } from "antd";
+import { notFound, useParams } from "next/navigation";
 
 import styles from "./styles.module.css";
-import React, {useEffect, useImperativeHandle, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Tiptap from "@/components/Tiptap";
-import countWordsInHtmlString from "@/utils/StringUtils";
 
-import {ClockCircleOutlined} from "@ant-design/icons";
-import {formatTimeInSeconds2} from "@/utils/TimeUtils";
-import {useTestStore} from "@/stores/testStore";
-import {SubjectService, filtersType} from "@/services/subject.service";
+import { ClockCircleOutlined } from "@ant-design/icons";
+import { formatTimeInSeconds2 } from "@/utils/TimeUtils";
+import { useTestStore } from "@/stores/testStore";
+import { AnnouncedSubjectService } from "@/services/announced_subject.service";
+
+import { SaveFilled } from "@ant-design/icons";
 
 // TODO: Content Security Policy
-
-const MOCK_TEST_INFO: TestsNamespace.ProdTest = [
-    {
-        time: 40 * 60
-    },
-
-    {
-        title: "<p>Які явища вивчає <b>фізика</b>?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>географічні</p>"},
-            {content: "<p>біологічні</p>"},
-            {content: "<p>фізичні</p>"},
-            {content: "<p>хімічні</p>"},
-        ],
-    },
-    {
-        title: "<p>Які з перелічених явищ є <b>хімічними</b>?</p>",
-        type: "MULTI_ANSWER",
-        answers: [
-            {content: "<p>гроза</p>"},
-            {content: "<p>реакція</p>"},
-            {content: "<p>вибух</p>"},
-            {content: "<p>райдуга</p>"},
-        ],
-    },
-    {
-        title: "<p>Що з даного переліку є <b>фізичними явищами</b>?</p>",
-        type: "MULTI_ANSWER",
-        answers: [
-            {content: "<p>гроза</p>"},
-            {content: "<p>реакція</p>"},
-            {content: "<p>вибух</p>"},
-            {content: "<p>райдуга</p>"},
-        ],
-    },
-    {
-        title: "<p>Фізична величина, яка характеризує масу речовини позначається буквою: </p>",
-        type: "TEXT",
-        answers: [],
-    },
-    {
-        title: "<p>Які явища вивчає <b>фізика</b>?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>географічні</p>"},
-            {content: "<p>біологічні</p>"},
-            {content: "<p>фізичні</p>"},
-            {content: "<p>хімічні</p>"},
-        ],
-    },
-    {
-        title: "<p>формула для обчислення роботи</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>W = F * S</p>"},
-            {content: "<p>W = F / S</p>"},
-            {content: "<p>W = F + S</p>"},
-            {content: "<p>W = F - S</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Using Thread.sleep() method is.</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    },
-    {
-        title: "<p>Що таке робота?</p>",
-        type: "ONE_ANSWER",
-        answers: [
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-            {content: "<p>фізична величина</p>"},
-            {content: "<p>механічна величина</p>"},
-        ],
-    }
-]
 
 type QuestionRenderParams = {
     question: TestsNamespace.ProdQuestion,
     index: number
 }
-type AnswerRenderRef = {
-    getData: () => number | number[] | string | null
-}
 
-const OneAnswerRender = React.forwardRef(({question, index}: QuestionRenderParams, ref) => {
+const OneAnswerRender = ({question, index}: QuestionRenderParams) => {
     const value = useTestStore(state => state.answers[index]);
     const setValue = useTestStore(state => state.setAnswer.bind(null, index));
 
-    useImperativeHandle(ref, () => ({
-        getData: () => value
-    } as AnswerRenderRef));
-
     return (
-        <Radio.Group value={value} onChange={val => setValue(val.target.value)}>
+        <Radio.Group value={value && value[0]} onChange={val => setValue([val.target.value])}>
             <Space direction="vertical">
                 {question.answers.map((answer, i) =>
                     <Radio key={i} value={i}>
-                        <Tiptap editable={false} content={answer.content}/>
+                        <Tiptap style={{fontSize: 17}} editable={false} content={answer}/>
                     </Radio>
                 )}
             </Space>
         </Radio.Group>
     )
-})
+};
 
-const MultiAnswersRender = React.forwardRef(({question, index}: QuestionRenderParams, ref) => {
+const MultiAnswersRender = ({question, index}: QuestionRenderParams) => {
     const values = useTestStore(state => state.answers[index]);
     const setValues = useTestStore(state => state.setAnswer.bind(null, index));
-
-    useImperativeHandle(ref, () => ({
-        getData: () => values
-    } as AnswerRenderRef));
 
     return (
         <Checkbox.Group
@@ -241,56 +49,73 @@ const MultiAnswersRender = React.forwardRef(({question, index}: QuestionRenderPa
             onChange={values => setValues(values)}
             options={
                 question.answers.map((answer, i) => ({
-                    label: <Tiptap editable={false} content={answer.content}/>,
+                    label: <Tiptap style={{fontSize: 17, margin: "3px 0"}} editable={false} content={answer}/>,
                     value: i
                 }))
             }
         />
     )
-});
+};
 
-const TextAnswerRender = React.forwardRef(({question, index}: QuestionRenderParams, ref) => {
-    const value = useTestStore(state => state.answers[index]) || '';
+const TextAnswerRender = ({question, index}: QuestionRenderParams) => {
+    const value = useTestStore(state => state.answers[index]) || [''];
     const setValue = useTestStore(state => state.setAnswer.bind(null, index));
-
-    useImperativeHandle(ref, () => ({
-        getData: () => value
-    } as AnswerRenderRef));
 
     return (
         <Input
-            value={value as string}
-            onChange={e => setValue(e.target.value)}
+            value={value[0]}
+            onChange={e => setValue([e.target.value])}
         />
     )
-});
+};
 
-const Question = React.forwardRef(({question, index}: QuestionRenderParams, ref) => {
-    const answerRef = React.useRef<AnswerRenderRef>();
-
-    useImperativeHandle(ref, () => ({
-        getData: () => answerRef.current?.getData()
-    } as AnswerRenderRef));
+const Question = ({question, index}: QuestionRenderParams) => {
+    if (!question) {
+        return null;
+    }
 
     return (
         <>
-            <Tiptap style={{marginBottom: 10, fontSize: (countWordsInHtmlString(question.title) > 7) ? 23 : 30}}
+            <Tiptap style={{marginBottom: 10, fontSize: 23}}
                     editable={false} content={question.title}/>
 
             {question.type == "ONE_ANSWER" &&
-                <OneAnswerRender ref={answerRef} question={question} index={index}/>
+                <OneAnswerRender question={question} index={index}/>
             }
 
             {question.type == "MULTY_ANSWER" &&
-                <MultiAnswersRender ref={answerRef} question={question} index={index} />
+                <MultiAnswersRender question={question} index={index} />
             }
 
             {question.type == "TEXT" &&
-                <TextAnswerRender ref={answerRef} question={question} index={index}/>
+                <TextAnswerRender question={question} index={index}/>
             }
         </>
     )
-});
+};
+
+const Timer = ({timeEnd}: {timeEnd: number | undefined}) => {
+    if (!timeEnd) {
+        return null;
+    }
+
+    const [_, setForce] = useState(false);
+
+    useEffect(() => {
+        let id = setInterval(() => {
+            setForce(v => !v);
+        }, 1000);
+
+        return () => clearInterval(id);
+    }, []);
+
+    return (
+        <div className={styles.clock}>
+            <ClockCircleOutlined style={{color: "#349feb"}}/>
+            <p>{formatTimeInSeconds2(Math.max(timeEnd - Date.now(), 0) / 1000)}</p>
+        </div>
+    )
+}
 
 export default function TestPage() {
     const params = useParams();
@@ -299,35 +124,32 @@ export default function TestPage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isTimeUp, setIsTimeUp] = useState(false);
 
-    const [testInfo, setTestInfo] = useState<TestsNamespace.ProdTest["0"]>();
     const [questions, setQuestions] = useState<TestsNamespace.ProdQuestion[]>([]);
+    const [timeEnd, setTimeEnd] = useState<number | undefined>(undefined);
 
     const [selectedQuestion, setSelectedQuestion] = useState(0);
+    const [currentAnswer, setCurrentAnswer] = useState<TestsNamespace.AnswerType>([undefined]);
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isNotFound, setNotFound] = useState(false);
 
-    const questionRef = React.useRef<AnswerRenderRef>();
     const testStore = useTestStore();
 
     const fetch = (uid: string | string[]) => {
-        // SubjectService.startExam(uid).then(res => {
-        //     alert(JSON.stringify(res));
-        //     if (!res.success) {
-        //         // @ts-ignore
-        //         setQuestions([{title: "Помилка завантаження тесту", type: "ONE_ANSWER", answers: []}]);
-        //         setTestInfo({time: -1});
-        //         return;
-        //     }
-        //
-        //     // @ts-ignore
-        //     setQuestions(res.filter((_, i) => i > 0) as TestsNamespace.ProdQuestion[]);
-        //     // @ts-ignore
-        //     setTestInfo(res[0]);
-        //     alert(JSON.stringify(res));
-        //     // @ts-ignore
-        // })
-        setQuestions(MOCK_TEST_INFO.filter((_, i) => i > 0) as TestsNamespace.ProdQuestion[]);
-        setTestInfo(MOCK_TEST_INFO[0]);
+        AnnouncedSubjectService.startExam(uid as string).then(res => {
+            if (!res.data) {
+                setIsLoaded(true);
+                setNotFound(true);
+                return;
+            }
+            
+            let testInfo = res.data;
+
+            setQuestions(testInfo);
+            setTimeEnd(res.time_end);
+            
+            setIsLoaded(true);
+        });
     }
 
 
@@ -349,32 +171,39 @@ export default function TestPage() {
         // TODO next router push to result page
     }
 
-    const timerStart = () => {
-        const interval = setInterval(() => {
-            setTestInfo(prev => {
-                if (prev.time == 0) {
-                    clearInterval(interval);
-                    setIsTimeUp(true);
-                    return prev;
-                }
-
-                return {
-                    time: prev.time - 1
-                }
-            })
-        }, 1000);
-    }
     useEffect(() => {
+
         fetch(testUID);
         setIsLoaded(true);
-        timerStart()
     }, []);
-    if (!isLoaded) {
-        return;
+
+    const save = () => {
+        if (currentAnswer == testStore.answers[selectedQuestion]) {
+            return;
+        }
+
+        
     }
 
-    if (!testInfo) {
-        return;
+    const nextQuestion = () => {
+        save();
+        setSelectedQuestion(selectedQuestion + 1);
+        setCurrentAnswer(testStore.answers[selectedQuestion] || [undefined]);
+    };
+
+    const prevQuestion = () => {
+        save();
+        setSelectedQuestion(selectedQuestion - 1);
+        setCurrentAnswer(testStore.answers[selectedQuestion] || [undefined]);
+    }
+
+
+
+    if (!isLoaded) {
+        return <Spin fullscreen spinning />;
+    }
+    if (isNotFound) {
+        notFound();
     }
     return (
         <>
@@ -424,22 +253,22 @@ export default function TestPage() {
 
                     <div className={styles.content}>
                         <div className={styles.content_inner}>
-                            <div className={styles.clock}>
-                                <ClockCircleOutlined style={{color: "#349feb"}}/>
-                                <p>{formatTimeInSeconds2(testInfo.time)}</p>
+                            <div className={styles.upRight}>
+                                <Timer timeEnd={timeEnd} />
+                                <SaveFilled style={{fontSize: 30, color: "#77a2e6"}} />
                             </div>
 
                             <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>Питання
                                 №{selectedQuestion + 1}</h3>
 
-                            <Question ref={questionRef} question={questions[selectedQuestion]}
+                            <Question question={questions[selectedQuestion]}
                                       index={selectedQuestion}/>
 
                             <div className={styles.buttons}>
-                                <Button onClick={() => setSelectedQuestion(selectedQuestion - 1)}
+                                <Button onClick={prevQuestion}
                                         disabled={selectedQuestion == 0} style={{display: "block"}} type="primary">Попереднє
                                     питання</Button>
-                                <Button onClick={() => setSelectedQuestion(selectedQuestion + 1)}
+                                <Button onClick={nextQuestion}
                                         disabled={selectedQuestion == questions.length - 1} style={{display: "block"}}
                                         type="primary">Наступне питання</Button>
                             </div>
@@ -448,12 +277,14 @@ export default function TestPage() {
                                 <>
                                     <Button onClick={showModal}
                                             style={{display: "block", margin: "auto", marginTop: 20}}
-                                            type="primary">Закінчити спробу
+                                            type="primary"
+                                    >
+                                        Закінчити спробу
                                     </Button>
 
                                     <Modal title="Confirm Submission" visible={isModalVisible} onOk={handleOk}
                                            onCancel={hideModal}>
-                                        <p>Are you sure you want to submit?</p>
+                                        <p>Ви впевнені?</p>
                                     </Modal>
                                 </>
                             }
@@ -470,7 +301,7 @@ export default function TestPage() {
                     gap: "var(--gap)"
                 }}>
                     <h1>Час вийшов</h1>
-                    <Button onClick={submit} type="primary">Завершити тест</Button>
+                    <p>Відповіді, які ви обрали були передани. Очікуйте лист який прийде до вашої скринькі коли почнеться предмет.</p>
                 </div>
             }
         </>

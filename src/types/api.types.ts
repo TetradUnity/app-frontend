@@ -122,6 +122,9 @@ export interface IGrade {
 }
 
 export namespace TestsNamespace {
+    export type AnswerType = number[] | string[] | undefined[];
+    export type QuestionType = "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT";
+
     export type Test = [
         {
             time: number,
@@ -132,7 +135,7 @@ export namespace TestsNamespace {
 
     export interface Question {
         title: string,
-        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
+        type: QuestionType,
         answers: Answer[]
     } 
 
@@ -141,22 +144,13 @@ export namespace TestsNamespace {
         content: string
     };
 
-    export type ProdTest = [
-        {
-            time: number,
-        },
-        ...ProdQuestion[]
-    ];
 
     export interface ProdQuestion {
         title: string,
-        type: "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT",
-        answers: ProdAnswer[]
+        type:  QuestionType,
+        answers: string[]
     };
-
-    export type ProdAnswer = {
-        content: string
-    };
+    export type ProdTest = ProdQuestion[];
 }
 
 export interface CreateSubjectParams {

@@ -225,7 +225,7 @@ export default function AnnouncedSubject() {
 
                         <section>
                             <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Тривалість екзамену:</h1>
-                            <p>{formatTimeInSeconds(info.duration_exam)}</p>
+                            <p>{formatTimeInSeconds(info.duration_exam / 1000)}</p>
                         </section>
                     </>
                 }

@@ -27,6 +27,8 @@ export default function ProfileLayout({
     const myProfileId = useProfileStore(store => store.id);
     const [isNotFound, setNotFound] = useState(false);
 
+    console.log("asdsad???")
+
     useEffect(() => {
         setIsLoading(true);
 

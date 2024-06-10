@@ -10,7 +10,5 @@ export default function Settings() {
         router.push("/profile/settings/about")
     }, [])
 
-    return (
-        <></>
-    )
+    return null;
 }

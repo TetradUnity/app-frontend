@@ -154,7 +154,7 @@ export default function AppHeader() {
                 <Link
                     style={{color: "orangered", display: "flex", alignItems: "center"}}
                     onClick={() => {
-                        AuthTokensService.deleteAuthToken();
+                        AuthTokensService.logout();
                         window.location.href = "/";
                     }}
                     href="/"
@@ -169,7 +169,8 @@ export default function AppHeader() {
 
     ]
 
-    const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
+    // const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
+    const gridTemplateColumns = "250px 1fr 200px";
     return (
         <div style={{
             background: 'var(--header)',
@@ -193,24 +194,26 @@ export default function AppHeader() {
                 <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
                     <Image src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
-                {isLoggedIn ?
-                    <Space style={{display: "flex", justifyContent: "center"}}>
-                        <NavButton
-                            path="/subjects"
-                            icon={<BookOutlined/>}
-                            text="Предмети"
-                        />
-                        <NavButton
-                            path="/students"
-                            icon={<IdcardOutlined/>}
-                            text="Студенти"
-                        />
-                        <NavButton
-                            path="/teachers"
-                            icon={<TeamOutlined/>}
-                            text="Вчителі"
-                        />
-                    </Space> : null}
+                
+                <Space style={{display: "flex", justifyContent: "center"}}>
+                    <NavButton
+                        path="/subjects"
+                        icon={<BookOutlined/>}
+                        text="Предмети"
+                    />
+                    <NavButton
+                        path="/students"
+                        icon={<IdcardOutlined/>}
+                        text="Студенти"
+                    />
+                    <NavButton
+                        path="/teachers"
+                        icon={<TeamOutlined/>}
+                        text="Вчителі"
+                    />
+                </Space>
+
+
                 {isLoggedIn ?
                     <Space align="center" style={{
                         display: "flex",
@@ -230,8 +233,15 @@ export default function AppHeader() {
                     </Space>
 
                     : <Space
-                        style={{display: "flex", position: "relative", justifyContent: "flex-end", padding: "10px 0"}}>
-                        <Link style={{marginRight: 15}} href="/login">Авторизація</Link>
+                        style={{
+                            display: "flex",
+                            position: "relative",
+                            justifyContent: "flex-end",
+                            padding: "10px 0",
+                            width: "fit-content"
+                        }}
+                    >
+                        <Link href="/login">Авторизація</Link>
                     </Space>}
             </div>
         </div>
