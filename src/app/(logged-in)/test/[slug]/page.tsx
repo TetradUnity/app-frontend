@@ -15,6 +15,8 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 
 import { SaveFilled } from "@ant-design/icons";
 
+import { motion } from "framer-motion";
+
 // TODO: Content Security Policy
 
 type QuestionRenderParams = {
@@ -255,7 +257,10 @@ export default function TestPage() {
                         <div className={styles.content_inner}>
                             <div className={styles.upRight}>
                                 <Timer timeEnd={timeEnd} />
-                                <SaveFilled style={{fontSize: 30, color: "#77a2e6"}} />
+                                
+                                {/* <motion.span animate={{width: 30}}>
+                                    <SaveFilled style={{fontSize: 30, color: "#77a2e6"}} />
+                                </motion.span> */}
                             </div>
 
                             <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>Питання
