@@ -1,0 +1,41 @@
+.student_slot {
+    outline: none; border: none;
+    width: 100%;
+    padding: 13px;
+    text-align: left;
+    cursor: pointer;
+    background: var(--foreground-lighter-0_5);
+    color: white;
+    margin-top: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+.student_slot [role="img"] {
+    position: relative;
+    top: 6px;
+}
+
+
+.file_slot {
+    background: var(--foreground-lighter-0_5);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.file_slot > * {
+    display: inline-block;
+}
+
+.file_slot > div > * {
+    display: inline-block;
+}
+
+.file_slot > div > p {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 10px;
+}

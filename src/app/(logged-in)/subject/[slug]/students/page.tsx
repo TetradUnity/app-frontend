@@ -6,14 +6,14 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { SubjectService } from "@/services/subject.service";
 import { useSubjectStore } from "@/stores/subjectStore";
-import { Spin } from "antd";
+import { Avatar, Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
 
 function StudentSlot({item} : {item: IStudentShortInfo}) {
     return (
         <div className={styles.material_slot + " " + styles.student_slot}>
             <Link href={"/profile/" + item.id}>
-                <img className={styles.student_avatar} src={"https://media.licdn.com/dms/image/C5603AQE-LZbyqja3GQ/profile-displayphoto-shrink_800_800/0/1585481402347?e=2147483647&v=beta&t=0jx6LRb9wlnWNVNSWzmXAVnDWwvFGVO_klpqm94TynY"} alt="avatar" />
+                <Avatar shape="square" className={styles.student_avatar} size="large" src={"https://media.licdn.com/dms/image/C5603AQE-LZbyqja3GQ/profile-displayphoto-shrink_800_800/0/1585481402347?e=2147483647&v=beta&t=0jx6LRb9wlnWNVNSWzmXAVnDWwvFGVO_klpqm94TynY"} alt="avatar" />
                 <h2>{item.first_name} {item.last_name}</h2>
             </Link>
          </div>

@@ -31,6 +31,8 @@ export const useSubjectStore = create( devtools<State & Action>( (set, get) => (
     students: [],
     studentsFetchingState: "not_fetched",
 
+    savedScrollPosition: 0,
+
     // TODO: Make it a worker when back end will be ready. 
     grades: [
         {grade: 9, reason: "test", date: new Date(1715839132000)},

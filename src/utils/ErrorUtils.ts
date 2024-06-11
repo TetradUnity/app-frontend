@@ -9,7 +9,8 @@ const SERVER_ERRORS = {
     "incorrect_format_exam": "екзамен переданий в некоректній формі",
     "very_short": "дуже коротко",
     "late": "пізно",
-    "you_already_tried": "ви вже зареєструвались"
+    "you_already_tried": "ви вже зареєструвались",
+    "not_found": "не знайдено"
 
 } as const;
 

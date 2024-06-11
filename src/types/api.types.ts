@@ -117,7 +117,9 @@ export interface SubjectCardProps {
     subject: TemporaryAnnoncedSubjectInfo
 }
 
-export type IStudentShortInfo = ITeacherShortInfo;
+export type IStudentShortInfo = ITeacherShortInfo & {
+    avatar: string
+};
 
 export interface IGrade {
     grade: number,

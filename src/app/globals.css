@@ -20,6 +20,7 @@ body {
     --background: #0A0A0A;
     --foreground-darker: #181818;
     --foreground: #1b1b1b;
+    --foreground-lighter-0_5: rgb(35,35,35);
     --foreground-lighter: #252525;
     --foreground-lighter-1_5: #1d1d1d;
     --foreground-lighter-2: #2d2d2d;

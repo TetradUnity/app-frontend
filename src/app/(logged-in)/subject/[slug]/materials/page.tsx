@@ -4,12 +4,12 @@ import { useSubjectStore } from "@/stores/subjectStore"
 import { IMaterialShortInfo } from "@/types/api.types";
 import { useShallow } from "zustand/react/shallow";
 
-import { RightOutlined } from "@ant-design/icons";
+import { RightOutlined, PlusCircleFilled } from "@ant-design/icons";
 
 import styles from "../styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
-import {Empty} from "antd";
+import { Button, Empty } from "antd";
 
 function MaterialSlot({item} : {item: IMaterialShortInfo}) {
     const date = dayjs(item.date);
@@ -32,11 +32,12 @@ export default function SubjectMaterialsPage() {
 
     return (
         <>
-        {
-            (materials.length > 0)
-            ? materials.map((item, k) => <MaterialSlot item={item} key={k} />)
-            : <Empty description={<p className={styles.empty_text}>Матеріалів поки ще немає.</p>}/>
-        }
+            <Button icon={<PlusCircleFilled/>} type="dashed" block style={{marginBottom: 15}}>Створити новий матеріал</Button>
+            {
+                (materials.length > 0)
+                ? materials.map((item, k) => <MaterialSlot item={item} key={k} />)
+                : <Empty description={<p className={styles.empty_text}>Матеріалів поки ще немає.</p>}/>
+            }
         </>
     )
 }

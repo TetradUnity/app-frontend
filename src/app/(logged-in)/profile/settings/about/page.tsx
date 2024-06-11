@@ -1,12 +1,12 @@
 'use client'
 
-import {Avatar, Button, Input, Modal, UploadFile} from "antd"
+import { Avatar, Button, Input, Modal, UploadFile } from "antd"
 import React, {useEffect, useState} from "react";
-import {useProfileStore} from "@/stores/profileStore";
+import { useProfileStore } from "@/stores/profileStore";
 import Dragger from "antd/es/upload/Dragger";
 
-import {CloudUploadOutlined, DeleteOutlined} from "@ant-design/icons";
-import {EditProfileProps, UserService} from "@/services/user.service";
+import { CloudUploadOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditProfileProps, UserService } from "@/services/user.service";
 import TextArea from "antd/es/input/TextArea";
 import ImgCropModal from "@/components/ImgCropModal";
 import { UploadService, UploadType } from "@/services/upload.service";

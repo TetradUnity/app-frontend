@@ -5,7 +5,7 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Divider, Input, Modal, Radio, Space, Spin, Table, TableColumnsType, Tooltip, message } from "antd";
+import { Button, Checkbox, Divider, Input, Modal, Radio, Space, Spin, Table, TableColumnsType, Tooltip } from "antd";
 
 import styles from "@/styles/announced_subject.module.css";
 import { UploadService, UploadType } from "@/services/upload.service";
@@ -13,6 +13,7 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
 import translateRequestError from "@/utils/ErrorUtils";
 import Tiptap from "@/components/Tiptap";
+import TestResult from "@/components/TestResult";
 
 interface DataType {
     key: React.Key,
@@ -31,18 +32,6 @@ type CandidateInfoModalProps = {
 const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateInfoModalProps) => {
     if (!(candidate && questions)) {
         return null;
-    }
-
-    const checkIfCorrectTextAnswer = (question: TestsNamespace.CandidateQuestion) => {
-        let yourAnswer = (question.your_answer[0] as string || '');
-
-        for (let i = 0; i < question.answers.length; i++) {
-            if (yourAnswer == question.answers[i].content) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     return (
@@ -79,64 +68,7 @@ const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateI
 
             <section>
                 <h3>Відповіді:</h3>
-                {questions.map((question, i) => 
-                    <div style={{background: "var(--foreground-lighter-1_5)", padding: 20, marginTop: 10, borderRadius: 9}}>
-                        <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>
-                            Питання №{i + 1}
-                        </h3>
-
-                        <Tiptap style={{marginBottom: 10, fontSize: 17}}
-                            editable={false} content={question.title}/>
-                        
-                        {question.type == "ONE_ANSWER" &&
-                            <Radio.Group value={question.your_answer[0]}>
-                                <Space direction="vertical">
-                                    {question.answers.map((answer, i) =>
-                                        <Radio key={i} value={i}>
-                                            <Tiptap
-                                                style={{
-                                                    fontSize: 17,
-                                                    color: answer.isCorrect ? "#34eb37" : "#c9576a"
-                                                }}
-                                                editable={false}
-                                                content={answer.content}
-                                            />
-                                        </Radio>
-                                    )}
-                                </Space>
-                            </Radio.Group>
-                        }
-                        
-                        {question.type == "MULTI_ANSWER" &&
-                            <Checkbox.Group
-                                value={question.your_answer as number[]}
-                                options={
-                                    question.answers.map((answer, i) => ({
-                                        label: <Tiptap
-                                                    style={{
-                                                        fontSize: 17,
-                                                        margin: "3px 0",
-                                                        color: answer.isCorrect ? "#34eb37" : "#c9576a"
-                                                    }}
-                                                    editable={false}
-                                                    content={answer.content}
-                                                />,
-                                        value: i
-                                    }))
-                                }
-                            />
-                        }
-
-                        {question.type == "TEXT" &&
-                            <Input
-                                style={{
-                                    color: checkIfCorrectTextAnswer(question) ? "#34eb37" : "#c9576a"
-                                }}
-                                value={question.your_answer[0]}
-                            />
-                        }
-                    </div>
-                )}
+                <TestResult questions={questions} />
             </section>
 
             <Divider />

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 import styles from "./styles.module.css";
 import { Segmented } from "antd";
-import { motion } from "framer-motion";
+import { AnimationControls, TargetAndTransition, motion } from "framer-motion";
 
 // TODO: fetching from server when it's be ready.
 const cover_img = "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg";
@@ -66,9 +66,11 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
     const shouldShow = pathname.split("/").length != 5;
 
+    const anim = {opacity: shouldShow ? 1 : 0, height: shouldShow ? "auto" : 0};
+
     return (
-       <motion.div animate={{translateY: shouldShow ? 0 : -228}}>
-            <motion.div animate={{opacity: shouldShow ? 1 : 0}}>
+       <div>
+            <motion.div animate={anim} initial={anim}>
                 <div
                     style={{background: "url(" + cover_img + ")", position: "relative"}}
                     className={styles.header_div}
@@ -96,6 +98,6 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
             </motion.div>
 
             {children}
-       </motion.div>
+       </div>
     );
 }

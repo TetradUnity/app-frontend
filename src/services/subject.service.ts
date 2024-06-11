@@ -4,13 +4,11 @@ import { api, catchApiError } from "@/api";
 import {
     IAnnouncedSubject,
     IAnnouncedSubjectShort,
-    IMaterial,
     IResponse,
     IStudentShortInfo,
     ISubject,
     ITArrResponse,
-    ITResponse,
-    TestsNamespace
+    ITResponse
 } from "@/types/api.types";
 
 let subjects: {[id: number]: ISubject} = {
@@ -33,7 +31,13 @@ let subjects: {[id: number]: ISubject} = {
                 date: new Date(1715839416000)
             }
         ],
-        tests: []
+        tests: [
+            {
+                id: 1,
+                date: new Date(),
+                title: "Фізика як наука"
+            }
+        ]
     }
 };
 
@@ -43,16 +47,19 @@ let subject_students: {[id: number]: IStudentShortInfo[]} = {
             id: 1,
             first_name: "Акакій",
             last_name: "Акакієвич",
+            avatar: "",
         },
         {
             id: 2,
             first_name: "Олександр",
             last_name: "Дерево",
+            avatar: "",
         },
         {
             id: 3,
             first_name: "Ірина",
             last_name: "Кущ",
+            avatar: "",
         }
     ]
 };

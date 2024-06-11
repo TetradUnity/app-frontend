@@ -1,5 +1,6 @@
 import { UploadService, UploadType } from "@/services/upload.service";
 import { IUser } from "@/types/api.types";
+import { getUserAvatar } from "@/utils/OtherUtils";
 import { create } from "zustand";
 
 type IQUser = IUser & {isMe: boolean};
@@ -27,10 +28,8 @@ export const useQueryProfileStore = create<State & Action>(set => ({
 
         let newState = {...state, ...profile};
 
-        if (profile && profile.avatar) {
-            newState.avatar_url = UploadService.getImageURL(UploadType.AVATAR, profile.avatar);
-        } else {
-            newState.avatar_url = "/imgs/no_avatar.png";
+        if (profile) {
+            newState.avatar_url = getUserAvatar(profile.avatar);
         }
 
         return newState;

@@ -1,5 +1,6 @@
 import { UploadService, UploadType } from "@/services/upload.service";
 import { IUser } from "@/types/api.types";
+import { getUserAvatar } from "@/utils/OtherUtils";
 import { create } from "zustand";
 
 type State = IUser & {avatar_url: string};
@@ -24,8 +25,8 @@ export const useProfileStore = create<State & Action>(set => ({
 
         let newState = {...state, ...profile};
 
-        if (profile && profile.avatar) {
-            newState.avatar_url = UploadService.getImageURL(UploadType.AVATAR, profile.avatar);
+        if (profile) {
+            newState.avatar_url = getUserAvatar(profile.avatar);
         }
 
         return newState;
