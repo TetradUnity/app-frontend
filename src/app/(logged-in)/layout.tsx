@@ -83,10 +83,10 @@ export default function ILayout({
         }
         
         AuthService.isValidToken().then(response => {
-            // if (!response.success) {
-            //     setIsFailedToLoad(true);
-            //     return;
-            // }
+            if (!response.success) {
+                setIsFailedToLoad(true);
+                return;
+            }
 
             UserService.getProfile().then(response => {
                 updateProfileStore(response.data);
