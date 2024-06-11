@@ -36,6 +36,18 @@ export const AuthService = {
         }
     },
 
+    async isValidToken(): Promise<IResponse> {
+        try {
+            await api.get("/user/check-authorized");
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
     // dev-only
     async register(email: string, first_name: string, last_name: string, password: string, role: string): Promise<IResponse> {
         try {

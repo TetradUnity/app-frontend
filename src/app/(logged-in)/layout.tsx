@@ -13,6 +13,7 @@ import { AuthTokensService } from "@/services/auth-token.service";
 import { useUploadStore } from "@/stores/uploadStore";
 
 import { motion } from "framer-motion";
+import { AuthService } from "@/services/auth.service";
 
 const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/", "/profile/"];
 
@@ -81,14 +82,21 @@ export default function ILayout({
             return;
         }
         
-        UserService.getProfile().then(response => {
-            updateProfileStore(response.data);
-            setAppLoading(false);
-
+        AuthService.isValidToken().then(response => {
             if (!response.success) {
                 setIsFailedToLoad(true);
                 return;
             }
+
+            UserService.getProfile().then(response => {
+                updateProfileStore(response.data);
+                setAppLoading(false);
+    
+                if (!response.success) {
+                    setIsFailedToLoad(true);
+                    return;
+                }
+            })
         })
     }, []);
 
