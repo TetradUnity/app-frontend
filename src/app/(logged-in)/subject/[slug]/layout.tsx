@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 import styles from "./styles.module.css";
 import { Segmented } from "antd";
+import { motion } from "framer-motion";
 
 // TODO: fetching from server when it's be ready.
 const cover_img = "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg";
@@ -24,9 +25,8 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
     const store = useSubjectStore();
 
-    const { push } = useRouter();
-
     const pathname = usePathname();
+    const { push } = useRouter();
 
     useEffect(() => {
         setIsLoading(true);
@@ -64,34 +64,38 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
         notFound();
     }
 
+    const shouldShow = pathname.split("/").length != 5;
+
     return (
-       <>
-       <div
-        style={{background: "url(" + cover_img + ")"}}
-        className={styles.header_div}
-       >
-            <h1>{store.title}</h1>
-            <p><b>Викладач: </b><i>{store.teacherInfo.first_name} {store.teacherInfo.last_name}</i></p>
-       </div>
+       <motion.div animate={{translateY: shouldShow ? 0 : -228}}>
+            <motion.div animate={{opacity: shouldShow ? 1 : 0}}>
+                <div
+                    style={{background: "url(" + cover_img + ")", position: "relative"}}
+                    className={styles.header_div}
+                >
+                        <h1>{store.title}</h1>
+                        <p><b>Викладач: </b><i>{store.teacherInfo.first_name} {store.teacherInfo.last_name}</i></p>
+                </div>
 
-        <Segmented
-            style={{margin: "20px 0"}}
-            defaultValue={pathname.split("/")[3]}
-            options={[
-                {label: "Матеріали", value: "materials"},
-                {label: "Тести", value: "tests"},
-                {label: "Студенти", value: "students"},
-                {label: "Розклад занять", value: "timetable"},
-                {label: "Оцінки", value: "grades"},
-            ]}
-            onChange={key => {
-                push("/subject/" + slug + "/" + key)
-            }}
-            size="large"
-            block
-        />
+                <Segmented
+                    style={{margin: "20px 0"}}
+                    defaultValue={pathname.split("/")[3]}
+                    options={[
+                        {label: "Матеріали", value: "materials"},
+                        {label: "Тести", value: "tests"},
+                        {label: "Студенти", value: "students"},
+                        {label: "Розклад занять", value: "timetable"},
+                        {label: "Оцінки", value: "grades"},
+                    ]}
+                    onChange={key => {
+                        push("/subject/" + slug + "/" + key)
+                    }}
+                    size="large"
+                    block
+                />
+            </motion.div>
 
-        {children}
-       </>
+            {children}
+       </motion.div>
     );
 }

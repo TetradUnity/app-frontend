@@ -12,11 +12,12 @@ import dayjs from "dayjs";
 import {Empty} from "antd";
 
 function MaterialSlot({item} : {item: IMaterialShortInfo}) {
-    let date = dayjs(item.date);
+    const date = dayjs(item.date);
+    const subjectId = useSubjectStore(useShallow(state => state.subjectId));
 
     return (
         <div className={styles.material_slot + " " + styles.slot_with_arrow}>
-            <Link href={window.location.pathname + "/" + item.id}>
+            <Link href={"/subject/" + subjectId + "/materials/" + item.id}>
                 <h2>{item.title}</h2>
                 <p>Опубліковано: <i>{date.format("D MMMM о HH:mm")}</i></p>
 

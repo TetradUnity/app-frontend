@@ -47,14 +47,18 @@ export interface ITestShortInfo {
     date: Date
 }
 
+
 export interface ISubject {
     title: string,
     teacherInfo: ITeacherShortInfo,
     materials: IMaterialShortInfo[],
     tests: ITestShortInfo[]
 }
-
-
+export interface IMaterial {
+    title: string,
+    content: string,
+    date: Date
+}
 
 type IAnnouncedSubjectBase = {
     time_start: number;
