@@ -14,7 +14,7 @@ body {
     padding-bottom: 16px !important;
 }
 :root {
-    --subject-card-height: 175px;
+    --subject-card-height: 225px;
     --gap: 16px;
     --gap-half: 8px;
     --background: #0A0A0A;

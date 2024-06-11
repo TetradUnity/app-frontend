@@ -34,7 +34,7 @@ const Answer = React.forwardRef((
             setIsCorrect(false)
         },
         loadFromDraft: (draft) => {
-            setIsCorrect(draft.isCorrect);
+            setIsCorrect(draft.isCorrect || false);
 
             let id = setInterval(() => {
                 let editor = editorRef.current?.getEditor();
@@ -92,7 +92,7 @@ const TextAnswer = React.forwardRef((
     
     useImperativeHandle(ref, () => ({
         getData: () => ({
-            isCorrect: true,
+            isCorrect: undefined,
             content: content
         }),
         uncheck: () => {},
@@ -183,9 +183,9 @@ ref) => {
         if (
             (answers.length > 0) && (
             (type == "ONE_ANSWER" && newType == "TEXT") ||
-            (type == "MULTY_ANSWER" && newType == "TEXT") ||
+            (type == "MULTI_ANSWER" && newType == "TEXT") ||
             (type == "TEXT" && newType == "ONE_ANSWER") ||
-            (type == "TEXT" && newType == "MULTY_ANSWER") )
+            (type == "TEXT" && newType == "MULTI_ANSWER") )
         ) {
             modal.confirm({
                 title: "Попередження",
@@ -203,7 +203,7 @@ ref) => {
             return;
         }
 
-        if ((type == "MULTY_ANSWER" && newType == "ONE_ANSWER")) {
+        if ((type == "MULTI_ANSWER" && newType == "ONE_ANSWER")) {
             uncheckAllAnswers(true);
         }
 
@@ -272,7 +272,7 @@ ref) => {
                     onChange={changeQuestionType}
                     options={[
                         {value: "ONE_ANSWER", label: "Одна правильна відповідь"},
-                        {value: "MULTY_ANSWER", label: "Декілька правильних відповідей"},
+                        {value: "MULTI_ANSWER", label: "Декілька правильних відповідей"},
                         {value: "TEXT", label: "Текст"}
                     ]}
                     style={{marginBottom: 10}}
@@ -368,6 +368,15 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                 title: "Помилка.",
                 maskClosable: true,
                 content: <p>Прохідний бал не може бути меньшим за 0.</p>
+            });
+            return false;
+        }
+
+        if (data.length < 1) {
+            modal.error({
+                title: "Помилка.",
+                maskClosable: true,
+                content: <p>Має бути хочаб одне питання.</p>
             })
             return false;
         }

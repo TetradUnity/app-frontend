@@ -611,8 +611,8 @@ export default function CreateSubjectPage() {
             >
                 <Form.Item name="title" label="Назва предмету:" rules={[
                     { required: true, message: "Обов'язкове поле!" },
-                    { min: 2, message: "Назва курсу повина мати більше ніж 2 символа." },
-                    { max: 25, message: "Назва курсу не може мати більше аніж 25 символів." }
+                    { min: 2, message: "Назва предмету повина мати більше ніж 2 символа." },
+                    { max: 25, message: "Назва предмету не може мати більше аніж 25 символів." }
                 ]}>
                     <Input />
                 </Form.Item>
@@ -620,7 +620,9 @@ export default function CreateSubjectPage() {
 
                 <Form.Item label="Короткий опис предмету:" required>
                     <Form.Item noStyle name="short_desc" rules={[
-                        { required: true, message: "Обов'язкове поле!" }
+                        { required: true, message: "Обов'язкове поле!" },
+                        { min: 2, message: "предмету предмету повина мати більше ніж 2 символа." },
+                        { max: 100, message: "Опис предмету не може мати більше аніж 100 символів." }
                     ]}>
                         <TextArea />
                     </Form.Item>

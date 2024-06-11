@@ -107,7 +107,7 @@ const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateI
                             </Radio.Group>
                         }
                         
-                        {question.type == "MULTY_ANSWER" &&
+                        {question.type == "MULTI_ANSWER" &&
                             <Checkbox.Group
                                 value={question.your_answer as number[]}
                                 options={

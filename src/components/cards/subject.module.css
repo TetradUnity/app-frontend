@@ -33,12 +33,14 @@
     min-width: 1px;
     max-width: 400px;
     min-height: var(--subject-card-height);
-    display: block;
+    /* display: block; */
     color: var(--text-primary);
     overflow: hidden;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-
     position: relative;
+
+    display: flex;
+    flex-direction: column;
 }
 .Card p {
     color: rgb(215,215,215);

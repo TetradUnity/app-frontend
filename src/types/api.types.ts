@@ -123,7 +123,7 @@ export interface IGrade {
 
 export namespace TestsNamespace {
     export type AnswerType = number[] | string[] | undefined[];
-    export type QuestionType = "ONE_ANSWER" | "MULTY_ANSWER" | "TEXT";
+    export type QuestionType = "ONE_ANSWER" | "MULTI_ANSWER" | "TEXT";
 
     export type Test = [
         {
@@ -140,7 +140,7 @@ export namespace TestsNamespace {
     } 
 
     export type Answer = {
-        isCorrect: boolean,
+        isCorrect?: boolean,
         content: string
     };
 

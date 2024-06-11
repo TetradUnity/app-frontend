@@ -20,6 +20,16 @@ import useModal from "antd/es/modal/useModal";
 import translateRequestError from "@/utils/ErrorUtils";
 import { UploadService, UploadType } from "@/services/upload.service";
 
+const ForTeacherRender = ({info, id} : {info: IAnnouncedSubject, id: number}) => {
+    if (!info.time_exam_end) {
+        return null;
+    }
+
+    return (
+        <p style={{textAlign: "center"}}>Ви побачите список студентів, які подали заявку на вступ до вашого предмета і зможете видаляти тих, які на вашу думку не підходять, після того, як закінчиться іспит.</p>
+    )
+}
+
 export default function AnnouncedSubject() {
     const params = useParams();
     let { slug } = params;
@@ -34,8 +44,11 @@ export default function AnnouncedSubject() {
 
     const [modal, ctx] = useModal();
 
+    const profileId = useProfileStore(useShallow(state => state.id));
     const role = useProfileStore(useShallow(state => state.role));
     const email = useProfileStore(useShallow(state => state.email));
+
+    const [isNotFound, setNotFound] = useState(false);
 
     const register = (email: string, first_name?: string, last_name?: string) => {
         if (!first_name) {
@@ -82,17 +95,18 @@ export default function AnnouncedSubject() {
         let subjectId = parseInt(slug as string);
 
         if (!subjectId || subjectId < 0) {
-            notFound();
+            setNotFound(true);
+            return;
         }
 
         SubjectService.getAnnouncedSubjectInfo(subjectId).then(response => {
             setIsLoaded(true);
 
             if (!response.success) {
-                notFound();
+                setNotFound(true);
+                return;
             }
 
-            // @ts-ignore
             setInfo(response.data);
         })
     }, [])
@@ -101,7 +115,7 @@ export default function AnnouncedSubject() {
         return null;
     }
 
-    if (!info) {
+    if (isNotFound || !info) {
         notFound();
     }
 
@@ -166,8 +180,8 @@ export default function AnnouncedSubject() {
                     </Button>
                 }
 
-                {role == "TEACHER" &&
-                    <p style={{textAlign: "center"}}>Ви побачите список студентів, які подали заявку на вступ до вашого предмета і зможете видаляти тих, які на вашу думку не підходять, після того, як закінчиться іспит.</p>
+                {(info.teacher_id == profileId) &&
+                   <ForTeacherRender info={info} id={parseInt(slug as string)} />
                 }
            </div>
 

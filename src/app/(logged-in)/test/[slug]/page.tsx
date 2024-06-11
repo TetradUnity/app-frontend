@@ -80,7 +80,7 @@ const Question = ({question, index}: QuestionRenderParams) => {
                 <OneAnswerRender question={question} index={index}/>
             }
 
-            {question.type == "MULTY_ANSWER" &&
+            {question.type == "MULTI_ANSWER" &&
                 <MultiAnswersRender question={question} index={index} />
             }
 
@@ -182,15 +182,24 @@ export default function TestPage() {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка",
-                    content: <p>Закінчити тест не вдалось: {translateRequestError(resp.error_code)}</p>
+                    content: <p>Закінчити тест не вдалося: {translateRequestError(resp.error_code)}</p>
                 })
                 return;
             }
 
-            modal.success({
-                title: "Успіх",
-                // @ts-ignore
-                content: <p>Ви здали на {pluralize(Math.round(resp.result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}). Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!</p>,
+            const result = resp.result as number;
+            const passing_grade = resp.passing_grade as number;
+            const isPassed = result >= passing_grade;
+
+            modal[isPassed ? "success" : "error"]({
+                title: isPassed ? "Успіх" : "Невдача",
+                content:
+                    <p>
+                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
+                        {isPassed
+                            ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
+                            : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
+                    </p>,
                 onOk: () => window.location.href = "/subjects",
                 onCancel: () => window.location.href = "/subjects"
             })
@@ -210,7 +219,7 @@ export default function TestPage() {
         AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(resp => {
             if (!resp.success) {
                 modal.error({
-                    title: "Помилка при зберіганні",
+                    title: "Помилка під час збереження",
                     content: <p>При зберіганні відповіді трапилась помилка: {translateRequestError(resp.error_code)}</p>
                 })
             }
@@ -333,8 +342,8 @@ export default function TestPage() {
                     flexDirection: "column",
                     gap: "var(--gap)"
                 }}>
-                    <h1>Час вийшов</h1>
-                    <p>Відповіді, які ви встигли обрати були передані вчителю. Слідкуйте за почтовою скриньою!</p>
+                    <h1>Час вичерпано</h1>
+                    <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
                 </div>
             }
             {modalCtx}

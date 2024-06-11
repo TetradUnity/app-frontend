@@ -42,15 +42,18 @@ export default function SubjectCard({subject, filters}: {subject: IAnnouncedSubj
                 padding: "12px 16px 12px 16px",
                 justifyContent: "space-between",
                 background: "var(--foreground-lighter)",
+                flex: 1
             }}>
-                <h3 className={styles.subjectTitle}>
-                    <Highlight source={subject.title} toFind={filters.title || ""} />
-                </h3>
-                <Link className={styles.teacherLink} href={"/profile/" + subject.teacher_id}>
-                    <Highlight source={subject.teacher_first_name} toFind={filters.first_name_teacher || ""} />
-                    {" "}
-                    <Highlight source={subject.teacher_last_name} toFind={filters.last_name_teacher || ""} />
-                </Link>
+                <div>
+                    <h3 className={styles.subjectTitle}>
+                        <Highlight source={subject.title} toFind={filters.title || ""} />
+                    </h3>
+                    <Link className={styles.teacherLink} href={"/profile/" + subject.teacher_id}>
+                        <Highlight source={subject.teacher_first_name} toFind={filters.first_name_teacher || ""} />
+                        {" "}
+                        <Highlight source={subject.teacher_last_name} toFind={filters.last_name_teacher || ""} />
+                    </Link>
+                </div>
 
                 <p style={{marginTop: 10, fontSize: 15}}>{subject.short_description}</p>
             </Flex>
