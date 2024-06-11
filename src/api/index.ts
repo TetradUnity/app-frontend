@@ -74,6 +74,6 @@ export function catchApiError(error: any): IResponse {
     
     return {
         success: false,
-        error_code: "unknown_error"
+        error_code: "network_error"
     }
 }

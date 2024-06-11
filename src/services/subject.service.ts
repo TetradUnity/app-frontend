@@ -4,6 +4,7 @@ import { api, catchApiError } from "@/api";
 import {
     IAnnouncedSubject,
     IAnnouncedSubjectShort,
+    IMaterial,
     IResponse,
     IStudentShortInfo,
     ISubject,
@@ -119,6 +120,28 @@ export const SubjectService = {
         }
     },
 
+    async createLinkExam(
+        subjectId: number,
+        email: string,
+        first_name: string,
+        last_name: string,
+    ): Promise<IResponse> {
+        try {
+            await api.post("/subject/create-link-exam", {
+                subjectId,
+                email,
+                first_name,
+                last_name,
+            });
+
+            return {
+                success: true
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
     mock: {
         getSubject: (subjectId: number): Promise<ITResponse<ISubject>> => {
             return new Promise(resolve => {
@@ -152,27 +175,6 @@ export const SubjectService = {
                     });
                 }, 500 + (Math.random() * 700));
             });
-        }
-    },
-    async createLinkExam(
-        subjectId: number,
-        email: string,
-        first_name: string,
-        last_name: string,
-    ): Promise<IResponse> {
-        try {
-            const response = await api.post("/subject/create-link-exam", {
-                subjectId,
-                email,
-                first_name,
-                last_name,
-            });
-
-            return {
-                success: true
-            }
-        } catch (e) {
-            return catchApiError(e);
         }
     },
 };
