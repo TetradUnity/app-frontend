@@ -19,6 +19,7 @@ import { useShallow } from "zustand/react/shallow";
 import useModal from "antd/es/modal/useModal";
 import translateRequestError from "@/utils/ErrorUtils";
 import { UploadService, UploadType } from "@/services/upload.service";
+import {AnnouncedSubjectService} from "@/services/announced_subject.service";
 
 const ForTeacherRender = ({info, id} : {info: IAnnouncedSubject, id: number}) => {
     if (!info.time_exam_end) {
@@ -60,7 +61,7 @@ export default function AnnouncedSubject() {
         
         setLoading(true);
 
-        SubjectService.register(parseInt(slug as string), email, first_name, last_name).then(response => {
+        AnnouncedSubjectService.register(parseInt(slug as string), email, first_name, last_name).then(response => {
             setLoading(false);
 
             if (!response.success) {
@@ -99,7 +100,7 @@ export default function AnnouncedSubject() {
             return;
         }
 
-        SubjectService.getAnnouncedSubjectInfo(subjectId).then(response => {
+        AnnouncedSubjectService.getAnnouncedSubjectInfo(subjectId).then(response => {
             setIsLoaded(true);
 
             if (!response.success) {

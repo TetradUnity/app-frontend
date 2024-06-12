@@ -1,6 +1,6 @@
 'use client'
 
-import {AutoComplete, Button, Divider, Empty, Flex, GetRef, Input, InputRef, Pagination, Radio, Select, Spin, Tag} from "antd";
+import {AutoComplete, Button, Divider, Empty, Flex, GetRef, Input, Pagination, Radio, Select, Spin, Tag} from "antd";
 import React, {useEffect, useState} from "react";
 
 import {
@@ -15,13 +15,14 @@ import {useShallow} from "zustand/react/shallow";
 import {IAnnouncedSubjectShort} from "@/types/api.types";
 
 import {LoadingOutlined} from '@ant-design/icons';
-import {SubjectService, filterProps} from "@/services/subject.service";
+import {filterProps} from "@/services/subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
 import { TweenOneGroup } from "rc-tween-one";
 
 import { PlusOutlined } from "@ant-design/icons";
 import { TagsService } from "@/services/tags.service";
 import { debounce } from "lodash";
+import {AnnouncedSubjectService} from "@/services/announced_subject.service";
 
 export default function Subjects() {
     const profileRole = useProfileStore(useShallow(state => state.role));
@@ -63,7 +64,7 @@ export default function Subjects() {
     const fetch = (page: number) => {
         setIsFetching(true);
         
-        SubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
+        AnnouncedSubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
             setIsFetching(false);
             if (!res.success) {
                 // @ts-ignore

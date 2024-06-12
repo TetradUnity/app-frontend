@@ -10,6 +10,7 @@ import {
     ITArrResponse,
     ITResponse
 } from "@/types/api.types";
+import {AuthTokensService} from "@/services/auth-token.service";
 
 let subjects: {[id: number]: ISubject} = {
     1: {
@@ -73,79 +74,18 @@ export type filterProps = {
 };
 
 export const SubjectService = {
-    async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
+    async getSubject(subjectId: number): Promise<ITResponse<ISubject>> {
         try {
-            const response = await api.post("/subject/get-announce-subjects", {
-                title: filters?.title,
-                first_name_teacher: filters?.first_name_teacher,
-                last_name_teacher: filters?.last_name_teacher,
-                has_exam: filters?.has_exam,
-                tags: filters?.tags
-            }, {
-                params: { page }
+            const response = await api.get("/subject", {
+                params: { subjectId }
             });
 
             return {
                 success: true,
-                data: response.data.subjects,
-                count_pages: response.data.count_pages
+                data: response.data.subject
             }
-        } catch (e) {
-            return catchApiError(e);
-        }
-    },
-
-    async getAnnouncedSubjectInfo(id: number): Promise<ITResponse<IAnnouncedSubject>> {
-        try {
-            const response = await api.get("/subject/get-detail-announce-subject", {
-                params: {
-                    id
-                }
-            });
-
-            return {
-                success: true,
-                data: response.data.subject,
-            }
-        } catch (e) {
-            return catchApiError(e);
-        }
-    },
-
-    async register(subject_id: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
-        try {
-            const response = await api.post("/subject/apply-subject", {
-                subject_id, email,
-                first_name, last_name
-            });
-
-            return {
-                success: true
-            }
-        } catch (e) {
-            return catchApiError(e);
-        }
-    },
-
-    async createLinkExam(
-        subjectId: number,
-        email: string,
-        first_name: string,
-        last_name: string,
-    ): Promise<IResponse> {
-        try {
-            await api.post("/subject/create-link-exam", {
-                subjectId,
-                email,
-                first_name,
-                last_name,
-            });
-
-            return {
-                success: true
-            }
-        } catch (e) {
-            return catchApiError(e);
+        } catch (error) {
+            return catchApiError(error);
         }
     },
 

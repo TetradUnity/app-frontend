@@ -47,17 +47,53 @@ export interface ITestShortInfo {
     date: Date
 }
 
-export interface ISubjectShort {
-    id: number
-    banner: string
+export namespace SubjectNamespace {
+    export interface ISubject {
+        title: string,
+        banner: string,
+        teacher_first_name: string,
+        teacher_last_name: string,
+        teacher_id: number
+    }
 
-    teacher_first_name?: string,
-    teacher_last_name?: string,
-    teacher_id?: number,
+    export interface ISubjectShort {
+        id: number
+        banner: string
 
-    type: "ANNOUNCED_SUBJECT" | "PREPARING_SUBJECT" | "READY_SUBJECT" | "ACTIVE_SUBJECT",
+        teacher_first_name?: string,
+        teacher_last_name?: string,
+        teacher_id?: number,
 
-    title: string
+        type: "ANNOUNCED_SUBJECT" | "PREPARING_SUBJECT" | "READY_SUBJECT" | "ACTIVE_SUBJECT",
+
+        title: string
+    }
+
+    export interface IEducationMaterialProps {
+        title: string,
+        subject_id: number,
+        is_test: boolean,
+        content: string,
+        deadline: number
+    }
+
+    export interface IEducationMaterial {
+        id: number,
+        title: string,
+        is_test: boolean,
+        deadline: number,
+        time_created: number
+    }
+
+    export interface IStudentHomeworkShortInfo {
+        id: number,
+        first_name: string,
+        last_name: string,
+        avatar: string,
+        value: number,
+        dispatch_time: number,
+        attempt: number
+    }
 }
 
 export interface ISubject {
@@ -104,26 +140,6 @@ export interface IAnnouncedSubjectShort {
     teacher_id: number,
 
     banner: string
-}
-
-/* TEMPORARY */
-export interface TemporaryAnnoncedSubjectInfo {
-    id: number,
-    title: string,
-    teacher_id: number,
-    description: string,
-    is_active: boolean,
-    created_at: string,
-    exam: any,
-    exam_end_date: any,
-    start_date: string,
-    banner: string,
-
-    duration: string,
-    timetable: string,
-}
-export interface SubjectCardProps {
-    subject: TemporaryAnnoncedSubjectInfo
 }
 
 export type IStudentShortInfo = ITeacherShortInfo & {
