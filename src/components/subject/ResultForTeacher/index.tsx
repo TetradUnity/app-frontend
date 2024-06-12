@@ -1,3 +1,5 @@
+'use client';
+
 import { IStudentShortInfo } from "@/types/api.types"
 import { Avatar, Empty } from "antd"
 

@@ -81,7 +81,7 @@ export default function ILayout({
             setNoAccess(true);
             return;
         }
-        
+
         AuthService.isValidToken().then(response => {
             if (!response.success) {
                 setIsFailedToLoad(true);

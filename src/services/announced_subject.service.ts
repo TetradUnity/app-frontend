@@ -58,7 +58,7 @@ export const AnnouncedSubjectService = {
     },
 
     // teacher
-    async startSubject(subject_id: number): Promise<IResponse> {
+    async approveStudents(subject_id: number): Promise<IResponse> {
         try {
              await api.post("/subject/approve-students", {}, {
                 params: { subject_id }

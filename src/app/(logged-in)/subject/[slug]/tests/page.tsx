@@ -8,8 +8,9 @@ import styles from "../styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
 
-import { RightOutlined } from "@ant-design/icons";
-import {Empty} from "antd";
+import { RightOutlined, PlusCircleFilled } from "@ant-design/icons";
+import {Button, Empty} from "antd";
+import { useRouter } from "next/navigation";
 
 function TestSlot({item} : {item: ITestShortInfo}) {
     let date = dayjs(item.date);
@@ -29,13 +30,25 @@ function TestSlot({item} : {item: ITestShortInfo}) {
 export default function SubjectTestsPage() {
     const tests = useSubjectStore(useShallow(state => state.tests));
 
+    const subjectId = useSubjectStore(useShallow(state => state.subjectId));
+    const { push } = useRouter();
+
     return (
         <>
-        {
-            (tests.length > 0)
-            ? tests.map((item, k) => <TestSlot item={item} key={k} />)
-            : <Empty description={<p className={styles.empty_text}>Тестів поки ще немає.</p>}/>
-        }
+            <Button
+                icon={<PlusCircleFilled/>}
+                type="dashed"
+                block
+                style={{marginBottom: 15}}
+                onClick={() => push("/subject/" + subjectId + "/tests/create")}
+            >
+                Створити тест
+            </Button>
+            {
+                (tests.length > 0)
+                ? tests.map((item, k) => <TestSlot item={item} key={k} />)
+                : <Empty description={<p className={styles.empty_text}>Тестів поки ще немає.</p>}/>
+            }
         </>
     )
 }

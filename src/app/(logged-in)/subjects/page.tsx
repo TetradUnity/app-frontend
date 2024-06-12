@@ -8,7 +8,7 @@ import {
     SearchOutlined
 } from "@ant-design/icons";
 
-import SubjectCard from "@/components/cards/SubjectCard";
+import SubjectCard from "@/components/cards/AnouncedSubjectCard";
 import Link from "next/link";
 import {useProfileStore} from "@/stores/profileStore";
 import {useShallow} from "zustand/react/shallow";

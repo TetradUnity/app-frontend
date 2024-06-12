@@ -1,3 +1,5 @@
+'use client';
+
 import FullscreenImageModal from "@/components/FullscreenImage";
 import { IStudentShortInfo } from "@/types/api.types";
 import { Avatar, Button, Divider, Flex, Input, Modal } from "antd";

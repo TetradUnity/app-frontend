@@ -1,7 +1,8 @@
+'use client';
+
 import { Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
-
 
 export default function BackButton() {
     const pathname = usePathname();

@@ -341,7 +341,7 @@ export type TestConstructorRef = {
     loadFromDraft: (draft: Drafts.Test) => void
 }
 
-export const TestConstructor = React.forwardRef((props, ref) => {
+export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingGradeEnabled?: boolean}, ref) => {
     type question = {
         id: number,
         ref: React.RefObject<QuestionRef>
@@ -363,7 +363,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
     };
 
     const checkIfCorrectly = (data: (TestsNamespace.Question | undefined)[]) => {
-        if (passingGrade < 0) {
+        if (passingGradeEnabled && passingGrade < 0) {
             modal.error({
                 title: "Помилка.",
                 maskClosable: true,
@@ -452,7 +452,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             return [
                 {
                     time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
-                    passing_grade: passingGrade
+                    ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
                 ...data
             ];
@@ -462,7 +462,7 @@ export const TestConstructor = React.forwardRef((props, ref) => {
             return [
                 {
                     time: testDuration ? (testDuration.unix() * 1000) : undefined,
-                    passing_grade: passingGrade
+                    ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
                 ...questions.map(item => item.ref.current?.getData())
             ];
@@ -572,19 +572,20 @@ export const TestConstructor = React.forwardRef((props, ref) => {
                 />
             </section>
 
-            <section>
-                <h2 style={{marginBottom: 10}}>Прохідний бал:</h2>
-                <Input
-                    value={passingGrade}
-                    onChange={val => setPassingGrade(parseInt(val.target.value))}
-                    type="number"
-                />
-            </section>
+            {passingGradeEnabled &&
+                <section>
+                    <h2 style={{marginBottom: 10}}>Прохідний бал:</h2>
+                    <Input
+                        value={passingGrade}
+                        onChange={val => setPassingGrade(parseInt(val.target.value))}
+                        type="number"
+                    />
+                </section>
+            }
 
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
             <p>В заголовках запитання, або в текстових відповідях можна форматувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
-            
             
             <Reorder.Group
                 axis="y"

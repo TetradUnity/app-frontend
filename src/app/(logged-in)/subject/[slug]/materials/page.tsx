@@ -10,6 +10,7 @@ import styles from "../styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { Button, Empty } from "antd";
+import { useRouter } from "next/navigation";
 
 function MaterialSlot({item} : {item: IMaterialShortInfo}) {
     const date = dayjs(item.date);
@@ -29,10 +30,21 @@ function MaterialSlot({item} : {item: IMaterialShortInfo}) {
 
 export default function SubjectMaterialsPage() {
     const materials = useSubjectStore(useShallow(state => state.materials));
+    
+    const subjectId = useSubjectStore(useShallow(state => state.subjectId));
+    const { push } = useRouter();
 
     return (
         <>
-            <Button icon={<PlusCircleFilled/>} type="dashed" block style={{marginBottom: 15}}>Створити новий матеріал</Button>
+            <Button
+                icon={<PlusCircleFilled/>}
+                type="dashed"
+                block
+                style={{marginBottom: 15}}
+                onClick={() => push("/subject/" + subjectId + "/materials/create")}
+            >
+                Створити матеріал
+            </Button>
             {
                 (materials.length > 0)
                 ? materials.map((item, k) => <MaterialSlot item={item} key={k} />)

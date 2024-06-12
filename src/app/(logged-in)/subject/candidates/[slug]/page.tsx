@@ -146,7 +146,7 @@ export default function AnnouncedSubject() {
         setIsPageLoading(true);
 
         let subjectId = parseInt(slug as string);
-
+        
         if (!subjectId || subjectId < 0) {
             setNotFound(true);
             return;
@@ -210,9 +210,9 @@ export default function AnnouncedSubject() {
     const startSubject = () => {
         modal.confirm({
             title: "Ви впевнені?",
-            content: <p>Цією дією ви почнете предмет. Учням на почтову скриньку прийде про це повідомлення.</p>,
+            content: <p>Перегляньте уважно, чи всі підходять на ваш предмет!</p>,
             onOk: async () => {
-                const resp = await AnnouncedSubjectService.startSubject(parseInt(slug as string));
+                const resp = await AnnouncedSubjectService.approveStudents(parseInt(slug as string));
 
                 if (!resp.success) {
                     modal.error({
@@ -302,7 +302,7 @@ export default function AnnouncedSubject() {
                         type="primary"
                         onClick={startSubject}
                     >
-                        Почати предмет
+                        Сформувати список
                     </Button>
                 </div>
            </div>

@@ -723,7 +723,7 @@ export default function CreateSubjectPage() {
                                 />
                             </Form.Item>
 
-                            <TestConstructor ref={testRef} />
+                            <TestConstructor passingGradeEnabled={true} ref={testRef} />
                         </>}
                 </Form.Item>
 

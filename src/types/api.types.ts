@@ -47,6 +47,18 @@ export interface ITestShortInfo {
     date: Date
 }
 
+export interface ISubjectShort {
+    id: number
+    banner: string
+
+    teacher_first_name?: string,
+    teacher_last_name?: string,
+    teacher_id?: number,
+
+    type: "ANNOUNCED_SUBJECT" | "PREPARING_SUBJECT" | "READY_SUBJECT" | "ACTIVE_SUBJECT",
+
+    title: string
+}
 
 export interface ISubject {
     title: string,
@@ -81,10 +93,7 @@ export type IAnnouncedSubject =
 
 
 export interface IAnnouncedSubjectShort {
-    id: number,
-
-    time_exam_end: number,
-    time_start: number,
+    id: number
 
     title: string,
     short_description: string,
@@ -187,6 +196,20 @@ export namespace Drafts {
         isExamRequired: boolean
     }>;
     export type Test = Partial<TestsNamespace.Test>;
+
+    export type Material = {
+        title?: string,
+        homework?: boolean,
+        homework_deadline?: number,
+        material?: string
+    };
+
+    export type TestMaterial = {
+        title?: string,
+        deadline?: number,
+        max_attempts?: number,
+        test?: Drafts.Test
+    }
 }
 
 export interface ICandidate {

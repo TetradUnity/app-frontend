@@ -1,6 +1,8 @@
+'use client';
+
 import TestResult from "@/components/TestResult";
 import { IStudentShortInfo, TestsNamespace } from "@/types/api.types";
-import { Button, Divider, Modal } from "antd";
+import { Button, Divider, Flex, Input, Modal } from "antd";
 
 const MOCK_QUESTIONS: TestsNamespace.CandidateQuestion[] = [
     {
@@ -64,6 +66,14 @@ export default function TestResultViewerModal({isOpen, student, close} : TestRes
                     <Divider style={{marginTop: 15, marginBottom: 15}} />
 
                     <TestResult questions={MOCK_QUESTIONS} slotColor="var(--foreground-lighter-0_5)" />
+
+                    <Divider />
+
+                    <h3 style={{marginBottom: 10}}>Оцінка:</h3>
+                    <Flex gap={10}>
+                        <Input type="number" defaultValue="0" />
+                        <Button>Змінити</Button>
+                    </Flex>
                 </>}
             </Modal>
         </>
