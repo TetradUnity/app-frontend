@@ -109,6 +109,18 @@ export namespace SubjectNamespace {
         title: string,
         type: string
     }
+    
+    export interface ISingleEducationMaterial {
+        content: string
+    }
+
+    export interface ISingleEducationTest {
+        your_attempts: number,
+        available_attempt: number,
+        amount_questions: number,
+        duration: number,
+        test: TestsNamespace.Question[],
+    }
 }
 
 export interface IMaterial {
@@ -166,7 +178,8 @@ export namespace TestsNamespace {
     export type Test = [
         {
             time: number,
-            passing_grade: number,
+            passing_grade?: number,
+            max_attempts: number
         },
         ...Question[]
     ]

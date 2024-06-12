@@ -39,8 +39,8 @@ export default function MaterialCreatePage() {
 
     const onSubmit = () => {
         modal.confirm({
-            title: "",
-            content: <p></p>,
+            title: "Створення матеріалу.",
+            content: <p>Ви впевнені?</p>,
             onOk: async () => {
                 const editor = tiptapRef.current?.getEditor();
                 if (!editor) return;

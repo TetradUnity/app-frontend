@@ -5,13 +5,16 @@ import Tiptap, { TiptapRef } from "@/components/Tiptap";
 import BackButton from "@/components/subject/BackButton";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { DraftService } from "@/services/draft.service";
-import { Drafts } from "@/types/api.types";
+import { Drafts, SubjectNamespace } from "@/types/api.types";
 import { Button, DatePicker, Form, Input, InputNumber, Modal, Switch } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import {useParams, useRouter} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import {useShallow} from "zustand/react/shallow";
+import { EducationService } from "@/services/education.service";
+import translateRequestError from "@/utils/ErrorUtils";
+import { useSubjectStore } from "@/stores/subjectStore";
 
 const draftStore = DraftService.createStore<Drafts.TestMaterial>("test_material_create_draft");
 
@@ -22,8 +25,58 @@ export default function TestCreatePage() {
     const testRef = React.useRef<TestConstructorRef>();
     const isDraftModalVisible = React.useRef<boolean>();
 
-    const onSubmit = () => {
+    const updateMaterialFetchStatus = useSubjectStore(useShallow(state => state.updateMaterialFetchStatus));
 
+    const onSubmit = () => {
+        modal.confirm({
+            title: "Створення матеріалу.",
+            content: <p>Ви впевнені?</p>,
+            onOk: async () => {
+                let test = undefined;
+                if (testRef.current) {
+                    test = testRef.current.getData();
+                    if (!test) {
+                        return;
+                    }
+                    test[0].max_attempts = form.getFieldValue("max_attempts") || 1;
+                    test = JSON.stringify(test);
+                }
+                if (!test) return;
+
+                let data: SubjectNamespace.IEducationMaterialProps = {
+                    title: form.getFieldValue("title"),
+                    subject_id: parseInt(slug as string),
+                    is_test: true,
+                    content: test,
+                    deadline: form.getFieldValue("deadline").unix() * 1000
+                }
+
+                const response = await EducationService.createEducationMaterial(data);
+
+                if (!response.success) {
+                    modal.error({
+                        title: "Помилка",
+                            content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
+                    });
+                    return;
+                }
+
+                modal.success({
+                    title: "Успіх!",
+                    content: <p>Ви створили новий матеріал</p>,
+                    onOk: () => {
+                        updateMaterialFetchStatus("NOT_FETCHED");
+                        draftStore.remove();
+                        push("/subject/" + slug + "/assigments");
+                    },
+                    onCancel: () => {
+                        updateMaterialFetchStatus("NOT_FETCHED");
+                        draftStore.remove();
+                        push("/subject/" + slug + "/assigments");
+                    }
+                });
+            }
+        })
     }
 
     const saveDraft = () => {

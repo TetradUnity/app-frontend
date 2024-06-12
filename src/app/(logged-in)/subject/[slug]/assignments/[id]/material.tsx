@@ -16,7 +16,7 @@ import { FileTextOutlined, CloudUploadOutlined, PaperClipOutlined, DeleteFilled,
 import { fileIsImage } from "@/utils/OtherUtils";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
-import { IStudentShortInfo } from "@/types/api.types";
+import { IStudentShortInfo, SubjectNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 import FullscreenImageModal from "@/components/FullscreenImage";
 
@@ -153,49 +153,14 @@ const RenderForStudent = () => {
     )
 }
 
-export default function MaterialPage() {
-    const { id } = useParams();
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-
+type Props = {
+    material: SubjectNamespace.ISingleEducationMaterial
+};
+export default function MaterialPage({material} : Props) {
     const role = useProfileStore(useShallow(state => state.role));
-
-    useEffect(() => {
-        let subjectId = parseInt(id as string);
-
-        if (!subjectId || subjectId < 0) {
-            setError("not_found");
-            return;
-        }
-
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-    }, []);
     
-    if (error) {
-         return (
-            <Foreground style={{height: 100}}>
-                <BackButton />
-                <p style={{textAlign: "center", fontSize: 30}}>Трапилась помилка: {translateRequestError(error)}</p>
-            </Foreground>
-        )
-    }
-
-    if (isLoading) {
-        return (
-            <Foreground style={{height: 100}}>
-                <BackButton />
-                <Spin style={{display: "block", margin: "auto"}} spinning />
-            </Foreground>
-        )
-    }
-
     return (
-        <Foreground>
-            <BackButton />
-
+        <>
             <h1><FileTextOutlined style={{color: "var(--primary-light)"}} /> Фізика - як наука. Вступний урок до курсу фізики. Базові поняття</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>11 червня, 2024 рік о 19:00</i></p>
             <p style={{fontSize: 15}}>Здати до: <i>12 червня, 2024 рік 15:49</i></p>
@@ -212,6 +177,6 @@ export default function MaterialPage() {
 
             <h1>Домашнє завдання:</h1>
             {role == "TEACHER" ? <RenderForTeacher /> : <RenderForStudent />}
-        </Foreground>
+        </>
     )
 }

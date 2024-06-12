@@ -35,14 +35,7 @@ export const EducationService = {
         }
     },
 
-    async getEducationMaterial(educationId: number): Promise<IResponse & {
-        your_attempts?: number,
-        available_attempt?: number,
-        amount_questions?: number,
-        duration?: number,
-        test?: TestsNamespace.Question[],
-        content?: string
-    }> {
+    async getEducationMaterial(educationId: number): Promise<ITResponse<SubjectNamespace.ISingleEducationMaterial & SubjectNamespace.ISingleEducationTest>> {
         try {
             const response = await api.post("/education/create-education-material", {}, {
                 params: { education_id: educationId }
@@ -50,12 +43,14 @@ export const EducationService = {
 
             return {
                 success: true,
-                your_attempts: response.data.your_attempts,
-                available_attempt: response.data.available_attempt,
-                amount_questions: response.data.amount_questions,
-                duration: response.data.duration,
-                test: response.data.test,
-                content: response.data.content
+                data: {
+                    your_attempts: response.data.your_attempts,
+                    available_attempt: response.data.available_attempt,
+                    amount_questions: response.data.amount_questions,
+                    duration: response.data.duration,
+                    test: response.data.test,
+                    content: response.data.content
+                }
             }
         } catch (error) {
             return catchApiError(error);

@@ -240,7 +240,7 @@ const TagsSelector = React.forwardRef(({modal} : {modal: HookAPI}, ref) => {
                 enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100 }}
                 leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
                 style={{display: "inline-block"}}
-                onEnd={(e) => {
+                onEnd={(e: any) => {
                     if (e.type === 'appear' || e.type === 'enter') {
                     (e.target as any).style = 'display: inline-block';
                     }
