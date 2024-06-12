@@ -172,7 +172,7 @@ export default function AnnouncedSubject() {
 
                 <section>
                     <h1><CheckOutlined style={{color: "#00ff5e"}} /> Вступний екзамен:</h1>
-                    <p>{info.time_exam_end ? "Існує" : "Не існує"}</p>
+                    <p>{(info.duration_exam && info.duration_exam > 0) ? "Існує" : "Не існує"}</p>
                 </section>
 
                 {(info.duration_exam && info.duration_exam > 0)

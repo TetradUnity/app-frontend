@@ -6,10 +6,22 @@
     align-items: flex-start;
     justify-content: flex-end;
     border-radius: 10px;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .header_div * {
     text-shadow: rgba(0,0,0,.4) 1px 0 10px;
+}
+
+.header_div a {
+    color: white;
+}
+.header_div a:hover {
+    color: rgb(220,220,220);
+    text-decoration: underline;
 }
 
 .material_slot {

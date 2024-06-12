@@ -8,15 +8,15 @@ import {
 } from "@/types/api.types";
 
 export const EducationService = {
-    async getEducationMaterials(subjectId: number): Promise<ITArrResponse<SubjectNamespace.IEducationMaterial>> {
+    async getEducationMaterials(subjectId: number, page: number): Promise<ITArrResponse<SubjectNamespace.IEducationMaterial>> {
         try {
             const response = await api.get("/education/get-education-materials", {
-                params: { subject_id: subjectId }
+                params: { subject_id: subjectId, page: page }
             });
 
             return {
                 success: true,
-                data: response.data.education_materials,
+                data: response.data.education_materials
             }
         } catch (error) {
             return catchApiError(error);

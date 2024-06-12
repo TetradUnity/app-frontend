@@ -106,7 +106,7 @@ export default function TestCreatePage() {
 
     return (
         <Foreground>
-            <BackButton />
+            <BackButton navTo="assigments" />
             <h1 style={{marginTop: 10, marginBottom: 15}}>Створити тест</h1>
 
             <Form

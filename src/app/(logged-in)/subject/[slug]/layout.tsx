@@ -8,12 +8,10 @@ import { useEffect, useState } from "react";
 
 import styles from "./styles.module.css";
 import { Segmented } from "antd";
-import { AnimationControls, TargetAndTransition, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { EducationService } from "@/services/education.service";
-import translateRequestError from "@/utils/ErrorUtils";
-
-// TODO: fetching from server when it's be ready.
-const cover_img = "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg";
+import { UploadService, UploadType } from "@/services/upload.service";
+import Link from "next/link";
 
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
@@ -37,10 +35,10 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     }
 
     useEffect(() => {
-        if ((pathname.endsWith("materials") || pathname.endsWith("tests")) && store.materialsFetchingStatus == "NOT_FETCHED") {
+        if ((pathname.endsWith("assigments")) && store.materialsFetchingStatus == "NOT_FETCHED") {
             store.updateMaterialFetchStatus("FETCHING");
 
-            EducationService.getEducationMaterials(subjectId).then(response => {
+            EducationService.getEducationMaterials(subjectId, 1).then(response => {
                 if (!response.data) {
                     store.updateMaterialFetchStatus(response.error_code as string);
                     return;
@@ -90,19 +88,18 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
        <div>
             <motion.div animate={anim} initial={anim}>
                 <div
-                    style={{background: "url(" + cover_img + ")", position: "relative"}}
+                    style={{backgroundImage: "url(" + store.subject.banner + ")", position: "relative"}}
                     className={styles.header_div}
                 >
                         <h1>{store.subject.title}</h1>
-                        <p><b>Викладач: </b><i>{store.subject.teacher_first_name} {store.subject.teacher_last_name}</i></p>
+                        <Link href={"/profile/" + store.subject.teacher_id}><p><b>Викладач: </b><i>{store.subject.teacher_first_name} {store.subject.teacher_last_name}</i></p></Link>
                 </div>
 
                 <Segmented
                     style={{margin: "20px 0"}}
                     defaultValue={pathname.split("/")[3]}
                     options={[
-                        {label: "Матеріали", value: "materials"},
-                        {label: "Тести", value: "tests"},
+                        {label: "Завдання", value: "assigments"},
                         {label: "Студенти", value: "students"},
                         {label: "Розклад занять", value: "timetable"},
                         {label: "Оцінки", value: "grades"},

@@ -119,7 +119,7 @@ export default function MaterialCreatePage() {
 
     return (
         <Foreground>
-            <BackButton />
+            <BackButton navTo="assigments" />
             <h1 style={{marginTop: 10, marginBottom: 15}}>Створити матеріал</h1>
 
             <Form

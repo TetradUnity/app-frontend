@@ -112,7 +112,7 @@ export default function AnnouncedSubject() {
             width: 1,
             render: (_, record, index) => {
                 return (
-                   <div style={{display: "block", margin: "auto"}}>
+                   <div style={{display: "block", margin: "auto", width: "fit-content"}}>
                         <Tooltip title="Відказати студенту бути участником вашого предмету">
                             <Button
                                 type="primary"
@@ -124,6 +124,7 @@ export default function AnnouncedSubject() {
                             />
                         </Tooltip>
 
+                       {hasExam &&
                         <Tooltip title="Подробніше">
                             <Button
                                 type="dashed"
@@ -133,6 +134,7 @@ export default function AnnouncedSubject() {
                                 onClick={() => fetchStudentInfo(record.id, index)}
                             />
                         </Tooltip>
+                    }
                    </div>
                 )
             }
