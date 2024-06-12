@@ -65,6 +65,7 @@ export namespace SubjectNamespace {
         teacher_id?: number,
 
         type: "ANNOUNCED_SUBJECT" | "PREPARING_SUBJECT" | "READY_SUBJECT" | "ACTIVE_SUBJECT",
+        info: number,
 
         title: string
     }
@@ -94,14 +95,21 @@ export namespace SubjectNamespace {
         dispatch_time: number,
         attempt: number
     }
+
+    export interface IGrade {
+        id: number,
+        value: number,
+        date: number,
+        reason: string
+    }
+
+    export interface IEvent {
+        id: number,
+        title: string,
+        type: string
+    }
 }
 
-export interface ISubject {
-    title: string,
-    teacherInfo: ITeacherShortInfo,
-    materials: IMaterialShortInfo[],
-    tests: ITestShortInfo[]
-}
 export interface IMaterial {
     title: string,
     content: string,
@@ -235,4 +243,10 @@ export interface ICandidate {
     last_name: string;
     result: number;
     duration?: number;
+}
+
+export interface ICertificate {
+    uid: string,
+    title: string,
+    type: "PARTICIPATION" | "GOOD_RESULTS" | "EXCELLENT_RESULTS"
 }

@@ -1,58 +1,68 @@
-import { ISubject, IStudentShortInfo, IGrade } from "@/types/api.types";
+import { UploadService, UploadType } from "@/services/upload.service";
+import { IStudentShortInfo, IGrade, SubjectNamespace } from "@/types/api.types";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-type State = ISubject & {
-    subjectId: number,
+type StatusType = "SUCCESS" | "FETCHING" | "NOT_FETCHED" | `${string}`;
 
-    students: IStudentShortInfo[],
-    studentsFetchingState: "not_fetched" | "fetching" | "success" | "error",
+type State =  {
+    subject: SubjectNamespace.ISubject & {id: number},
+
+    materials: SubjectNamespace.IEducationMaterial[],
+    materialsFetchingStatus: StatusType,
 
     grades: IGrade[]
+    gradesFetchingStatus: StatusType,
+
+    students: IStudentShortInfo[],
+    studentsFetchingStatus: StatusType,
 };
 
 type Action = {
-    updateSubjectInfo: (data: (ISubject & {subjectId: number}) | undefined) => void,
-    updateStudents: (data: IStudentShortInfo[] | undefined) => void,
-    updateFetchStatus: (status: State["studentsFetchingState"]) => void
+    updateSubjectInfo: (data: State["subject"] | undefined) => void,
+    
+    updateMaterials: (data: State["materials"]) => void,
+    updateMaterialFetchStatus: (status: StatusType) => void,
+
+    updateGrades: (data: State["grades"]) => void,
+    updateGradesFetchStatus: (status: StatusType) => void,
+
+    updateStudents: (data: State["students"]) => void,
+    updateStudentsFetchStatus: (status: StatusType) => void,
 };
 
 export const useSubjectStore = create( devtools<State & Action>( (set, get) => ({
-    subjectId: -1,
-    title: "",
-    teacherInfo: {
+    subject: {
         id: -1,
-        first_name: "",
-        last_name: ""
+        title: "",
+        banner: "",
+        teacher_first_name: "",
+        teacher_last_name: "",
+        teacher_id: -1
     },
+
     materials: [],
-    tests: [],
+    materialsFetchingStatus: "NOT_FETCHED",
+
+    grades: [],
+    gradesFetchingStatus: "NOT_FETCHED",
 
     students: [],
-    studentsFetchingState: "not_fetched",
+    studentsFetchingStatus: "NOT_FETCHED",
 
-    savedScrollPosition: 0,
-
-    // TODO: Make it a worker when back end will be ready. 
-    grades: [
-        {grade: 9, reason: "test", date: new Date(1715839132000)},
-        {grade: 11, reason: "conference", date: new Date(1715839123000)},
-        {grade: 10, reason: "task", date: new Date(1715839100000)},
-        {grade: 8, reason: "conference", date: new Date(1715839100000)},
-        {grade: 12, reason: "task", date: new Date(1715839100000)}
-    ],
-
-    updateSubjectInfo: (data) => set(state => {
+    updateSubjectInfo: data => set(state => {
         if (data) {
-            return {...state, ...data};
+            return {...state, subject: {...data, banner: UploadService.getImageURL(UploadType.BANNER, data.banner)}};
         }
         return state;
     }),
-    updateStudents: (data) => set(state => {
-        if (data) {
-            return {...state, students: data, studentsFetchingState: "success"};
-        }
-        return state;
-    }),
-    updateFetchStatus: (status) => set(state => ({...state, studentsFetchingState: status}))
+
+    updateMaterials: data => set(state => ({...state, materials: data})),
+    updateMaterialFetchStatus: status => set(state => ({...state, materialsFetchingStatus: status})),
+
+    updateStudents: data => set(state => ({...state, students: data})),
+    updateStudentsFetchStatus: status => set(state => ({...state, studentsFetchingStatus: status})),
+
+    updateGrades: data => set(state => ({...state, grades: data})),
+    updateGradesFetchStatus: status => set(state => ({...state, gradesFetchingStatus: status}))
 }) ));

@@ -1,7 +1,7 @@
 'use client';
 
 import { useSubjectStore } from "@/stores/subjectStore"
-import { ITestShortInfo } from "@/types/api.types";
+import { ITestShortInfo, SubjectNamespace, TestsNamespace } from "@/types/api.types";
 import { useShallow } from "zustand/react/shallow";
 
 import styles from "../styles.module.css";
@@ -9,12 +9,13 @@ import Link from "next/link";
 import dayjs from "dayjs";
 
 import { RightOutlined, PlusCircleFilled } from "@ant-design/icons";
-import {Button, Empty} from "antd";
+import {Button, Empty, Spin} from "antd";
 import { useRouter } from "next/navigation";
+import translateRequestError from "@/utils/ErrorUtils";
 
-function TestSlot({item} : {item: ITestShortInfo}) {
-    let date = dayjs(item.date);
-    const subjectId = useSubjectStore(useShallow(state => state.subjectId));
+function TestSlot({item} : {item: SubjectNamespace.IEducationMaterial}) {
+    let date = dayjs(item.time_created);
+    const subjectId = useSubjectStore(useShallow(state => state.subject.id));
 
     return (
         <div className={styles.material_slot + " " + styles.slot_with_arrow}>
@@ -28,10 +29,18 @@ function TestSlot({item} : {item: ITestShortInfo}) {
 }
 
 export default function SubjectTestsPage() {
-    const tests = useSubjectStore(useShallow(state => state.tests));
+    const materials = useSubjectStore(useShallow(state => state.materials.filter(material => material.is_test)));
+    const materialsFetchStatus = useSubjectStore(useShallow(state => state.materialsFetchingStatus));
 
-    const subjectId = useSubjectStore(useShallow(state => state.subjectId));
+    const subjectId = useSubjectStore(useShallow(state => state.subject.id));
+
     const { push } = useRouter();
+
+    if (materialsFetchStatus == "FETCHING" || materialsFetchStatus == "NOT_FETCHED") {
+        return <Spin style={{display: "block", margin: "auto"}} spinning />
+    } else if (materialsFetchStatus != "SUCCESS") {
+        return <p style={{textAlign: "center"}}>Трапилась помилка: {translateRequestError(materialsFetchStatus)}</p>
+    }
 
     return (
         <>
@@ -45,8 +54,8 @@ export default function SubjectTestsPage() {
                 Створити тест
             </Button>
             {
-                (tests.length > 0)
-                ? tests.map((item, k) => <TestSlot item={item} key={k} />)
+                (materials.length > 0)
+                ? materials.map((item, k) => <TestSlot item={item} key={k} />)
                 : <Empty description={<p className={styles.empty_text}>Тестів поки ще немає.</p>}/>
             }
         </>

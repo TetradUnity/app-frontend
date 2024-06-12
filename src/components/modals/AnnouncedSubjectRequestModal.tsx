@@ -1,16 +1,20 @@
 import { validateEmail } from "@/utils/OtherUtils";
 import { Input, Modal, Segmented, message } from "antd";
-import { CSSProperties, useState } from "react";
+import React, { CSSProperties, useImperativeHandle, useState } from "react";
 
 const sectionStyle: CSSProperties = {
     marginTop: 10
 }
 
-export default function AnnouncedSubjectRequestModal(
+export type AnnouncedSubjectRequestModalRef = {
+    set: (email: string, firstName?: string, lastName?: string) => void
+}
+
+const AnnouncedSubjectRequestModal = React.forwardRef((
     {isOpen, close, callback}
     :
     {isOpen: boolean, close: () => void, callback: (email: string, first_name?: string, last_name?: string) => void}
-){
+, ref) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -19,6 +23,14 @@ export default function AnnouncedSubjectRequestModal(
     const [choose, setChoose] = useState<chooseType>("not_registered");
     
     const [messageApi, contextHolder] = message.useMessage();
+
+    useImperativeHandle(ref, () => ({
+        set: (email: string, firstName?: string, lastName?: string) => {
+            setEmail(email);
+            setFirstName(firstName || '');
+            setLastName(lastName || '');
+        }
+    }) as AnnouncedSubjectRequestModalRef);
 
     const onOk = () => {
         let data = {
@@ -96,4 +108,7 @@ export default function AnnouncedSubjectRequestModal(
             {contextHolder}
         </Modal>
     )
-}
+});
+
+
+export default AnnouncedSubjectRequestModal;

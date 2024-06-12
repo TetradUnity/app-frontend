@@ -12,13 +12,19 @@ const authorizedUrls = [
     '/teachers'
 ];
 const availableForBoth = [
-    '/subjects', '/profile'
+    '/subjects', '/profile', '/subject/announced/'
 ]
 
 const checkUrl = (pathname: string, urls: string[]) => {
     for (let i = 0; i < urls.length; i++) {
-        if (pathname.startsWith(urls[0])) {
-            return true;
+        if (urls[i] == "/") {
+            if (pathname == urls[i]) {
+                return true;
+            }
+        } else {
+            if (pathname.startsWith(urls[i])) {
+                return true;
+            }
         }
     }
 
@@ -26,18 +32,19 @@ const checkUrl = (pathname: string, urls: string[]) => {
 }
 
 export function middleware(request: NextRequest) {
-    const isAuthorized = cookies().get("AUTH_TOKEN");
+    const isAuthorized = cookies().get("AUTH_TOKEN") != undefined;
     const url = request.nextUrl.pathname;
 
     if (checkUrl(url, availableForBoth)) {
         return NextResponse.next();
     }
 
+    
     if (checkUrl(url, authorizedUrls)) {
-        if (!isAuthorized) {
-            return NextResponse.redirect(new URL('/', request.url))
+        if (isAuthorized) {
+            return NextResponse.next();
         }
-        return NextResponse.next();
+        return NextResponse.redirect(new URL('/', request.url))
     }
 
     if (checkUrl(url, notAuthorizedUrls)) {

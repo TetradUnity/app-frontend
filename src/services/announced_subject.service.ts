@@ -2,6 +2,8 @@
 
 import { api, catchApiError } from "@/api";
 import {
+    IAnnouncedSubject,
+    IAnnouncedSubjectShort,
     ICandidate,
     IResponse,
     ITArrResponse,
@@ -9,6 +11,13 @@ import {
     TestsNamespace
 } from "@/types/api.types";
 
+export type filterProps = {
+    tags?: string[],
+    has_exam?: boolean,
+    first_name_teacher?: string,
+    last_name_teacher?: string,
+    title?: string
+};
 export const AnnouncedSubjectService = {
     // student or guest
     async startExam(uid: string): Promise<ITResponse<TestsNamespace.ProdTest> & {time_end?: number}> {
@@ -51,6 +60,59 @@ export const AnnouncedSubjectService = {
                 success: true,
                 result: response.data.result,
                 passing_grade: response.data.passing_grade
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
+    async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
+        try {
+            const response = await api.post("/subject/get-announce-subjects", {
+                title: filters?.title,
+                first_name_teacher: filters?.first_name_teacher,
+                last_name_teacher: filters?.last_name_teacher,
+                has_exam: filters?.has_exam,
+                tags: filters?.tags
+            }, {
+                params: { page }
+            });
+
+            return {
+                success: true,
+                data: response.data.subjects,
+                count_pages: response.data.count_pages
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+
+    async getAnnouncedSubjectInfo(id: number): Promise<ITResponse<IAnnouncedSubject>> {
+        try {
+            const response = await api.get("/subject/get-detail-announce-subject", {
+                params: {
+                    id
+                }
+            });
+
+            return {
+                success: true,
+                data: response.data.subject,
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
+    },
+    async register(subject_id: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
+        try {
+            const response = await api.post("/subject/apply-subject", {
+                subject_id, email,
+                first_name, last_name
+            });
+
+            return {
+                success: true
             }
         } catch (e) {
             return catchApiError(e);

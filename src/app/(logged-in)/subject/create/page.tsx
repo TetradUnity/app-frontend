@@ -350,9 +350,8 @@ export default function CreateSubjectPage() {
                     setLoading(false);
                     return;
                 }
-                
 
-                let examEnabled = form.getFieldValue("examEndDate") !== undefined;
+                let examEnabled = testSelectorVisible;
 
                 let exam = data.exam;
                 if (testRef.current && examEnabled) {
@@ -376,19 +375,19 @@ export default function CreateSubjectPage() {
 
                 if (end_exam_time) {
                     if (end_exam_time > start_subject_time) {
-                        err("Дата закінчення екзамену не може бути назначеною після того як почнеться предмет.");
+                        err("Дата закінчення приймання заявок не може бути назначеною після того як почнеться предмет.");
                         setLoading(false);
                         return;
                     }
 
                     if (end_exam_time < current_time + (7 * 86400 * 1000)) {
-                        err("Дата закінчення екзамену має бути назначена як мінімум через неділю від поточної дати.")
+                        err("Дата закінчення приймання заявок має бути назначена як мінімум через неділю від поточної дати.")
                         setLoading(false);
                         return;
                     }
 
                     if (start_subject_time - end_exam_time < 86400 * 1000) {
-                        err("Різниця між датою закінчення екзамену та початком предмету має бути як мінімум 1 день.");
+                        err("Різниця між датою закінчення приймання заявок та початком предмету має бути як мінімум 1 день.");
                         setLoading(false);
                         return;
                     }
@@ -679,6 +678,13 @@ export default function CreateSubjectPage() {
                     />
                 </Form.Item>
 
+                <Form.Item name="examEndDate" label="До якої дати можна зареєструватись:" rules={[
+                    { required: true, message: "Обов'язкове поле!" }
+                ]}>
+                    <DatePicker
+                    />
+                </Form.Item>
+
                 <Form.Item required label="Приблизна тривалість предмету:">
                     <Form.Item initialValue={duration} noStyle name="duration">
                         <DatePicker.RangePicker
@@ -715,16 +721,9 @@ export default function CreateSubjectPage() {
                         <Switch />
                     </Form.Item>
 
-                    {testSelectorVisible && <>
-                            <Form.Item style={{marginTop: 20}} name="examEndDate" label="До якої дати можна буде здати екзамен:" rules={[
-                                { required: true, message: "Обов'язкове поле!" }
-                            ]}>
-                                <DatePicker
-                                />
-                            </Form.Item>
-
-                            <TestConstructor passingGradeEnabled={true} ref={testRef} />
-                        </>}
+                    {testSelectorVisible &&
+                        <TestConstructor passingGradeEnabled={true} ref={testRef} />
+                    }
                 </Form.Item>
 
                 <Form.Item>

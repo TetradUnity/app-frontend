@@ -2,15 +2,10 @@
 
 import { api, catchApiError } from "@/api";
 import {
-    IAnnouncedSubject,
-    IAnnouncedSubjectShort,
     IResponse,
-    IStudentShortInfo,
-    ISubject,
     ITArrResponse,
     ITResponse, SubjectNamespace, TestsNamespace
 } from "@/types/api.types";
-import {AuthTokensService} from "@/services/auth-token.service";
 
 export const EducationService = {
     async getEducationMaterials(subjectId: number): Promise<ITArrResponse<SubjectNamespace.IEducationMaterial>> {

@@ -10,19 +10,19 @@ import {
 
 import SubjectCard from "@/components/cards/AnouncedSubjectCard";
 import Link from "next/link";
-import {useProfileStore} from "@/stores/profileStore";
-import {useShallow} from "zustand/react/shallow";
-import {IAnnouncedSubjectShort} from "@/types/api.types";
+import { useProfileStore } from "@/stores/profileStore";
+import { useShallow } from "zustand/react/shallow";
+import  {IAnnouncedSubjectShort } from "@/types/api.types";
 
-import {LoadingOutlined} from '@ant-design/icons';
-import {filterProps} from "@/services/subject.service";
+import { LoadingOutlined } from '@ant-design/icons';
+import { filterProps } from "@/services/announced_subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
 import { TweenOneGroup } from "rc-tween-one";
 
 import { PlusOutlined } from "@ant-design/icons";
 import { TagsService } from "@/services/tags.service";
 import { debounce } from "lodash";
-import {AnnouncedSubjectService} from "@/services/announced_subject.service";
+import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 
 export default function Subjects() {
     const profileRole = useProfileStore(useShallow(state => state.role));

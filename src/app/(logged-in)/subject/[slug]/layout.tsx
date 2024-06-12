@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { Segmented } from "antd";
 import { AnimationControls, TargetAndTransition, motion } from "framer-motion";
+import { EducationService } from "@/services/education.service";
+import translateRequestError from "@/utils/ErrorUtils";
 
 // TODO: fetching from server when it's be ready.
 const cover_img = "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg";
@@ -28,16 +30,32 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     const pathname = usePathname();
     const { push } = useRouter();
 
+    const subjectId = parseInt(slug as string);
+
+    if (!subjectId || subjectId < 0) {
+        notFound();
+    }
+
+    useEffect(() => {
+        if ((pathname.endsWith("materials") || pathname.endsWith("tests")) && store.materialsFetchingStatus == "NOT_FETCHED") {
+            store.updateMaterialFetchStatus("FETCHING");
+
+            EducationService.getEducationMaterials(subjectId).then(response => {
+                if (!response.data) {
+                    store.updateMaterialFetchStatus(response.error_code as string);
+                    return;
+                }
+
+                store.updateMaterials(response.data);
+                store.updateMaterialFetchStatus("SUCCESS");
+            })
+        }
+    }, [pathname]);
+
     useEffect(() => {
         setIsLoading(true);
 
-        let subjectId = parseInt(slug as string);
-
-        if (!subjectId || subjectId < 0) {
-            notFound();
-        }
-
-        SubjectService.mock.getSubject(subjectId).then(res => {
+        SubjectService.getSubject(subjectId).then(res => {
             setIsLoading(false);
 
             if (!res.success) {
@@ -50,7 +68,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
             }
 
             if (res.data) {
-                store.updateSubjectInfo({...res.data, subjectId: subjectId});
+                store.updateSubjectInfo({...res.data, id: subjectId});
             }
         }).catch(err => {
             console.log(err)
@@ -75,8 +93,8 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                     style={{background: "url(" + cover_img + ")", position: "relative"}}
                     className={styles.header_div}
                 >
-                        <h1>{store.title}</h1>
-                        <p><b>Викладач: </b><i>{store.teacherInfo.first_name} {store.teacherInfo.last_name}</i></p>
+                        <h1>{store.subject.title}</h1>
+                        <p><b>Викладач: </b><i>{store.subject.teacher_first_name} {store.subject.teacher_last_name}</i></p>
                 </div>
 
                 <Segmented

@@ -2,7 +2,7 @@
 
 import { IAnnouncedSubject } from "@/types/api.types";
 import { notFound, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import { Button, Spin } from "antd";
@@ -10,7 +10,7 @@ import { Button, Spin } from "antd";
 import styles from "@/styles/announced_subject.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
-import AnnouncedSubjectRequestModal from "@/components/modals/AnnouncedSubjectRequestModal";
+import AnnouncedSubjectRequestModal, { AnnouncedSubjectRequestModalRef } from "@/components/modals/AnnouncedSubjectRequestModal";
 import { SubjectService } from "@/services/subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
 import Tiptap from "@/components/Tiptap";
@@ -40,6 +40,7 @@ export default function AnnouncedSubject() {
     const [isLoaded, setIsLoaded] = useState(false);
 
     const [modalVisible, setModalVisible] = useState(false);
+    const modalRef = React.useRef<AnnouncedSubjectRequestModalRef>()
 
     const [loading, setLoading] = useState(false);
 
@@ -67,8 +68,16 @@ export default function AnnouncedSubject() {
             if (!response.success) {
                 modal.error({
                     title: "Помилка.",
-                    content: <p>{translateRequestError(response.error_code)}</p>
-                })
+                    content: <p>{translateRequestError(response.error_code)}</p>,
+                    onOk: () => {
+                        modalRef.current?.set(email, first_name, last_name);
+                        setModalVisible(true);
+                    },
+                    onCancel: () => {
+                        modalRef.current?.set(email, first_name, last_name);
+                        setModalVisible(true);
+                    }
+                });
                 return;
             }
 
@@ -150,34 +159,32 @@ export default function AnnouncedSubject() {
                     <h1><CalendarOutlined style={{color: "#e62780"}} /> Розклад заннять:</h1>
                     <p>{info.timetable}</p>
                 </section>
-
-                <section>
-                    <h1><CheckOutlined style={{color: "#00ff5e"}} /> Вступний екзамен:</h1>
-                    <p>{info.time_exam_end ? "Існує" : "Не існує"}</p>
-                </section>
-                
-                {info.time_exam_end &&
-                    <>
-                        <section>
-                            <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Екзамен можна здати до:</h1>
-                            <p>{dayjs(info.time_exam_end).format("D MMMM YYYY року")}</p>
-                        </section>
-
-                        <section>
-                            <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Тривалість екзамену:</h1>
-                            <p>{formatTimeInSeconds(info.duration_exam / 1000)}</p>
-                        </section>
-                    </>
-                }
                 
                 <section>
                     <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Початок предмету:</h1>
                     <p>{dayjs(info.time_start).format("D MMMM YYYY року")}</p>
                 </section>
 
+                <section>
+                    <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Подати заявку можна до:</h1>
+                    <p>{dayjs(info.time_exam_end).format("D MMMM YYYY року")}</p>
+                </section>
+
+                <section>
+                    <h1><CheckOutlined style={{color: "#00ff5e"}} /> Вступний екзамен:</h1>
+                    <p>{info.time_exam_end ? "Існує" : "Не існує"}</p>
+                </section>
+
+                {(info.duration_exam && info.duration_exam > 0)
+                    ? <section>
+                        <h1><FieldTimeOutlined style={{color: "#abdbe3"}} /> Тривалість екзамену:</h1>
+                        <p>{formatTimeInSeconds(info.duration_exam / 1000)}</p>
+                     </section>
+                     : null
+                }
                 {(role == "STUDENT" || role == "GUEST") && 
                     <Button onClick={onClickedRegister} style={{display: "block", margin: "auto"}} type="primary">
-                        {info.time_exam_end ? "Подати заявку" : "Зареєструвати мене"}
+                        Подати заявку
                     </Button>
                 }
 
@@ -189,6 +196,7 @@ export default function AnnouncedSubject() {
            {loading && <Spin fullscreen />}
            {ctx}
            <AnnouncedSubjectRequestModal
+            ref={modalRef}
             isOpen={modalVisible}
             close={() => setModalVisible(false)}
             callback={register}
