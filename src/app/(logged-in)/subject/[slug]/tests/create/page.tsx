@@ -9,6 +9,9 @@ import { Drafts } from "@/types/api.types";
 import { Button, DatePicker, Form, Input, InputNumber, Modal, Switch } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import {useParams, useRouter} from "next/navigation";
+import {useProfileStore} from "@/stores/profileStore";
+import {useShallow} from "zustand/react/shallow";
 
 const draftStore = DraftService.createStore<Drafts.TestMaterial>("test_material_create_draft");
 
@@ -104,9 +107,18 @@ export default function TestCreatePage() {
         }
     }, [])
 
+    const { slug } = useParams();
+    const { push } = useRouter();
+    const role = useProfileStore(useShallow(state => state.role));
+
+    if (role != "TEACHER") {
+        push("/subject/" + slug + "/assigments");
+        return null;
+    }
+
     return (
         <Foreground>
-            <BackButton navTo="assigments" />
+            <BackButton navTo="assignments" />
             <h1 style={{marginTop: 10, marginBottom: 15}}>Створити тест</h1>
 
             <Form

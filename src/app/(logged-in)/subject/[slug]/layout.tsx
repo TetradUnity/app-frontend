@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { EducationService } from "@/services/education.service";
 import { UploadService, UploadType } from "@/services/upload.service";
 import Link from "next/link";
+import {SubjectNamespace} from "@/types/api.types";
 
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
@@ -35,7 +36,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     }
 
     useEffect(() => {
-        if ((pathname.endsWith("assigments")) && store.materialsFetchingStatus == "NOT_FETCHED") {
+        if ((pathname.endsWith("assignments")) && store.materialsFetchingStatus == "NOT_FETCHED") {
             store.updateMaterialFetchStatus("FETCHING");
 
             EducationService.getEducationMaterials(subjectId, 1).then(response => {
@@ -46,6 +47,20 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
                 store.updateMaterials(response.data);
                 store.updateMaterialFetchStatus("SUCCESS");
+            })
+        }
+
+        if ((pathname.endsWith("students")) && store.studentsFetchingStatus == "NOT_FETCHED") {
+            store.updateStudentsFetchStatus("FETCHING");
+
+            SubjectService.getStudents(subjectId).then(response => {
+                if (!response.data) {
+                    store.updateStudentsFetchStatus(response.error_code as string);
+                    return;
+                }
+
+                store.updateStudents(response.data);
+                store.updateStudentsFetchStatus("SUCCESS");
             })
         }
     }, [pathname]);
@@ -99,7 +114,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                     style={{margin: "20px 0"}}
                     defaultValue={pathname.split("/")[3]}
                     options={[
-                        {label: "Завдання", value: "assigments"},
+                        {label: "Завдання", value: "assignments"},
                         {label: "Студенти", value: "students"},
                         {label: "Розклад занять", value: "timetable"},
                         {label: "Оцінки", value: "grades"},

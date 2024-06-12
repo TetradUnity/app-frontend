@@ -10,19 +10,29 @@ import styles from "../styles.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { Button, Divider, Empty, Spin } from "antd";
-import { useRouter } from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import translateRequestError from "@/utils/ErrorUtils";
 import { useProfileStore } from "@/stores/profileStore";
+
+import { FormOutlined, FileTextOutlined } from "@ant-design/icons";
+import {CSSProperties} from "react";
 
 function MaterialSlot({item} : {item: SubjectNamespace.IEducationMaterial}) {
     const date = dayjs(item.time_created);
     
-    const subjectId = useSubjectStore(useShallow(state => state.subject.id));
+    const {slug} = useParams();
+    const isTest = item.is_test;
+
+    const iconStyles: CSSProperties = {
+        marginRight: 8,
+        color: "var(--primary-light)"
+    }
+    const icon = isTest ? <FormOutlined style={iconStyles} /> : <FileTextOutlined style={iconStyles} />;
 
     return (
         <div className={styles.material_slot + " " + styles.slot_with_arrow}>
-            <Link href={"/subject/" + subjectId + "/materials/" + item.id}>
-                <h2>{item.title}</h2>
+            <Link href={"/subject/" + slug + "/assignments/" + item.id}>
+                <h2 style={{marginBottom: 5}}>{icon} {item.title}</h2>
                 <p>Опубліковано: <i>{date.format("D MMMM о HH:mm")}</i></p>
 
                 <RightOutlined className={styles.arrow_style} />

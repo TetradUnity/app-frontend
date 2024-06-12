@@ -32,7 +32,8 @@ export interface ISearchUserResult {
 export interface ITeacherShortInfo {
     id: number,
     first_name: string,
-    last_name: string
+    last_name: string,
+    avatar: string
 }
 
 export interface IMaterialShortInfo {
@@ -150,9 +151,7 @@ export interface IAnnouncedSubjectShort {
     banner: string
 }
 
-export type IStudentShortInfo = ITeacherShortInfo & {
-    avatar: string
-};
+export type IStudentShortInfo = ITeacherShortInfo;
 
 export interface IGrade {
     grade: number,

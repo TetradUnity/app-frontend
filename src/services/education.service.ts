@@ -25,7 +25,7 @@ export const EducationService = {
 
     async createEducationMaterial(props: SubjectNamespace.IEducationMaterialProps): Promise<IResponse> {
         try {
-            const response = await api.post("/education/create-education-material", props);
+            await api.post("/education/create-education-material", props);
 
             return {
                 success: true

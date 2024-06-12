@@ -2,6 +2,7 @@
 
 import { api, catchApiError } from "@/api";
 import {
+    IStudentShortInfo,
     ITArrResponse,
     ITResponse,
     SubjectNamespace
@@ -30,6 +31,21 @@ export const SubjectService = {
             return {
                 success: true,
                 data: response.data.subject
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
+    async getStudents(subjectId: number): Promise<ITArrResponse<IStudentShortInfo>> {
+        try {
+            const response = await api.get("/subject/get-students", {
+                params: { subject_id: subjectId }
+            });
+
+            return {
+                success: true,
+                data: response.data.students
             }
         } catch (error) {
             return catchApiError(error);

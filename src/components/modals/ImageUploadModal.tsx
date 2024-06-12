@@ -6,7 +6,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import ImgCropModal from "../ImgCropModal";
 import { UploadService, UploadType } from "@/services/upload.service";
 
-const FileUploadForm = ({callback, close} : {callback: (url: string) => void, close: () => void}) => {
+const FileUploadForm = ({callback, close, imageType } : {imageType?: UploadType, callback: (url: string) => void, close: () => void}) => {
     const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
 
     const upload = async () => {
@@ -16,12 +16,12 @@ const FileUploadForm = ({callback, close} : {callback: (url: string) => void, cl
         
         close();
 
-        let resp = await UploadService.upload(UploadType.EXAM_RESOURCE, fileList[0].originFileObj);
+        let resp = await UploadService.upload(imageType || UploadType.EXAM_RESOURCE, fileList[0].originFileObj);
         if (!resp.success) {
             return;
         }
 
-        callback(UploadService.getImageURL(UploadType.EXAM_RESOURCE, resp.data));
+        callback(UploadService.getImageURL(imageType || UploadType.EXAM_RESOURCE, resp.data));
         setFileList([]);
     }
 
@@ -86,8 +86,8 @@ const SelectURLForm = ({callback, close} : {callback: (url: string) => void, clo
 }
 
 export default function ImageUploadModal(
-    {open, setOpen, callback} :
-    {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, callback: (url: string) => void}
+    {open, setOpen, callback, imageType} :
+    {open: boolean, imageType?: UploadType, setOpen: React.Dispatch<React.SetStateAction<boolean>>, callback: (url: string) => void}
 ) {
     const [type, setType] = useState("upload");
 
@@ -109,7 +109,7 @@ export default function ImageUploadModal(
             />
 
            {(type == "upload") ?
-            <FileUploadForm callback={callback} close={setOpen.bind(null, false)} /> :
+            <FileUploadForm imageType={imageType} callback={callback} close={setOpen.bind(null, false)} /> :
             <SelectURLForm callback={callback} close={setOpen.bind(null, false)} />}
         </Modal>
     )

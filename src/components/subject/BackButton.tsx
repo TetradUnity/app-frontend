@@ -2,13 +2,14 @@
 
 import { Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { usePathname, useRouter } from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
+import {useSubjectStore} from "@/stores/subjectStore";
+import {useShallow} from "zustand/react/shallow";
 
 export default function BackButton({navTo} : {navTo?: string}) {
     const pathname = usePathname();
+    const { slug } = useParams();
     const { push } = useRouter();
-
-
 
     return (
         <Button
@@ -18,7 +19,7 @@ export default function BackButton({navTo} : {navTo?: string}) {
             shape="circle"
             onClick={() => {
                 let url = navTo
-                    ?  pathname.split("/").slice(0, 3).join("/") + navTo
+                    ?  "/subject/" + slug + "/" + navTo
                     : pathname.split("/").slice(0, 4).join("/");
                 push(url);
             }}

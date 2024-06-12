@@ -8,12 +8,20 @@ import { SubjectService } from "@/services/subject.service";
 import { useSubjectStore } from "@/stores/subjectStore";
 import { Avatar, Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
+import {useShallow} from "zustand/react/shallow";
+import {getUserAvatar} from "@/utils/OtherUtils";
 
 function StudentSlot({item} : {item: IStudentShortInfo}) {
     return (
         <div className={styles.material_slot + " " + styles.student_slot}>
             <Link href={"/profile/" + item.id}>
-                <Avatar shape="square" className={styles.student_avatar} size="large" src={"https://media.licdn.com/dms/image/C5603AQE-LZbyqja3GQ/profile-displayphoto-shrink_800_800/0/1585481402347?e=2147483647&v=beta&t=0jx6LRb9wlnWNVNSWzmXAVnDWwvFGVO_klpqm94TynY"} alt="avatar" />
+                <Avatar
+                    src={getUserAvatar(item.avatar)}
+                    shape="square"
+                    className={styles.student_avatar}
+                    size="large"
+                    alt="avatar"
+                />
                 <h2>{item.first_name} {item.last_name}</h2>
             </Link>
          </div>
@@ -21,47 +29,22 @@ function StudentSlot({item} : {item: IStudentShortInfo}) {
 }
 
 export default function SubjectStudentsPage() {
-    const subject_id = useSubjectStore(state => state.subjectId);
+    const subject_id = useSubjectStore(useShallow(state => state.subject.id));
 
-    const students = useSubjectStore(state => state.students);
-    const students_fetch_status = useSubjectStore(state => state.studentsFetchingState);
+    const [students, status] = useSubjectStore(useShallow(state => [state.students, state.studentsFetchingStatus]));
 
-    const updateStudents = useSubjectStore(state => state.updateStudents);
-    const updateFetchStatus = useSubjectStore(state => state.updateFetchStatus);
-
-    useEffect(() => {
-        if (students_fetch_status != "not_fetched") {
-            return;
-        }
-        if (subject_id == -1) {
-            return;
-        }
-
-        updateFetchStatus("fetching");
-
-        SubjectService.mock.getStudents(subject_id).then(res => {
-            if (!res.success) {
-                console.log(subject_id, res)
-                updateFetchStatus("error");
-                return;
-            }
-
-            updateStudents(res.data);
-        })
-    }, [subject_id]);
-
-    if (students_fetch_status == "fetching") {
+    if (status == "fetching") {
         return (
             <Spin
-                    style={{display: "block", margin: "auto"}}
-                    indicator={<LoadingOutlined style={{fontSize: 60}}/>}
-                    spinning={true}
-                />
+                style={{display: "block", margin: "auto"}}
+                indicator={<LoadingOutlined style={{fontSize: 60}}/>}
+                spinning={true}
+            />
         );
     }
-    if (students_fetch_status == "error") {
+    if (status == "error") {
         return (
-            <p className={styles.empty_text}>Сталася помилка. Попробуйте ще раз!</p>
+            <p style={{fontSize: 30, textAlign: "center"}}>Сталася помилка. Попробуйте ще раз!</p>
         );
     }
 

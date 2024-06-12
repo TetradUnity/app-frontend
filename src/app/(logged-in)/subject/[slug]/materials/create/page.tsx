@@ -5,10 +5,17 @@ import Tiptap, { TiptapRef } from "@/components/Tiptap";
 import ImageUploadModal from "@/components/modals/ImageUploadModal";
 import BackButton from "@/components/subject/BackButton";
 import { DraftService } from "@/services/draft.service";
-import { Drafts } from "@/types/api.types";
+import {Drafts, SubjectNamespace} from "@/types/api.types";
 import { Button, DatePicker, Form, Input, Modal, Switch } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import {useParams, useRouter} from "next/navigation";
+import {useProfileStore} from "@/stores/profileStore";
+import {useShallow} from "zustand/react/shallow";
+import {UploadType} from "@/services/upload.service";
+import {EducationService} from "@/services/education.service";
+import translateRequestError from "@/utils/ErrorUtils";
+import {useSubjectStore} from "@/stores/subjectStore";
 
 const draftStore = DraftService.createStore<Drafts.Material>("material_create_draft");
 
@@ -28,8 +35,50 @@ export default function MaterialCreatePage() {
         setUploadModalOpen(true);
     }
 
-    const onSubmit = () => {
+    const updateMaterialFetchStatus = useSubjectStore(useShallow(state => state.updateMaterialFetchStatus));
 
+    const onSubmit = () => {
+        modal.confirm({
+            title: "",
+            content: <p></p>,
+            onOk: async () => {
+                const editor = tiptapRef.current?.getEditor();
+                if (!editor) return;
+
+                let data: SubjectNamespace.IEducationMaterialProps = {
+                    title: form.getFieldValue("title"),
+                    subject_id: parseInt(slug as string),
+                    is_test: false,
+                    content: editor.getHTML(),
+                    deadline: isHomeworkEnabled ? (form.getFieldValue("homework_deadline").unix() * 1000) : 0
+                }
+
+                const response = await EducationService.createEducationMaterial(data);
+
+                if (!response.success) {
+                    modal.error({
+                        title: "Помилка",
+                            content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
+                    });
+                    return;
+                }
+
+                modal.success({
+                    title: "Успіх!",
+                    content: <p>Ви створили новий матеріал</p>,
+                    onOk: () => {
+                        updateMaterialFetchStatus("NOT_FETCHED");
+                        draftStore.remove();
+                        push("/subject/" + slug + "/assigments");
+                    },
+                    onCancel: () => {
+                        updateMaterialFetchStatus("NOT_FETCHED");
+                        draftStore.remove();
+                        push("/subject/" + slug + "/assigments");
+                    }
+                });
+            }
+        })
     }
 
     const saveDraft = () => {
@@ -117,9 +166,18 @@ export default function MaterialCreatePage() {
         }
     }, [])
 
+    const { slug } = useParams();
+    const { push } = useRouter();
+    const role = useProfileStore(useShallow(state => state.role));
+
+    if (role != "TEACHER") {
+        push("/subject/" + slug + "/assigments");
+        return null;
+    }
+
     return (
         <Foreground>
-            <BackButton navTo="assigments" />
+            <BackButton navTo="assignments" />
             <h1 style={{marginTop: 10, marginBottom: 15}}>Створити матеріал</h1>
 
             <Form
@@ -180,6 +238,7 @@ export default function MaterialCreatePage() {
                 open={uploadModalOpen}
                 setOpen={setUploadModalOpen}
                 callback={uploadModalCallback}
+                imageType={UploadType.EDUCATION_MATERIAL_RESOURCE}
             />
             {modalCtx}
         </Foreground>
