@@ -20,7 +20,7 @@ export default function ProfileHead() {
 
     return (
         <>
-            <Space direction="vertical" style={{display: "flex", background: "var(--foreground)", borderRadius: 8}}>
+            <div className={styles.container}>
                 <div className={styles.Head} style={{
 
                 }}>
@@ -66,7 +66,7 @@ export default function ProfileHead() {
                         Досягнення
                     </Link>
                 </div>
-            </Space>
+            </div>
         </>
     );
 }
