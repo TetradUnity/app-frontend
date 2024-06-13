@@ -36,6 +36,8 @@
     height: 100%;
 }
 
+
+
 @media screen and (max-width: 768px){
     .nav-buttons{
         display: none;
@@ -56,5 +58,8 @@
     }
     .header-grid{
         grid-template-columns: 1fr 1fr 1fr;
+    }
+    .login-text{
+        display: none;
     }
 }

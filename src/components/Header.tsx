@@ -6,7 +6,7 @@ import {AuthTokensService} from "@/services/auth-token.service";
 import {
     ArrowRightOutlined,
     BookOutlined,
-    IdcardOutlined,
+    IdcardOutlined, LoginOutlined,
     LogoutOutlined,
     MenuOutlined,
     RiseOutlined,
@@ -19,39 +19,6 @@ import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
-
-let myProfileId = -1;
-const items: MenuProps['items'] = [
-    {
-        label: <Link href={`/profile/${myProfileId}/subjects`}>Мої предмети</Link>,
-        icon: <BookOutlined/>,
-        key: '0',
-    },
-    {
-        label: <Link href={`/profile/${myProfileId}/grades`}>Оцінки</Link>,
-        icon: <StarOutlined/>,
-        key: '1',
-    },
-    {
-        label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
-        icon: <RiseOutlined/>,
-        key: '2',
-    },
-    {
-        label: <Link href={`/profile/settings`}>Налаштування</Link>,
-        icon: <SettingOutlined/>,
-        key: '3',
-    },
-    {key: 'divider', type: 'divider'},
-    {
-        label: <Link style={{color: "orangered"}} onClick={() => {
-            AuthTokensService.deleteAuthToken();
-            window.location.href = "/";
-        }} href="/">Вихід</Link>,
-        icon: <LogoutOutlined style={{color: "orangered", fontSize: "16px"}}/>,
-        key: '4',
-    },
-]
 
 function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
     const pathname = usePathname();
@@ -169,8 +136,6 @@ export default function AppHeader() {
 
     ]
 
-    // const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
-    const gridTemplateColumns = "250px 1fr 200px";
     return (
         <div style={{
             background: 'var(--header)',
@@ -184,11 +149,12 @@ export default function AppHeader() {
         }}>
             <div className="header-grid">
                 <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
-                    <Image className="logo-big" src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image className="logo-big" src="/logo_academy.svg" alt="Logo" preview={false}
+                           style={{height: 42}}/>
                     <Image className="logo-small" src="/logo.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
-                
-                <Space style={{display: "flex", justifyContent: "center"}}>
+
+                <div className="nav-buttons">
                     <NavButton
                         path="/subjects"
                         icon={<BookOutlined/>}
@@ -204,7 +170,24 @@ export default function AppHeader() {
                         icon={<TeamOutlined/>}
                         text="Вчителі"
                     />
-                </Space>
+                </div>
+                <div className="nav-buttons-short">
+                    <NavButton
+                        path="/subjects"
+                        icon={<BookOutlined/>}
+                        text=""
+                    />
+                    <NavButton
+                        path="/students"
+                        icon={<IdcardOutlined/>}
+                        text=""
+                    />
+                    <NavButton
+                        path="/teachers"
+                        icon={<TeamOutlined/>}
+                        text=""
+                    />
+                </div>
 
 
                 {isLoggedIn ?
@@ -215,7 +198,7 @@ export default function AppHeader() {
                     }}>
                         <Link href={`/profile/${profile.id}`}>
                             <Avatar shape="square" alt="avatar" size={32} style={{margin: 0, padding: 0}}
-                                src={profile.avatar_url} icon={<UserOutlined/>}/>
+                                    src={profile.avatar_url} icon={<UserOutlined/>}/>
                         </Link>
 
                         <Dropdown menu={{items}} trigger={["click"]} overlayStyle={{paddingTop: 12, minWidth: 230}}>
@@ -224,17 +207,22 @@ export default function AppHeader() {
 
                     </Space>
 
-                    : <Space
+                    : <div
                         style={{
                             display: "flex",
                             position: "relative",
-                            justifyContent: "flex-end",
+                            gap: "var(--gap)",
                             padding: "10px 0",
-                            width: "fit-content"
+                            justifyContent: "flex-end",
+                            marginRight: 20,
                         }}
                     >
-                        <Link href="/login">Авторизація</Link>
-                    </Space>}
+                        <Link href="/login" style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "var(--gap)",
+                        }}><span className="login-text">Авторизація</span><LoginOutlined/> </Link>
+                    </div>}
             </div>
         </div>
     )
