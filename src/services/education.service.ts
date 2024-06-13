@@ -135,9 +135,11 @@ export const EducationService = {
                 params: { grade_id: gradeId }
             });
 
+            let toParse = response.data.test || response.data.files;
+
             return {
                 success: true,
-                data: JSON.parse(response.data.test || response.data.files)
+                data: toParse ? JSON.parse(toParse) : undefined
             }
         } catch (error) {
             return catchApiError(error);

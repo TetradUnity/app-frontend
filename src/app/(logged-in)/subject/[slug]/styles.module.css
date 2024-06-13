@@ -24,6 +24,12 @@
     text-decoration: underline;
 }
 
+.delete_subject {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
 .material_slot {
     position: relative;
     border-radius: 10px;

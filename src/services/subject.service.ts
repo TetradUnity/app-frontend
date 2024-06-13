@@ -2,6 +2,7 @@
 
 import { api, catchApiError } from "@/api";
 import {
+    IResponse,
     IStudentShortInfo,
     ITArrResponse,
     ITResponse,
@@ -50,5 +51,19 @@ export const SubjectService = {
         } catch (error) {
             return catchApiError(error);
         }
+    },
+
+    async finishSubject(subject_id: number): Promise<IResponse> {
+        try {
+            await api.delete("/subject/finish-subject", {
+               params: { subject_id }
+            });
+
+           return {
+               success: true
+           }
+       } catch (e) {
+           return catchApiError(e);
+       }
     }
 };

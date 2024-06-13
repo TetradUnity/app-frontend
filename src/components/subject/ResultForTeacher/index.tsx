@@ -14,6 +14,7 @@ import { useParams } from "next/navigation";
 import { EducationService } from "@/services/education.service";
 import dayjs from "dayjs";
 import translateRequestError from "@/utils/ErrorUtils";
+import { pluralize } from "@/utils/InternalizationUtils";
 
 type ResultForTeacherProps = {
     type: "material" | "test"
@@ -74,7 +75,7 @@ export default function ResultForTeacher({type} : ResultForTeacherProps) {
                             <span className={styles.divider}>{" | "}</span>
                             {(student.value > 0)
                                 ? <span className={styles.evaluated}>
-                                    {Math.round(student.value)} балів
+                                    {pluralize(Math.round(student.value), ['бал', 'бала', 'балів'])}
                                     {(student.attempt > 1) ? ("з " + student.attempt + "спроби") : null}
                                 </span>
                                 : <span className={styles.unevaluated}>Не оцінений</span>

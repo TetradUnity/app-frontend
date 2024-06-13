@@ -10,8 +10,9 @@ import {Empty, List, Spin, message} from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EducationService } from "@/services/education.service";
 import { GradeService } from "@/services/grade.service";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import translateRequestError from "@/utils/ErrorUtils";
+import { useProfileStore } from "@/stores/profileStore";
 
 function GradeSlot({item} : {item: SubjectNamespace.IGrade}) {
     return (
@@ -28,6 +29,8 @@ export default function SubjectGradesPage() {
     const [grades, setGrades] = useState<SubjectNamespace.IGrade[]>([]);
     const [loading, setLoading] = useState(false);
     
+    const role = useProfileStore(useShallow(state => state.role));
+
     const fetchRef = useRef({
         loading: false,
         page: 1,
@@ -70,6 +73,10 @@ export default function SubjectGradesPage() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    if (role != "STUDENT") {
+        notFound();
+    }
 
     return (
         (loading)

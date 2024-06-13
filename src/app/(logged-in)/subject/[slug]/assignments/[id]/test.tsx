@@ -17,27 +17,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
-const MOCK_STUDENTS: IStudentShortInfo[] = [
-    {
-        id: 0,
-        first_name: "Григорій",
-        last_name: "Кущ",
-        avatar: ""
-    },
-    {
-        id: 0,
-        first_name: "Галина",
-        last_name: "Калина",
-        avatar: ""
-    },
-    {
-        id: 0,
-        first_name: "Стас",
-        last_name: "Рис",
-        avatar: ""
-    }
-];
-
 const RenderForTeacher = ({material} : Props) => {
     let isDedline = material.deadline && material.deadline > 0;
     if (isDedline) {
@@ -98,46 +77,54 @@ const RenderForStudent = ({material} : Props) => {
 
     return (
         <div>
-            <div className={styles.content + " " + styles.no_padding}>
-                <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
-                <section>
-                    <h1 style={{marginBottom: 5}}><ClockCircleOutlined style={{color: "#e62780"}} /> Час на проходження:</h1>
-                    <p>{(material.duration > 0) ? formatTimeInSeconds(material.duration / 1000) : "не вказано"}</p>
-                </section>
-
-                <section>
-                    <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#e62780"}} /> Кількість питань:</h1>
-                    <p>{material.amount_questions}</p>
-                </section>
-
-                <section>
-                    <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Кількість спроб:</h1>
-                    <p>{material.your_attempts}/{material.available_attempt}</p>
-                </section>
-
-                {material.grade &&
+            {!isDedline 
+            && <>
+                    <div className={styles.content + " " + styles.no_padding}>
+                    <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
                     <section>
-                        <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Оцінка:</h1>
-                        <p>{material.grade}</p>
+                        <h1 style={{marginBottom: 5}}><ClockCircleOutlined style={{color: "#e62780"}} /> Час на проходження:</h1>
+                        <p>{(material.duration > 0) ? formatTimeInSeconds(material.duration / 1000) : "не вказано"}</p>
                     </section>
-                }
-            </div>
 
-            <Divider />
+                    <section>
+                        <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#e62780"}} /> Кількість питань:</h1>
+                        <p>{material.amount_questions}</p>
+                    </section>
+
+                    <section>
+                        <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Кількість спроб:</h1>
+                        <p>{material.your_attempts}/{material.available_attempt}</p>
+                    </section>
+
+                    {material.grade &&
+                        <section>
+                            <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Оцінка:</h1>
+                            <p>{material.grade}</p>
+                        </section>
+                    }
+                </div>
+
+                <Divider />
+            </>
+            }
 
             {material.test &&
                 <>
                     <h3>Ваші відповіді:</h3>
                     <TestResult slotColor="var(--foreground-lighter)" questions={material.test} />
-                    <Divider />
                 </>
             }
 
-            <Link href={"/subject/" + slug + "/tests/" + id}>
-                <Button disabled={isDedline || isMaxAttempts} style={{display: "block", margin: "auto"}} type="primary">
-                    Пройти тест
-                </Button>
-            </Link>
+            {!isDedline &&
+                <>
+                    <Divider />
+                    <Link href={"/subject/" + slug + "/tests/" + id}>
+                        <Button disabled={isDedline || isMaxAttempts} style={{display: "block", margin: "auto"}} type="primary">
+                            Пройти тест
+                        </Button>
+                    </Link>
+                </>
+            }
         </div>
     )
 }

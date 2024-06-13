@@ -7,12 +7,15 @@ import { notFound, useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import styles from "./styles.module.css";
-import { Segmented } from "antd";
+import { Button, Modal, Segmented } from "antd";
 import { motion } from "framer-motion";
 import { EducationService } from "@/services/education.service";
 import { UploadService, UploadType } from "@/services/upload.service";
 import Link from "next/link";
 import {SubjectNamespace} from "@/types/api.types";
+import { useProfileStore } from "@/stores/profileStore";
+import { useShallow } from "zustand/react/shallow";
+import translateRequestError from "@/utils/ErrorUtils";
 
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
@@ -30,6 +33,10 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     const { push } = useRouter();
 
     const subjectId = parseInt(slug as string);
+
+    const role = useProfileStore(useShallow(state => state.role));
+
+    const [modal, modalCtx] = Modal.useModal();
 
     if (!subjectId || subjectId < 0) {
         notFound();
@@ -69,8 +76,6 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
             if (res.data) {
                 store.updateSubjectInfo({...res.data, id: subjectId});
             }
-        }).catch(err => {
-            console.log(err)
         })
     }, []);
 
@@ -85,6 +90,42 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
     const anim = {opacity: shouldShow ? 1 : 0, height: shouldShow ? "auto" : 0};
 
+    const sections = [
+        {label: "Завдання", value: "assignments"},
+        {label: "Студенти", value: "students"},
+        {label: "Календар", value: "timetable"},
+    ];
+    if (role == "STUDENT") {
+        sections.push(
+            {label: "Оцінки", value: "grades"}
+        )
+    }
+
+    const deleteSubject = () => {
+        modal.confirm({
+            title: "Завершення предмету",
+            content: <p>Ви впевнені що хочете завершити предмет? Всі завдання, тести та навчальні матеріали зникнуть.</p>,
+            onOk: () => {
+                SubjectService.finishSubject(subjectId).then(resp => {
+                    if (!resp.success) {
+                        modal.error({
+                            title: "Невдача",
+                            content: <p>Не получилось завершити предмет: ${translateRequestError(resp.error_code)}</p>
+                        });
+                        return;
+                    }
+
+                    modal.success({
+                        title: "Успіх",
+                        content: <p>Ваш предмет був завершений!</p>,
+                        onOk: () => window.location.href = "/",
+                        onCancel: () => window.location.href = "/"
+                    });
+                })
+            }
+        })
+    }
+
     return (
        <div>
             <motion.div animate={anim} initial={anim}>
@@ -94,19 +135,20 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                 >
                         <h1>{store.subject.title}</h1>
                         <Link href={"/profile/" + store.subject.teacher_id}><p><b>Викладач: </b><i>{store.subject.teacher_first_name} {store.subject.teacher_last_name}</i></p></Link>
+
+                        {role == "TEACHER" &&
+                            <div className={styles.delete_subject}>
+                                <Button danger type="primary" onClick={deleteSubject}>Завершити предмет</Button>
+                            </div>
+                        }
                 </div>
 
                 <Segmented
                     style={{margin: "20px 0"}}
                     defaultValue={pathname.split("/")[3]}
-                    options={[
-                        {label: "Завдання", value: "assignments"},
-                        {label: "Студенти", value: "students"},
-                        {label: "Розклад занять", value: "timetable"},
-                        {label: "Оцінки", value: "grades"},
-                    ]}
+                    options={sections}
                     onChange={key => {
-                        push("/subject/" + slug + "/" + key)
+                        push("/subject/" + slug + "/" + key);
                     }}
                     size="large"
                     block
@@ -114,6 +156,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
             </motion.div>
 
             {children}
+            {modalCtx}
        </div>
     );
 }

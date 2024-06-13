@@ -3,7 +3,7 @@ import styles from "./subject.module.css";
 import Link from "next/link";
 import { IAnnouncedSubjectShort } from "@/types/api.types";
 import { UploadService, UploadType } from "@/services/upload.service";
-import { filterProps } from "@/services/subject.service";
+import { filterProps } from "@/services/announced_subject.service";
 
 const Highlight = ({source, toFind} : {source: string, toFind: string}) => {
     let from = source.toLowerCase().search(toFind.toLowerCase());
