@@ -34,8 +34,6 @@ export const UserService = {
                 avatar
             });
 
-            console.log(response)
-
             return {
                 success: true,
                 data: response.data.user

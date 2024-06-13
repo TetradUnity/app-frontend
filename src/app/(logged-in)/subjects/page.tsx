@@ -264,6 +264,7 @@ export default function Subjects() {
                     }}
                 />
             </Flex>
+            {/*@ts-ignore*/}
             <Filters
                 withExam={withExam}
                 setWithExam={setWithExam}

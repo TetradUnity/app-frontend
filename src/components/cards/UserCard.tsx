@@ -5,7 +5,6 @@ import {IUser} from "@/types/api.types";
 import {UploadService, UploadType} from "@/services/upload.service";
 
 export default function UserCard({user}: { user: IUser }) {
-    console.log(user);
     return (
         <Link className={styles.Card} href={"/profile/" + user.id} style={{
             background: "var(--foreground)",

@@ -8,3 +8,10 @@
     align-items: center;
     gap: var(--gap);
 }
+
+@media screen and (max-width: 500px) {
+    .Header {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
