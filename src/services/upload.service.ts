@@ -13,7 +13,6 @@ export enum UploadType {
     EDUCATION_MATERIAL_RESOURCE = "education_material_resources",
     EDUCATION_MATERIAL = "education_materials",
     EXAM_RESOURCE = "exam_resources",
-    HOMEWORK_RESOURCE = "homework_resources",
     HOMEWORK = "homework",
     CERTIFICATES = "certificates"
 }

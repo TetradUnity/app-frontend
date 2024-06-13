@@ -1,7 +1,6 @@
 'use client';
 
 import Foreground from "@/components/Foreground";
-import Tiptap, { TiptapRef } from "@/components/Tiptap";
 import BackButton from "@/components/subject/BackButton";
 import { TestConstructor, TestConstructorRef } from "@/components/tests/TestConstructor";
 import { DraftService } from "@/services/draft.service";
@@ -38,7 +37,8 @@ export default function TestCreatePage() {
                     if (!test) {
                         return;
                     }
-                    test[0].max_attempts = form.getFieldValue("max_attempts") || 1;
+                    test[0].count_attempts = form.getFieldValue("max_attempts") || 1;
+                    test[0].viewing_correct_answers = form.getFieldValue("viewing_correct_answers") || false;
                     test = JSON.stringify(test);
                 }
                 if (!test) return;
@@ -67,12 +67,12 @@ export default function TestCreatePage() {
                     onOk: () => {
                         updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
-                        push("/subject/" + slug + "/assigments");
+                        push("/subject/" + slug + "/assignments");
                     },
                     onCancel: () => {
                         updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
-                        push("/subject/" + slug + "/assigments");
+                        push("/subject/" + slug + "/assignments");
                     }
                 });
             }
@@ -84,13 +84,15 @@ export default function TestCreatePage() {
             title: form.getFieldValue("title"),
             deadline: form.getFieldValue("deadline") && (form.getFieldValue("deadline").unix() * 1000) || undefined,
             max_attempts: form.getFieldValue("max_attempts"),
-            test: testRef.current?.getDataAsDraft()
+            test: testRef.current?.getDataAsDraft(),
+            viewing_correct_answers: form.getFieldValue("viewing_correct_answers")
         })
     }
 
     const loadFromDraft = (draft: Drafts.TestMaterial) => {
         form.setFieldValue("title", draft.title);
         form.setFieldValue("max_attempts", draft.max_attempts);
+        form.setFieldValue("viewing_correct_answers", draft.viewing_correct_answers);
 
         if (draft.deadline) {
             form.setFieldValue("deadline", dayjs(draft.deadline));
@@ -197,6 +199,11 @@ export default function TestCreatePage() {
                 ]}>
                     <InputNumber />
                 </Form.Item>
+
+                <Form.Item label="Чи можуть учні дивитись правильні відповіді після дедлайна:" name="viewing_correct_answers">
+                    <Switch />
+                </Form.Item>
+
 
                 <Form.Item label="Тест:" required>
                     <TestConstructor ref={testRef} />

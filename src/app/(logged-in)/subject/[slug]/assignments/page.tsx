@@ -24,8 +24,8 @@ function MaterialSlot({item} : {item: SubjectNamespace.IEducationMaterial}) {
     const isTest = item.is_test;
 
     const iconStyles: CSSProperties = {
-        marginRight: 8,
-        color: "var(--primary-light)"
+        marginRight: 3,
+        color: "var(--primary-light) !important"
     }
     const icon = isTest ? <FormOutlined style={iconStyles} /> : <FileTextOutlined style={iconStyles} />;
 
@@ -42,7 +42,7 @@ function MaterialSlot({item} : {item: SubjectNamespace.IEducationMaterial}) {
 }
 
 export default function AssigmnentsPage() {
-    const materials = useSubjectStore(useShallow(state => state.materials.filter(material => !material.is_test)));
+    const materials = useSubjectStore(useShallow(state => state.materials));
     const materialsFetchStatus = useSubjectStore(useShallow(state => state.materialsFetchingStatus));
 
     const subjectId = useSubjectStore(useShallow(state => state.subject.id));
@@ -86,7 +86,7 @@ export default function AssigmnentsPage() {
             
             {
                 (materials.length > 0)
-                ? materials.map((item, k) => <MaterialSlot item={item} key={k} />)
+                ? materials.map((item) => <MaterialSlot item={item} key={item.id} />)
                 : <Empty description={<p className={styles.empty_text}>Завданнь поки ще немає.</p>}/>
             }
         </>

@@ -1,3 +1,5 @@
+'use client';
+
 import Foreground from "@/components/Foreground";
 import BackButton from "@/components/subject/BackButton";
 import { EducationService } from "@/services/education.service";
@@ -6,6 +8,8 @@ import translateRequestError from "@/utils/ErrorUtils";
 import { Spin } from "antd";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import MaterialInfoPage from "./material";
+import TestInfoPage from "./test";
 
 export default function AssigmnentsIdPage() {
     const { id } = useParams();
@@ -28,7 +32,7 @@ export default function AssigmnentsIdPage() {
                 return;
             }
 
-            
+            setMaterial(response.data);
             setLoading(false);
         })
     }, []);
@@ -42,7 +46,7 @@ export default function AssigmnentsIdPage() {
        )
    }
 
-   if (isLoading) {
+   if (isLoading || !material) {
        return (
            <Foreground style={{height: 100}}>
                <BackButton />
@@ -54,7 +58,9 @@ export default function AssigmnentsIdPage() {
    return (
         <Foreground>
             <BackButton />
-            
+            {material.content 
+            ? <MaterialInfoPage material={material} />
+            : <TestInfoPage material={material} />}
         </Foreground>
    )
 }

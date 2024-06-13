@@ -69,12 +69,12 @@ export default function MaterialCreatePage() {
                     onOk: () => {
                         updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
-                        push("/subject/" + slug + "/assigments");
+                        push("/subject/" + slug + "/assignments");
                     },
                     onCancel: () => {
                         updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
-                        push("/subject/" + slug + "/assigments");
+                        push("/subject/" + slug + "/assignments");
                     }
                 });
             }

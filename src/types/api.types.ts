@@ -110,11 +110,18 @@ export namespace SubjectNamespace {
         type: string
     }
     
-    export interface ISingleEducationMaterial {
-        content: string
+    export interface ISingleEducationBase {
+        title: string,
+        date: number,
+        deadline: number
     }
 
-    export interface ISingleEducationTest {
+    export interface ISingleEducationMaterial extends ISingleEducationBase {
+        content: string,
+        homework: string[]
+    }
+
+    export interface ISingleEducationTest extends ISingleEducationBase {
         your_attempts: number,
         available_attempt: number,
         amount_questions: number,
@@ -179,7 +186,8 @@ export namespace TestsNamespace {
         {
             time: number,
             passing_grade?: number,
-            max_attempts: number
+            count_attempts?: number,
+            viewing_correct_answers?: boolean,
         },
         ...Question[]
     ]
@@ -244,6 +252,7 @@ export namespace Drafts {
         title?: string,
         deadline?: number,
         max_attempts?: number,
+        viewing_correct_answers?: boolean,
         test?: Drafts.Test
     }
 }

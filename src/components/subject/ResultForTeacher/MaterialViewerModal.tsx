@@ -9,6 +9,7 @@ import { FileFilled, EyeFilled, DownloadOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
 import { fileIsImage } from "@/utils/OtherUtils";
+import FileListViewer from "@/components/FileListViewer";
 
 type MaterialViewerModalProps = {
     isOpen: boolean,
@@ -22,21 +23,19 @@ export default function MaterialViewerModal({isOpen, student, close} : MaterialV
     const mock_files = [
         {
             name: "DCIM_2024_11_06_23_23dfhvbdfhjvbhdfvhjdfvhbjdfvhjb.jpg",
-            url: 'https://abrakadabra.fun/uploads/posts/2021-12/1640102595_2-abrakadabra-fun-p-ispisannii-list-2.png',
-            type: "image"
+            url: "htttp"
         },
         {
             name: "africa.pptx",
-            type: "file"
+            url: "htttp"
         },
         {
             name: "DCIM_2024_11_07_23_33.jpg",
             url: 'https://abrakadabra.fun/uploads/posts/2021-12/1640102566_1-abrakadabra-fun-p-ispisannii-list-1.jpg',
-            type: "image"
         },
         {
             name: "ambasador.pptx",
-            type: "file"
+            url: "htttp"
         }
     ]
 
@@ -55,34 +54,7 @@ export default function MaterialViewerModal({isOpen, student, close} : MaterialV
                         <Divider />
 
                         {mock_files.length > 0
-                            ? mock_files.map(file => 
-                                <Flex id={file.name} className={styles.file_slot}>
-                                    <Avatar size="large" shape="square" icon={<FileFilled />} src={file.url} />
-                                    <Flex style={{flex: 1}} justify="space-between" align="center">
-                                        <p>{file.name}</p>
-
-                                        <div>
-                                            {fileIsImage(file.name) &&
-                                                <Button
-                                                    icon={<EyeFilled />}
-                                                    type="dashed"
-                                                    shape="circle"
-                                                    style={{marginRight: 10}}
-                                                    onClick={() => {
-                                                        setImageUrl(file.url as string);
-                                                        setImageModalIsOpen(true);
-                                                    }}
-                                                />
-                                            }
-                                             <Button
-                                                icon={<DownloadOutlined />}
-                                                type="dashed"
-                                                shape="circle"
-                                            />
-                                        </div>
-                                    </Flex>
-                                </Flex>
-                            )
+                            ? <FileListViewer files={mock_files} />
                             : <p>Студент ще нічого не здав.</p>
                         }
 

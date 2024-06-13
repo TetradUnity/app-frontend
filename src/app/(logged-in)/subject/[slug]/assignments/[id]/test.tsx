@@ -1,21 +1,18 @@
 'use client';
 
-import Foreground from "@/components/Foreground";
-import BackButton from "@/components/subject/BackButton";
 import { Button, Divider, Spin } from "antd";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react"
-import translateRequestError from "@/utils/ErrorUtils";
 
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
-import { IStudentShortInfo, TestsNamespace } from "@/types/api.types";
+import { IStudentShortInfo, SubjectNamespace, TestsNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 
 import { FormOutlined, ClockCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import styles from "@/styles/announced_subject.module.css";
 import TestResult from "@/components/TestResult";
+import dayjs from "dayjs";
+import { formatTimeInSeconds } from "@/utils/TimeUtils";
 
 const MOCK_STUDENTS: IStudentShortInfo[] = [
     {
@@ -91,52 +88,19 @@ const RenderForStudent = () => {
     )
 }
 
-export default function TestInfoPage() {
-    const { id } = useParams();
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-
+type Props = {
+    material: SubjectNamespace.ISingleEducationTest
+};
+export default function TestInfoPage({material} : Props) {
     const role = useProfileStore(useShallow(state => state.role));
 
-    useEffect(() => {
-        let subjectId = parseInt(id as string);
-
-        if (!subjectId || subjectId < 0) {
-            setError("not_found");
-            return;
-        }
-
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-    }, []);
-    
-    if (error) {
-         return (
-            <Foreground style={{height: 100}}>
-                <BackButton />
-                <p style={{textAlign: "center", fontSize: 30}}>Трапилась помилка: {translateRequestError(error)}</p>
-            </Foreground>
-        )
-    }
-
-    if (isLoading) {
-        return (
-            <Foreground style={{height: 100}}>
-                <BackButton />
-                <Spin style={{display: "block", margin: "auto"}} spinning />
-            </Foreground>
-        )
-    }
-
     return (
-        <Foreground>
-            <BackButton />
-
-            <h1><FormOutlined style={{color: "var(--primary-light)"}} /> Фізика - як наука </h1>
-            <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>11 червня, 2024 рік о 19:00</i></p>
-            <p style={{fontSize: 15}}>Здати до: <i>12 червня, 2024 рік 15:49</i></p>
+        <>
+            <h1><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
+            {(material.deadline > 0) &&
+                <p style={{fontSize: 15}}>Здати до: <i>{dayjs(material.deadline).format("D MMMM о HH:mm")}</i></p>
+            }
 
             <Divider style={{marginTop: 14, marginBottom: 14}} />
 
@@ -144,13 +108,13 @@ export default function TestInfoPage() {
                 <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
                 <section>
                     <h1 style={{marginBottom: 5}}><ClockCircleOutlined style={{color: "#e62780"}} /> Час на проходження:</h1>
-                    <p>15 хвилин</p>
+                    <p>{(material.duration > 0) ? formatTimeInSeconds(material.duration) : "не вказано"}</p>
                 </section>
 
                 {role == "STUDENT" &&
                     <section>
                         <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Кількість спроб:</h1>
-                        <p>0/3</p>
+                        <p>{material.your_attempts}/{material.available_attempt}</p>
                     </section>
                 }
             </div>
@@ -159,6 +123,6 @@ export default function TestInfoPage() {
             <Divider />
 
             {role == "TEACHER" ? <RenderForTeacher /> : <RenderForStudent />}
-        </Foreground>
+        </>
     )
 }

@@ -4,9 +4,9 @@ import Foreground from "@/components/Foreground";
 import Tiptap from "@/components/Tiptap";
 import BackButton from "@/components/subject/BackButton";
 import { mockMaterialContent } from "@/temporary/data";
-import { Button, Divider, Modal, Spin } from "antd";
+import { Button, Divider, Modal, Spin, message } from "antd";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import translateRequestError from "@/utils/ErrorUtils";
 
 import Dragger from "antd/es/upload/Dragger";
@@ -19,6 +19,11 @@ import { useShallow } from "zustand/react/shallow";
 import { IStudentShortInfo, SubjectNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 import FullscreenImageModal from "@/components/FullscreenImage";
+import dayjs from "dayjs";
+import FileListViewer from "@/components/FileListViewer";
+import { UploadService, UploadType } from "@/services/upload.service";
+import { RcFile } from "antd/es/upload";
+import { EducationService } from "@/services/education.service";
 
 const MOCK_STUDENTS: IStudentShortInfo[] = [
     {
@@ -51,12 +56,22 @@ const RenderForTeacher = () => {
     )
 }
 
-const RenderForStudent = () => {
+const RenderForStudent = ({material} : Props) => {
+    const { id } = useParams();
     const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
     const [imageUrl, setImageUrl] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
-    const isAlreadyHomework = false;
+    const [locallyHomework, setLocallyHomework] = useState<string[]>(material.homework);
+
+    const isAlreadyHomework = locallyHomework.length > 0;
+    let isDedline = material.deadline && material.deadline > 0;
+    if (isDedline) {
+        isDedline = Date.now() > material.deadline;
+    }
+
+    const [blocked, setIsBlocked] = useState(false);
+    const [msg, msgCtx] = message.useMessage();
 
     useEffect(() => {
         if (!modalVisible) {
@@ -64,16 +79,64 @@ const RenderForStudent = () => {
         }
     }, [modalVisible]);
 
+    const submitHomework = async () => {
+        if (fileList.length < 1) {
+            return;
+        }
+
+        setIsBlocked(true);
+
+        let uids = [];
+        for (let i = 0; i < fileList.length; i++) {
+            const resp = await UploadService.upload(UploadType.HOMEWORK, fileList[i].originFileObj as RcFile);
+            if (!resp.success) {
+                msg.error("Не вдалось загрузити файл: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+                setIsBlocked(false);
+                return;
+            }
+            uids.push(resp.data);
+        }
+
+        const resp = await EducationService.sendHomework(parseInt(id as string), uids);
+        
+        setIsBlocked(false);
+
+        if (!resp.success) {
+            msg.error("Не вдалось загрузити домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            return;
+        }
+
+        setLocallyHomework(uids);
+    }
+
+    if (isDedline) {
+        return (
+            <>
+                <p style={{fontSize: 27, textAlign: "center"}}>Срок сдачі пройшов</p>
+                <p style={{fontSize: 22, textAlign: "center"}}>
+                    {isDedline
+                        ? "Ви надіслали домашнє завдання"
+                        : "Ви не надіслали домашнє завдання"
+                    }
+                </p>
+            </>
+        )
+    }
+
     return (
         isAlreadyHomework
         ? <>
-            <p style={{textAlign: "center"}}>Ви вже здали домашнє завдання.</p>
+            <FileListViewer files={locallyHomework.map(fileName => ({
+                name: fileName,
+                url: UploadService.getImageURL(UploadType.HOMEWORK, fileName)
+            }))} />
 
-            <Button style={{margin: "15px auto", display: "block"}} type="primary" danger>Відмінити</Button>
+            <Button style={{margin: "15px auto", display: "block"}} type="primary" danger>Скасувати</Button>
         </>
 
         : <>
             <Dragger
+                disabled={blocked}
                 fileList={fileList}
                 multiple
                 showUploadList={false}
@@ -142,13 +205,14 @@ const RenderForStudent = () => {
                 </div>
             )}
 
-            <Button style={{margin: "15px auto", display: "block"}} type="primary">Здати домашнє завдання</Button>
+            <Button onClick={submitHomework} disabled={blocked} style={{margin: "15px auto", display: "block"}} type="primary">Здати домашнє завдання</Button>
 
             <FullscreenImageModal
                 isOpen={modalVisible}
                 close={() => setModalVisible(false)}
                 imageUrl={imageUrl}
             />
+            {msgCtx}
         </>
     )
 }
@@ -156,19 +220,21 @@ const RenderForStudent = () => {
 type Props = {
     material: SubjectNamespace.ISingleEducationMaterial
 };
-export default function MaterialPage({material} : Props) {
+export default function MaterialInfoPage({material} : Props) {
     const role = useProfileStore(useShallow(state => state.role));
-    
+
     return (
         <>
-            <h1><FileTextOutlined style={{color: "var(--primary-light)"}} /> Фізика - як наука. Вступний урок до курсу фізики. Базові поняття</h1>
-            <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>11 червня, 2024 рік о 19:00</i></p>
-            <p style={{fontSize: 15}}>Здати до: <i>12 червня, 2024 рік 15:49</i></p>
+            <h1><FileTextOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
+            {(material.deadline > 0) &&
+                <p style={{fontSize: 15}}>Здати до: <i>{dayjs(material.deadline).format("D MMMM о HH:mm")}</i></p>
+            }
 
             <Divider style={{marginTop: 14, marginBottom: 14}} />
 
             <Tiptap
-                content={mockMaterialContent}
+                content={material.content}
                 editable={false}
             />
 
@@ -176,7 +242,7 @@ export default function MaterialPage({material} : Props) {
 
 
             <h1>Домашнє завдання:</h1>
-            {role == "TEACHER" ? <RenderForTeacher /> : <RenderForStudent />}
+            {role == "TEACHER" ? <RenderForTeacher /> : <RenderForStudent material={material} />}
         </>
     )
 }

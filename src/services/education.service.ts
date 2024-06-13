@@ -37,7 +37,7 @@ export const EducationService = {
 
     async getEducationMaterial(educationId: number): Promise<ITResponse<SubjectNamespace.ISingleEducationMaterial & SubjectNamespace.ISingleEducationTest>> {
         try {
-            const response = await api.post("/education/create-education-material", {}, {
+            const response = await api.post("/education/open-education-material", {}, {
                 params: { education_id: educationId }
             });
 
@@ -49,7 +49,11 @@ export const EducationService = {
                     amount_questions: response.data.amount_questions,
                     duration: response.data.duration,
                     test: response.data.test,
-                    content: response.data.content
+                    content: response.data.content,
+                    date: response.data.date,
+                    deadline: response.data.deadline,
+                    homework: response.data.homework ? JSON.parse(response.data.homework) : [],
+                    title: response.data.title
                 }
             }
         } catch (error) {

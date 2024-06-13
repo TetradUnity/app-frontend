@@ -23,7 +23,7 @@ export const GradeService = {
         }
     },
 
-    async getGrades(subject_id: number, page?: number): Promise<ITArrResponse<SubjectNamespace.IGrade> & {max_pages?: number}> {
+    async getGrades(subject_id: number, page?: number): Promise<ITArrResponse<SubjectNamespace.IGrade>> {
         try {
             const response = await api.get("/grade/get-grades", {
                 params: { subject_id, page }
@@ -31,8 +31,7 @@ export const GradeService = {
 
             return {
                 success: true,
-                data: response.data.grades,
-                max_pages: response.data.max_pages
+                data: response.data.grades
             }
         } catch (error) {
             return catchApiError(error);

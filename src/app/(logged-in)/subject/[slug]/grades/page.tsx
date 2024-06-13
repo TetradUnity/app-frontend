@@ -26,9 +26,8 @@ export default function SubjectGradesPage() {
     const { slug } = useParams();
 
     const [grades, setGrades] = useState<SubjectNamespace.IGrade[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(0);
-    const [maxPages, setMaxPages] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
 
     const [msg, msgCtx] = message.useMessage();
 
@@ -47,7 +46,6 @@ export default function SubjectGradesPage() {
         }
 
         setGrades(prev => [...prev, ...response.data as SubjectNamespace.IGrade[]]);
-        setMaxPages(response.max_pages);
         setPage(prev => prev + 1);
     }
 
