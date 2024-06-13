@@ -19,7 +19,7 @@ export const useQueryProfileStore = create<State & Action>(set => ({
     role: "STUDENT",
     isMe: false,
     avatar: "",
-    avatar_url: "/imgs/no_avatar.png",
+    avatar_url: "/imgs/default-student-avatar.png",
 
     updateProfile: (profile) => set(state => {
         if (!profile) {

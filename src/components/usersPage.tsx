@@ -1,82 +1,47 @@
 'use client'
-import {Button, Dropdown, Flex, Input, MenuProps} from "antd";
-import {DownOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined} from "@ant-design/icons";
+import {Flex, Input, Space} from "antd";
 import UserCard from "@/components/cards/UserCard";
 import {useState} from "react";
 import {IUser} from "@/types/api.types";
+import styles from "./users.module.css";
+import {UserService} from "@/services/user.service";
 
-const items : MenuProps['items'] = [
-    {
-        label: "По імені",
-        key: '0',
-    },
-    {
-        label: "По прізвищу",
-        key: '1',
-    },
-    {key: 'divider', type: 'divider'},
-    {
-        label: "За зростанням",
-        key: '2',
-    },
-    {
-        label: "За спаданням",
-        key: '3',
-    },
-]
 
 interface UsersPageProps {
     title: string;
-    users: IUser[];
+    type: "TEACHER" | "STUDENT";
 }
 
-export default function UsersPage({ title, users }: UsersPageProps) {
-    const [sortBy, setSortBy] = useState("По імені");
-    const [sortOrder, setSortOrder] = useState("asc");
+export default function UsersPage({ title, type }: UsersPageProps) {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [users, setUsers] = useState<IUser[]>([]);
 
-    const onClick : MenuProps['onClick'] = ({ key }) => {
-        switch (key) {
-            case '0':
-                setSortBy("По імені");
-                break;
-            case '1':
-                setSortBy("По прізвищу");
-                break;
-            case '2':
-                setSortOrder("asc");
-                break;
-            case '3':
-                setSortOrder("desc");
-                break;
-        }
+    const [page, setPage] = useState(1);
+
+    const onSearch = () => {
+        UserService.findUsers({
+            first_name: firstName,
+            last_name: lastName,
+            role: type,
+            limit: 28,
+            page: page
+        }).then((response) => {
+            if (response.success) {
+                // @ts-ignore
+                setUsers(response.data);
+            }
+        })
     }
-
     return (
         <Flex vertical gap='var(--gap)'>
-            <Flex gap='var(--gap)' style={{
-                background: 'var(--foreground)',
-                padding: "12px 16px",
-                borderRadius: 8,
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: "center",
-            }}>
+            <div className={styles.Header}>
                 <h3 style={{fontWeight: 450}}>{title}</h3>
-                <Input prefix={<SearchOutlined />} placeholder={`Пошук ${title.toLowerCase()}`} />
-                <Dropdown menu={{ items, onClick }} trigger={['click']} placement={"bottomRight"}
-                          overlayStyle={{ paddingTop: 12 }}>
-                    <Button style={{
-                        display: "inline-flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: 8,
-                    }}>
-                        {sortOrder === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />}
-                        Сортувати
-                        <DownOutlined style={{ fontSize: 12 }} />
-                    </Button>
-                </Dropdown>
-            </Flex>
+                <Space.Compact style={{width:"100%"}}>
+                    <Input placeholder="Прізвище" onChange={(e) => setFirstName(e.target.value)}/>
+                    <Input.Search placeholder="Ім'я" onChange={(e) => setFirstName(e.target.value)} onSearch={onSearch}/>
+                </Space.Compact>
+            </div>
             <div style={{
                 display: "grid",
                 gap: 'var(--gap)',

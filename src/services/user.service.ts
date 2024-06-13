@@ -43,5 +43,27 @@ export const UserService = {
         } catch (e) {
             return catchApiError(e);
         }
+    },
+
+    async findUsers({email, first_name, last_name, role, limit, page}: {email?: string, first_name?: string, last_name?: string, role: "TEACHER" | "STUDENT", limit: number, page: number}): Promise<ITResponse<IUser[]>> {
+        try {
+            const response = await api.get("/user/find-users", {
+                params: {
+                    email,
+                    first_name,
+                    last_name,
+                    role,
+                    limit,
+                    page
+                }
+            });
+
+            return {
+                success: true,
+                data: response.data.users
+            }
+        } catch (e) {
+            return catchApiError(e);
+        }
     }
 };

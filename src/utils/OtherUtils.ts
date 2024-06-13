@@ -20,9 +20,9 @@ function getFileExtension(fileName: string): string {
   return fileName.split(".")[1] || '';
 }
 
-export function getUserAvatar(avatar: string | undefined): string {
+export function getUserAvatar(avatar: string | undefined, role?: "TEACHER" | "STUDENT" | "CHIEF_TEACHER"): string {
   if (!avatar) {
-    return "/imgs/no_avatar.png";
+    return role !== "STUDENT" ? "/imgs/default-teacher-avatar.png" : "/imgs/default-student-avatar.png";
   }
   return UploadService.getImageURL(UploadType.AVATAR, avatar);
 }

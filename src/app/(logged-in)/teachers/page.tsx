@@ -7,5 +7,5 @@ export default function Teachers() {
     useEffect(() => {
         document.title = `Вчителі / Пошук`
     }, [])
-    return <UsersPage title="Вчителі" users={tempTeachers} />;
+    return <UsersPage title="Вчителі" type='TEACHER' />;
 }

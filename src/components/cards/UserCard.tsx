@@ -2,8 +2,10 @@ import Link from "next/link";
 import Image from "antd/lib/image";
 import styles from "./user.module.css";
 import {IUser} from "@/types/api.types";
+import {UploadService, UploadType} from "@/services/upload.service";
 
 export default function UserCard({user}: { user: IUser }) {
+    console.log(user);
     return (
         <Link className={styles.Card} href={"/profile/" + user.id} style={{
             background: "var(--foreground)",
@@ -16,7 +18,7 @@ export default function UserCard({user}: { user: IUser }) {
             gap: "var(--gap)"
         }}>
             <Image preview={false}
-                   src={user.avatar}
+                   src={user.avatar !== "" ? UploadService.getImageURL(UploadType.AVATAR, user.avatar as string) : ( user.role === 'STUDENT' ? "/imgs/default-student-avatar.png" : "/imgs/default-teacher-avatar.png")}
                    placeholder={
                        <div className={styles.Placeholder} style={{
                            width: 128,
