@@ -30,6 +30,10 @@ function MaterialSlot({item} : {item: SubjectNamespace.IEducationMaterial}) {
     }
     const icon = isTest ? <FormOutlined style={iconStyles} /> : <FileTextOutlined style={iconStyles} />;
 
+    useEffect(() => {
+        document.title = "Завдання / " + item.title;
+    }, []);
+
     return (
         <div className={styles.material_slot + " " + styles.slot_with_arrow}>
             <Link href={"/subject/" + slug + "/assignments/" + item.id}>

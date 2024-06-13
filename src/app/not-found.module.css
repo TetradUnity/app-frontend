@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    position: relative;
+    z-index: 10;
+    justify-content: center;
+    align-items: center;
+    overflow-y: hidden;
+    width: 100%;
+    height: calc(100vh - 58px - var(--gap));
+    min-height: 250px;
+
+}
+.text {
+    font-size: 148px;
+    margin-bottom: 0;
+    margin-right: 28px;
+    padding-right: 28px;
+    border-right: solid 1px #222;
+    color: var(--primary);
+}
+
+.paragraph {
+    font-size: 22px;
+    font-weight: 300;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .text {
+        font-size: 120px;
+        border-right: none;
+    }
+    .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .paragraph {
+        font-size: 20px;
+        text-wrap: wrap;
+    }
+}

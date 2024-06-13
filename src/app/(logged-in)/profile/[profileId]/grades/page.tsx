@@ -1,6 +1,6 @@
 'use client'
 import {Collapse, Divider, Flex, Input, Radio, RadioChangeEvent, Space} from "antd";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styles from "./styles.module.css"
 import {SearchOutlined} from "@ant-design/icons";
 import Link from "next/link";
@@ -48,6 +48,11 @@ export default function ProfileGrades() {
     const onChangeSort = (e: RadioChangeEvent) => {
         setSort(e.target.value)
     }
+
+    useEffect(() => {
+        document.title = "Оцінки / " + profile.first_name + " " + profile.last_name;
+    }, []);
+
     const sortingBlock = document.getElementById("sorting-block")
     let sortingBlockWidth = sortingBlock !== null ? sortingBlock.offsetWidth : 0
     return (

@@ -28,6 +28,10 @@ export default function AccountSettingsPage() {
     const updateProfileStore = useProfileStore(selector => selector.updateProfile);
 
     useEffect(() => {
+        document.title = "Інформація / Налаштування";
+    }, []);
+
+    useEffect(() => {
         setFirstName(originalFirstName);
         setLastName(originalLastName);
         setFileList([]);

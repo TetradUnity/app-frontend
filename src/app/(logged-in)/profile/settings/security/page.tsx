@@ -1,7 +1,7 @@
 'use client'
 
 import {Button, Form, Input, message} from "antd";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useProfileStore} from "@/stores/profileStore";
 import Link from "next/link";
 import {UserService} from "@/services/user.service";
@@ -16,6 +16,10 @@ export default function SecuritySettings() {
     const [passwordRepeat, setPasswordRepeat] = useState("");
 
     const [newEmail, setNewEmail] = useState(profile.email);
+
+    useEffect(() => {
+        document.title = "Безпека / Налаштування";
+    }, []);
 
 
     const savePassword = async () => {

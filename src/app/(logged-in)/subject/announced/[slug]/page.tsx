@@ -52,6 +52,10 @@ export default function AnnouncedSubject() {
 
     const [isNotFound, setNotFound] = useState(false);
 
+    useEffect(() => {
+        document.title = "Предмет / " + info?.title || "Предмет не знайдено";
+    }, [info])
+
     const register = (email: string, first_name?: string, last_name?: string) => {
         if (!first_name) {
             first_name = undefined;

@@ -2,7 +2,7 @@
 
 import { Button, Flex, Form, Input, message, theme } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { CSSProperties, useState } from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthTokensService } from "@/services/auth-token.service";
@@ -23,6 +23,10 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
+
+    useEffect(() => {
+        document.title = "Вхід в акаунт";
+    }, []);
 
     const onFormSubmitted = async () => {
         setLoading(true);
@@ -78,10 +82,9 @@ export default function LoginPage() {
             <Form.Item label="Пароль" name="password" rules={[
                 { required: true, message: "Обов'язкове поле!" },
             ]}>
-                <Input
+                <Input.Password
                     value={password}
                     onChange={(e) => setPassword(e.currentTarget.value)}
-                    type="password"
                  />
             </Form.Item>
 

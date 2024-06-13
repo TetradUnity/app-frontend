@@ -34,6 +34,10 @@ const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateI
         return null;
     }
 
+    useEffect(() => {
+        document.title = "Кандидат / " + candidate.first_name + " " + candidate.last_name;
+    }, [candidate]);
+
     return (
         <Modal
             title="Інформація про кандидата"

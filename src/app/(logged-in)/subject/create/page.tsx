@@ -327,6 +327,10 @@ export default function CreateSubjectPage() {
 
     const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
 
+    useEffect(() => {
+        document.title = "Створення предмету";
+    }, []);
+
     const err = (err: string) => {
         modal.error({
             title: "Помилка.",
@@ -381,7 +385,7 @@ export default function CreateSubjectPage() {
                     }
 
                     if (end_exam_time < current_time + (7 * 86400 * 1000)) {
-                        err("Дата закінчення приймання заявок має бути назначена як мінімум через неділю від поточної дати.")
+                        err("Дата закінчення приймання заявок має бути назначена як мінімум через тиждень від поточної дати.")
                         setLoading(false);
                         return;
                     }
