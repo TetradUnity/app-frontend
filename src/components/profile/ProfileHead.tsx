@@ -41,14 +41,7 @@ export default function ProfileHead() {
                             }}>Налаштування</Button>
                         </Link>}
                 </div>
-                <div style={{
-                    display: "flex",
-                    padding: "0 16px",
-                    borderTop: "solid #444 1px",
-                    gap: "var(--gap)",
-                    whiteSpace: "nowrap",
-                    alignItems: "center"
-                }}>
+                <div className={styles.linkRow}>
                     <Link
                         href={"/profile/" + profile.id}
                         className={styles.linkHeadProfile + " " + (selectedLink === "/" + profile.id ? styles.isActive : "")}

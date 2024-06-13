@@ -44,6 +44,21 @@
     transform: translateY(0) scale(1);
 }
 
+.linkRow {
+    display: flex;
+    padding: 0 16px;
+    border-top: solid #444 1px;
+    gap: var(--gap);
+    white-space: nowrap;
+    align-items: center;
+    overflow-x: auto;
+
+}
+
+.linkRow::-webkit-scrollbar {
+    display: none;
+}
+
 @media screen and (max-width: 536px) {
     .Head {
         flex-direction: column;
