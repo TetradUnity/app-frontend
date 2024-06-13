@@ -78,7 +78,7 @@ const RenderForStudent = ({material} : Props) => {
     return (
         <div>
             {!isDedline 
-            && <>
+            ? <>
                     <div className={styles.content + " " + styles.no_padding}>
                     <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
                     <section>
@@ -96,22 +96,31 @@ const RenderForStudent = ({material} : Props) => {
                         <p>{material.your_attempts}/{material.available_attempt}</p>
                     </section>
 
-                    {material.grade &&
+                    {material.grade ?
                         <section>
                             <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Оцінка:</h1>
                             <p>{material.grade}</p>
                         </section>
-                    }
+                    : null}
                 </div>
 
                 <Divider />
             </>
+            : null
             }
 
             {material.test &&
                 <>
                     <h3>Ваші відповіді:</h3>
                     <TestResult slotColor="var(--foreground-lighter)" questions={material.test} />
+                </>
+            }
+            {(isDedline && !material.test) &&
+                <>
+                    <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Срок сдачі вийшов</p>
+                    <p style={{fontSize: 18, textAlign: "center", color: "rgb(220,220,220)"}}>
+                        Ви не встигли надіслати домашнє завдання
+                    </p>
                 </>
             }
 

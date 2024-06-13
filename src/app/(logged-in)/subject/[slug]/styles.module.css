@@ -92,3 +92,18 @@
 .timetable_cell_today {
     background: var(--primary);
 }
+
+
+.modal_item {
+    display: block;
+    color: white;
+}
+
+.modal_item:hover {
+    color: rgb(220, 220, 220);
+    text-decoration: underline;
+}
+
+.modal_conference {
+    margin-top: 10px;
+}

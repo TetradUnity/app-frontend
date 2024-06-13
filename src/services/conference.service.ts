@@ -6,7 +6,6 @@ import {
 } from "@/types/api.types";
 
 type ConferenceCreateParams = {
-    title: string,
     link: string,
     subject_id: number,
     date: number,
@@ -20,7 +19,7 @@ export const ConferenceService = {
             return {
                 success: true,
                 id: response.data.id
-            }
+            };
         } catch (error) {
             return catchApiError(error);
         }

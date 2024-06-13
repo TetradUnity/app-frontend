@@ -107,7 +107,8 @@ export namespace SubjectNamespace {
     export interface IEvent {
         id: number,
         title: string,
-        type: string
+        date: number,
+        type: "education_material" | "conference" | "test"
     }
     
     export interface ISingleEducationBase {
