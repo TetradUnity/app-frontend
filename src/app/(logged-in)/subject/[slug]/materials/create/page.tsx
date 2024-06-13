@@ -35,8 +35,6 @@ export default function MaterialCreatePage() {
         setUploadModalOpen(true);
     }
 
-    const updateMaterialFetchStatus = useSubjectStore(useShallow(state => state.updateMaterialFetchStatus));
-
     const onSubmit = () => {
         modal.confirm({
             title: "Створення матеріалу.",
@@ -67,12 +65,10 @@ export default function MaterialCreatePage() {
                     title: "Успіх!",
                     content: <p>Ви створили новий матеріал</p>,
                     onOk: () => {
-                        updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
                         push("/subject/" + slug + "/assignments");
                     },
                     onCancel: () => {
-                        updateMaterialFetchStatus("NOT_FETCHED");
                         draftStore.remove();
                         push("/subject/" + slug + "/assignments");
                     }

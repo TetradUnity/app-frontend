@@ -3,7 +3,7 @@ import Tiptap from "./Tiptap";
 import { Checkbox, Input, Radio, Space } from "antd";
 
 type TestResultProps = {
-    questions: TestsNamespace.CandidateQuestion[],
+    questions: TestsNamespace.Question[] | TestsNamespace.CandidateQuestion[],
     slotColor?: string
 };
 
@@ -33,9 +33,11 @@ const getTextAnswerColor = (question: TestsNamespace.CandidateQuestion) => {
     return checkIfCorrectTextAnswer(question) ? "#34eb37" : "#c9576a";
 }
 
-export default function TestResult({questions, slotColor} : TestResultProps) {
-    
+const isCandidateQuestion = (question: TestsNamespace.Question | TestsNamespace.CandidateQuestion): question is TestsNamespace.CandidateQuestion => {
+    return (question as TestsNamespace.CandidateQuestion).your_answer !== undefined;
+}
 
+export default function TestResult({questions, slotColor} : TestResultProps) {
     return (
         <>
             {questions.map((question, i) => 
@@ -48,7 +50,7 @@ export default function TestResult({questions, slotColor} : TestResultProps) {
                         editable={false} content={question.title}/>
                     
                     {question.type == "ONE_ANSWER" &&
-                        <Radio.Group value={question.your_answer[0]}>
+                        <Radio.Group value={isCandidateQuestion(question) ? question.your_answer[0] : undefined}>
                             <Space direction="vertical">
                                 {question.answers.map((answer, i) =>
                                     <Radio key={i} value={i}>
@@ -68,10 +70,11 @@ export default function TestResult({questions, slotColor} : TestResultProps) {
                     
                     {question.type == "MULTI_ANSWER" &&
                         <Checkbox.Group
-                            value={question.your_answer as number[]}
+                            value={isCandidateQuestion(question) ? question.your_answer as number[] : []}
                             options={
                                 question.answers.map((answer, i) => ({
                                     label: <Tiptap
+                                                key={i}
                                                 style={{
                                                     fontSize: 17,
                                                     margin: "3px 0",
@@ -87,12 +90,22 @@ export default function TestResult({questions, slotColor} : TestResultProps) {
                     }
 
                     {question.type == "TEXT" &&
-                        <Input
-                            style={{
-                                color: getTextAnswerColor(question)
-                            }}
-                            value={question.your_answer[0]}
-                        />
+                        (isCandidateQuestion(question)
+                            ? <Input
+                                style={{
+                                    color: getTextAnswerColor(question)
+                                }}
+                                value={question.your_answer[0]}
+                            />
+                            : question.answers.map(answer => 
+                                <Input
+                                    style={{
+                                        color: "#34eb37"
+                                    }}
+                                    value={answer.content}
+                                />
+                            )
+                        )
                     }
                 </div>
             )}

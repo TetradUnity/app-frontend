@@ -1,4 +1,5 @@
 import { UploadService, UploadType } from "@/services/upload.service";
+import { Dayjs } from "dayjs";
 
 const IMAGE_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "svg", "webp"];
 
@@ -24,4 +25,15 @@ export function getUserAvatar(avatar: string | undefined): string {
     return "/imgs/no_avatar.png";
   }
   return UploadService.getImageURL(UploadType.AVATAR, avatar);
+}
+
+
+export function dayjsTimeToMs(dayjs: Dayjs | null): number {
+  if (!dayjs) {
+    return 0;
+  }
+
+  let seconds = dayjs.second() + dayjs.minute() * 60 + dayjs.hour() * 3600;
+
+  return seconds * 1000;
 }

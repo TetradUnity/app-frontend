@@ -58,9 +58,10 @@ export default function AssigmnentsIdPage() {
    return (
         <Foreground>
             <BackButton />
-            {material.content 
-            ? <MaterialInfoPage material={material} />
-            : <TestInfoPage material={material} />}
+            {material.is_test
+                ? <TestInfoPage material={material} />
+                : <MaterialInfoPage material={material} />
+            }
         </Foreground>
    )
 }

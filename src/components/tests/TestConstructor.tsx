@@ -12,6 +12,7 @@ import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUt
 import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { Reorder } from "framer-motion";
+import { dayjsTimeToMs } from "@/utils/OtherUtils";
 
 type AnswerRef = {
     getData: () => TestsNamespace.Answer,
@@ -441,7 +442,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
         return true;
     }
-
+    
     useImperativeHandle(ref, () => ({
         getData: () => {
             let data = questions.map(item => item.ref.current?.getData());
@@ -451,7 +452,8 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             return [
                 {
-                    time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
+                    // time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
+                    time: dayjsTimeToMs(testDuration),
                     ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
                 ...data

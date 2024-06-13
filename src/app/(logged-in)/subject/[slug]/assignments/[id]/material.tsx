@@ -16,7 +16,7 @@ import { FileTextOutlined, CloudUploadOutlined, PaperClipOutlined, DeleteFilled,
 import { fileIsImage } from "@/utils/OtherUtils";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
-import { IStudentShortInfo, SubjectNamespace } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 import FullscreenImageModal from "@/components/FullscreenImage";
 import dayjs from "dayjs";
@@ -25,33 +25,18 @@ import { UploadService, UploadType } from "@/services/upload.service";
 import { RcFile } from "antd/es/upload";
 import { EducationService } from "@/services/education.service";
 
-const MOCK_STUDENTS: IStudentShortInfo[] = [
-    {
-        id: 0,
-        first_name: "Григорій",
-        last_name: "Кущ",
-        avatar: ""
-    },
-    {
-        id: 0,
-        first_name: "Галина",
-        last_name: "Калина",
-        avatar: ""
-    },
-    {
-        id: 0,
-        first_name: "Стас",
-        last_name: "Рис",
-        avatar: ""
-    }
-];
+const RenderForTeacher = ({material} : Props) => {
+    let isDedline = material.deadline && material.deadline > 0;
 
-const RenderForTeacher = () => {
-    const dedlineExpire = true;
+    if (!isDedline) {
+        return null;
+    };
+
+    isDedline = Date.now() > material.deadline;
 
     return (
-        dedlineExpire
-            ? <ResultForTeacher type="material" students={MOCK_STUDENTS} />
+        isDedline
+            ? <ResultForTeacher type="material" />
             : <p style={{textAlign: "center"}}>Ви зможете подивитись домашнє завдання учнів після того, як пройде дедлайн.</p>
     )
 }
@@ -78,6 +63,20 @@ const RenderForStudent = ({material} : Props) => {
             URL.revokeObjectURL(imageUrl);
         }
     }, [modalVisible]);
+
+    if (isDedline) {
+        return (
+            <>
+                <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Срок сдачі вийшов</p>
+                <p style={{fontSize: 18, textAlign: "center", color: "rgb(220,220,220)"}}>
+                    {isDedline
+                        ? "Ви встигли надіслати домашнє завдання"
+                        : "Ви не встигли надіслати домашнє завдання"
+                    }
+                </p>
+            </>
+        )
+    }
 
     const submitHomework = async () => {
         if (fileList.length < 1) {
@@ -107,21 +106,22 @@ const RenderForStudent = ({material} : Props) => {
         }
 
         setLocallyHomework(uids);
-    }
+    };
 
-    if (isDedline) {
-        return (
-            <>
-                <p style={{fontSize: 27, textAlign: "center"}}>Срок сдачі пройшов</p>
-                <p style={{fontSize: 22, textAlign: "center"}}>
-                    {isDedline
-                        ? "Ви надіслали домашнє завдання"
-                        : "Ви не надіслали домашнє завдання"
-                    }
-                </p>
-            </>
-        )
-    }
+    const rejectHomework = async () => {
+        setIsBlocked(true);
+
+        const resp = await EducationService.sendHomework(parseInt(id as string), []);
+
+        setIsBlocked(false);
+
+        if (!resp.success) {
+            msg.error("Не вдалось скасувати домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            return;
+        }
+
+        setLocallyHomework([]);
+    };
 
     return (
         isAlreadyHomework
@@ -131,7 +131,7 @@ const RenderForStudent = ({material} : Props) => {
                 url: UploadService.getImageURL(UploadType.HOMEWORK, fileName)
             }))} />
 
-            <Button style={{margin: "15px auto", display: "block"}} type="primary" danger>Скасувати</Button>
+            <Button onClick={rejectHomework} disabled={blocked} style={{margin: "15px auto", display: "block"}} type="primary" danger>Скасувати</Button>
         </>
 
         : <>
@@ -241,8 +241,16 @@ export default function MaterialInfoPage({material} : Props) {
             <Divider style={{marginTop: 14, marginBottom: 14}} />
 
 
-            <h1>Домашнє завдання:</h1>
-            {role == "TEACHER" ? <RenderForTeacher /> : <RenderForStudent material={material} />}
+            {role == "TEACHER" 
+                ? <>
+                    <h1>Домашні завдання:</h1>
+                    <RenderForTeacher material={material} /> 
+                </>
+                : <>
+                    <h1>Домашнє завдання:</h1>
+                    <RenderForStudent material={material} />
+                </>
+            }
         </>
     )
 }

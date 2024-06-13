@@ -20,7 +20,7 @@ export type filterProps = {
 };
 export const AnnouncedSubjectService = {
     // student or guest
-    async startExam(uid: string): Promise<ITResponse<TestsNamespace.ProdTest> & {time_end?: number}> {
+    async startExam(uid: string): Promise<ITResponse<TestsNamespace.ProdTest> & {time_end?: number, savedAnswers?: TestsNamespace.AnswerType[]}> {
         try {
             const response = await api.post("/subject/start-exam", {}, {
                 params: { uid }
@@ -29,7 +29,8 @@ export const AnnouncedSubjectService = {
             return {
                 success: true,
                 data: JSON.parse(response.data.exam),
-                time_end: response.data.time_end
+                time_end: response.data.time_end,
+                savedAnswers: response.data.savedAnswers
             }
         } catch (e) {
             return catchApiError(e);

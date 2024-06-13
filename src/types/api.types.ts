@@ -113,11 +113,12 @@ export namespace SubjectNamespace {
     export interface ISingleEducationBase {
         title: string,
         date: number,
-        deadline: number
+        deadline: number,
+        is_test: boolean,
+        content?: string,
     }
 
     export interface ISingleEducationMaterial extends ISingleEducationBase {
-        content: string,
         homework: string[]
     }
 
@@ -126,7 +127,8 @@ export namespace SubjectNamespace {
         available_attempt: number,
         amount_questions: number,
         duration: number,
-        test: TestsNamespace.Question[],
+        test: TestsNamespace.CandidateQuestion[],
+        grade?: number
     }
 }
 

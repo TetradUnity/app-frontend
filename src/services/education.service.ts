@@ -3,6 +3,7 @@
 import { api, catchApiError } from "@/api";
 import {
     IResponse,
+    IStudentShortInfo,
     ITArrResponse,
     ITResponse, SubjectNamespace, TestsNamespace
 } from "@/types/api.types";
@@ -48,12 +49,14 @@ export const EducationService = {
                     available_attempt: response.data.available_attempt,
                     amount_questions: response.data.amount_questions,
                     duration: response.data.duration,
-                    test: response.data.test,
+                    test: response.data.test ? JSON.parse(response.data.test) : undefined,
                     content: response.data.content,
                     date: response.data.date,
                     deadline: response.data.deadline,
                     homework: response.data.homework ? JSON.parse(response.data.homework) : [],
-                    title: response.data.title
+                    title: response.data.title,
+                    is_test: response.data.is_test,
+                    grade: response.data.grade
                 }
             }
         } catch (error) {
@@ -61,7 +64,7 @@ export const EducationService = {
         }
     },
 
-    async startTest(educationMaterialId: number): Promise<ITResponse<TestsNamespace.ProdTest> & {savedAnswers?: TestsNamespace.AnswerType[]}> {
+    async startTest(educationMaterialId: number): Promise<ITResponse<TestsNamespace.ProdTest> & {savedAnswers?: TestsNamespace.AnswerType[]; time_end?: number}> {
         try {
             const response = await api.post("/education/start-test", {}, {
                 params: { education_id: educationMaterialId }
@@ -70,7 +73,8 @@ export const EducationService = {
             return {
                 success: true,
                 data: JSON.parse(response.data.test),
-                savedAnswers: response.data.saved_answer ? JSON.parse(response.data.saved_answer) : undefined
+                savedAnswers: response.data.saved_answer ? JSON.parse(response.data.saved_answer) : undefined,
+                time_end: response.data.end_time
             }
         } catch (error) {
             return catchApiError(error);
@@ -110,7 +114,7 @@ export const EducationService = {
         }
     },
 
-    async viewHomeworks(educationMaterialId: number): Promise<IResponse> {
+    async viewHomeworks(educationMaterialId: number): Promise<ITArrResponse<SubjectNamespace.IStudentHomeworkShortInfo>> {
         try {
             const response = await api.get("/education/view-homeworks", {
                 params: { education_id: educationMaterialId }
@@ -133,7 +137,7 @@ export const EducationService = {
 
             return {
                 success: true,
-                data: response.data.test || response.data.files
+                data: JSON.parse(response.data.test || response.data.files)
             }
         } catch (error) {
             return catchApiError(error);

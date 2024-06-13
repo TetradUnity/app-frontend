@@ -115,3 +115,7 @@ body {
     font-size: 25px;
 }
 
+
+.rm-pe, .rm-pe * {
+    pointer-events: none;
+}

@@ -1,0 +1,73 @@
+.main {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* .sider, .divider, .content {
+    display: inline-block;
+    vertical-align: top;
+} */
+
+.sider {
+    width: 200px;
+}
+
+.sider > button {
+    margin-bottom: 10px;
+}
+
+.divider {
+    margin-left: 15px;
+    width: 1px;
+    height: 90vh;
+    background: var(--foreground-lighter-2);
+}
+
+.content {
+    padding: 0 16px;
+    flex: 1;
+    position: relative;
+}
+.content_inner {
+    background: var(--foreground-lighter-1_5);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 15px;
+    margin-top: 20px;
+}
+
+.upRight {
+    position: absolute;
+    right: 32px;
+    top: 16px;
+
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.clock {
+    background: var(--foreground-lighter-2);
+    padding: 10px 0;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+}
+
+.clock * {
+    display: inline-block;
+    font-size: 17px;
+}
+.clock p {
+    margin-left: 10px;
+}

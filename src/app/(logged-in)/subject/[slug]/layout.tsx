@@ -36,20 +36,6 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     }
 
     useEffect(() => {
-        if ((pathname.endsWith("assignments")) && store.materialsFetchingStatus == "NOT_FETCHED") {
-            store.updateMaterialFetchStatus("FETCHING");
-
-            EducationService.getEducationMaterials(subjectId, 1).then(response => {
-                if (!response.data) {
-                    store.updateMaterialFetchStatus(response.error_code as string);
-                    return;
-                }
-
-                store.updateMaterials(response.data);
-                store.updateMaterialFetchStatus("SUCCESS");
-            })
-        }
-
         if ((pathname.endsWith("students")) && store.studentsFetchingStatus == "NOT_FETCHED") {
             store.updateStudentsFetchStatus("FETCHING");
 
@@ -104,7 +90,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
             <motion.div animate={anim} initial={anim}>
                 <div
                     style={{backgroundImage: "url(" + store.subject.banner + ")", position: "relative"}}
-                    className={styles.header_div}
+                    className={styles.header_div + (shouldShow ? "" : " rm-pe")}
                 >
                         <h1>{store.subject.title}</h1>
                         <Link href={"/profile/" + store.subject.teacher_id}><p><b>Викладач: </b><i>{store.subject.teacher_first_name} {store.subject.teacher_last_name}</i></p></Link>

@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import styles from "../styles.module.css";
 import dayjs from "dayjs";
 import {Empty, List, Spin, message} from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EducationService } from "@/services/education.service";
 import { GradeService } from "@/services/grade.service";
 import { useParams } from "next/navigation";
@@ -27,35 +27,54 @@ export default function SubjectGradesPage() {
 
     const [grades, setGrades] = useState<SubjectNamespace.IGrade[]>([]);
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-
-    const [msg, msgCtx] = message.useMessage();
+    
+    const fetchRef = useRef({
+        loading: false,
+        page: 1,
+        isEnd: false
+    });
 
     const fetch = async () => {
-        if (loading) return;
+        if (fetchRef.current.isEnd) return;
+        if (fetchRef.current.loading) return;
 
         setLoading(true);
+        fetchRef.current.loading = true;
 
-        const response = await GradeService.getGrades(parseFloat(slug as string), page);
-
-        setLoading(false);
+        const response = await GradeService.getGrades(parseFloat(slug as string), fetchRef.current.page);
 
         if (!response.success) {
-            msg.error("Трапилась помилка при завантажені оцінок: " + translateRequestError(response.error_code))
+            setLoading(false);
+            message.error("Трапилась помилка при завантажені оцінок: " + translateRequestError(response.error_code))
             return;
         }
 
-        setGrades(prev => [...prev, ...response.data as SubjectNamespace.IGrade[]]);
-        setPage(prev => prev + 1);
+        setGrades(prev => [...prev, ...response.data!]);
+        fetchRef.current.isEnd = response.data!.length == 0;
+        fetchRef.current.page += 1;
+        fetchRef.current.loading = false;
+        setLoading(false);
     }
 
     useEffect(() => {
         fetch();
+
+        const handleScroll = () => {
+            if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) {
+                return;
+            }
+
+            fetch();
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <>
-            {loading && <Spin spinning fullscreen />}
+        (loading)
+        ? <Spin size="large" style={{display: "block", margin: "auto"}} spinning />
+        : <>
             {
                 (grades.length > 0)
                 ?  <List
@@ -68,7 +87,6 @@ export default function SubjectGradesPage() {
                     />
                 : <Empty description={<p className={styles.empty_text}>У Вас оцінок поки ще немає.</p>} />
             }
-            {msgCtx}
         </>
     )
 }

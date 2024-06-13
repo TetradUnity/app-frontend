@@ -1,10 +1,10 @@
 'use client';
 
-import {TestsNamespace} from "@/types/api.types";
+import {IResponse, TestsNamespace} from "@/types/api.types";
 import { Button, Checkbox, Input, Modal, Radio, Space, Spin } from "antd";
 import { notFound, useParams } from "next/navigation";
 
-import styles from "./styles.module.css";
+import styles from "./passtest.module.css";
 import React, {useEffect, useState} from "react";
 import Tiptap from "@/components/Tiptap";
 
@@ -15,6 +15,7 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 
 import translateRequestError from "@/utils/ErrorUtils";
 import { pluralize } from "@/utils/InternalizationUtils";
+import { EducationService } from "@/services/education.service";
 
 // TODO: Content Security Policy
 
@@ -119,9 +120,12 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
     )
 }
 
-export default function TestPage() {
+type Props = {
+    isEducation: boolean
+}
+export default function PassTestPage({isEducation} : Props) {
     const params = useParams();
-    let {slug: testUID} = params;
+    let testUID = isEducation ? params.id : params.slug;
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isTimeUp, setIsTimeUp] = useState(false);
@@ -139,14 +143,13 @@ export default function TestPage() {
 
     const testStore = useTestStore();
 
-    const fetch = (uid: string | string[]) => {
-        AnnouncedSubjectService.startExam(uid as string).then(res => {
-            if (!(res.data && res.time_end)) {
-                setIsLoaded(true);
-                setNotFound(true);
-                return;
-            }
-            
+    const fetch = () => {
+        type Response = {
+            data: TestsNamespace.ProdTest,
+            savedAnswers?: TestsNamespace.AnswerType[];
+            time_end: number;
+        };
+        const proc = (res: Response) => {
             let questions = res.data;
 
             if (Date.now() > res.time_end) {
@@ -158,9 +161,43 @@ export default function TestPage() {
             testStore.setTotalQuestions(questions.length);
             setQuestions(questions);
             setTimeEnd(res.time_end);
+
+            if (res.savedAnswers) {
+                testStore.setAnswers(res.savedAnswers);
+            }
             
             setIsLoaded(true);
-        });
+        }
+
+        if (isEducation) {
+            EducationService.startTest(parseInt(testUID as string)).then(response => {
+                if (!(response.data && response.time_end)) {
+                    setIsLoaded(true);
+                    setNotFound(true);
+                    return;
+                }
+
+                proc({
+                    data: response.data,
+                    savedAnswers: response.savedAnswers,
+                    time_end: response.time_end
+                });
+            });
+        } else {
+            AnnouncedSubjectService.startExam(testUID as string).then(response => {
+                if (!(response.data && response.time_end)) {
+                    setIsLoaded(true);
+                    setNotFound(true);
+                    return;
+                }
+
+                proc({
+                    data: response.data,
+                    savedAnswers: response.savedAnswers,
+                    time_end: response.time_end
+                });
+            });
+        }
     }
 
 
@@ -178,7 +215,8 @@ export default function TestPage() {
     };
 
     const submit = () => {
-        AnnouncedSubjectService.finishExam(testUID as string, testStore.getAnswers()).then(resp => {
+       if (isEducation) {
+        EducationService.sendHomework(parseInt(testUID as string), testStore.getAnswers()).then(resp => {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка",
@@ -186,44 +224,72 @@ export default function TestPage() {
                 })
                 return;
             }
-
+            
             const result = resp.result as number;
-            const passing_grade = resp.passing_grade as number;
-            const isPassed = result >= passing_grade;
 
-            modal[isPassed ? "success" : "error"]({
-                title: isPassed ? "Успіх" : "Невдача",
+            modal.success({
+                title: "Успіх",
                 content:
                     <p>
-                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
-                        {isPassed
-                            ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
-                            : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
+                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])}!
                     </p>,
-                onOk: () => window.location.href = "/subjects",
-                onCancel: () => window.location.href = "/subjects"
+                onOk: () => window.location.href = "/subject/" + params.slug + "/",
+                onCancel: () => window.location.href = "/subject/" + params.slug + "/"
             })
         })
+       } else {
+            AnnouncedSubjectService.finishExam(testUID as string, testStore.getAnswers()).then(resp => {
+                if (!resp.success) {
+                    modal.error({
+                        title: "Помилка",
+                        content: <p>Закінчити екзамен не вдалося: {translateRequestError(resp.error_code)}</p>
+                    })
+                    return;
+                }
+
+                const result = resp.result as number;
+                const passing_grade = resp.passing_grade as number;
+                const isPassed = result >= passing_grade;
+
+                modal[isPassed ? "success" : "error"]({
+                    title: isPassed ? "Успіх" : "Невдача",
+                    content:
+                        <p>
+                            Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
+                            {isPassed
+                                ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
+                                : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
+                        </p>,
+                    onOk: () => window.location.href = "/subjects",
+                    onCancel: () => window.location.href = "/subjects"
+                })
+            })
+       }
     }
 
     useEffect(() => {
-        fetch(testUID);
+        fetch();
     }, []);
 
     const save = async () => {
-        console.log(currentAnswer, testStore.answers[selectedQuestion])
         if (currentAnswer == testStore.answers[selectedQuestion]) {
             return;
         }
 
-        AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(resp => {
+        const proc = (resp: IResponse) => {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка під час збереження",
                     content: <p>При зберіганні відповіді трапилась помилка: {translateRequestError(resp.error_code)}</p>
                 })
             }
-        })
+        }
+
+        if (isEducation) {
+            EducationService.updateAnswersTest(parseInt(testUID as string), testStore.getAnswers()).then(proc);
+        } else {
+            AnnouncedSubjectService.updateAnswers(testUID as string, testStore.getAnswers()).then(proc);
+        }
     }
 
     const nextQuestion = () => {

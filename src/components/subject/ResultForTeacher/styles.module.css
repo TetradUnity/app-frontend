@@ -9,13 +9,40 @@
     margin-top: 10px;
     font-size: 18px;
     border-radius: 10px;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.student_slot [role="img"] {
-    position: relative;
-    top: 6px;
+.student_slot > div {
+    flex: 1;
 }
 
+.ss_name {
+    display: block;
+    font-size: 20px;
+}
+.ss_dispatchtime {
+    display: block;
+    font-size: 15px;
+    color: rgb(220,220,220);
+}
+
+.divider, .evaluated, .unevaluated {
+    font-size: 17px;
+}
+
+.divider {
+    color: lightskyblue;
+}
+.evaluated {
+    color: aquamarine;
+}
+.unevaluated {
+    color: rgb(246, 104, 104);
+}
 
 .file_slot {
     background: var(--foreground-lighter-0_5);
