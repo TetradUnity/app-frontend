@@ -36,7 +36,7 @@ const items: MenuProps['items'] = [
         label: <Link href={`/profile/${myProfileId}/achievements`}>Досягнення</Link>,
         icon: <RiseOutlined/>,
         key: '2',
-},
+    },
     {
         label: <Link href={`/profile/settings`}>Налаштування</Link>,
         icon: <SettingOutlined/>,
@@ -53,7 +53,7 @@ const items: MenuProps['items'] = [
     },
 ]
 
-function NavButton({path, icon, text} : {path: string, icon: React.ReactNode, text: string}) {
+function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
     const pathname = usePathname();
 
     return (
@@ -182,17 +182,10 @@ export default function AppHeader() {
             backdropFilter: "blur(10px)",
             borderBottom: "solid 1px #444",
         }}>
-            <div style={{
-                maxWidth: "1200px",
-                width: "100%",
-                display: "grid",
-                gridTemplateColumns: gridTemplateColumns,
-                alignItems: "center",
-                margin: "0 auto",
-                height: "100%",
-            }}>
+            <div className="header-grid">
                 <Link href="/" style={{marginLeft: 20, width: "max-content"}}>
-                    <Image src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image className="logo-big" src="/logo_academy.svg" alt="Logo" preview={false} style={{height: 42}}/>
+                    <Image className="logo-small" src="/logo.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
                 
                 <Space style={{display: "flex", justifyContent: "center"}}>
@@ -219,10 +212,9 @@ export default function AppHeader() {
                         display: "flex",
                         position: "relative",
                         justifyContent: "flex-end",
-                        marginRight: 20
                     }}>
                         <Link href={`/profile/${profile.id}`}>
-                            <Avatar shape="square" alt="user avatar" size={32} style={{margin: 0, padding: 0}}
+                            <Avatar shape="square" alt="avatar" size={32} style={{margin: 0, padding: 0}}
                                 src={profile.avatar_url} icon={<UserOutlined/>}/>
                         </Link>
 
