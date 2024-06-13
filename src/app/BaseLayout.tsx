@@ -28,7 +28,7 @@ export default function BaseLayout({
                         "colorPrimary": "#8458dd",
                         "colorInfo": "#ab7ae0",
                         "colorBgBase": "#0A0A0A",
-                        "fontSize": 17,
+                        "fontSize": 16,
                         "borderRadius": 10
                     },
                     components: {
