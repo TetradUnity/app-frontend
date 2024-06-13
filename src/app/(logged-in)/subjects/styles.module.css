@@ -1,0 +1,42 @@
+.filters {
+    background: var(--foreground);
+    padding: 12px 16px;
+    border-radius: 8px;
+    position: sticky;
+    top: calc(58px + var(--gap));
+    height: fit-content;
+    width: 270px;
+}
+
+.filterBtn {
+    display: none;
+    width: 64px;
+}
+
+.createBtnLong {
+    width: 100%;
+}
+
+.createBtnShort {
+    display: none;
+    width: 64px;
+}
+
+@media screen and (max-width: 768px) {
+    .filters {
+        display: none;
+    }
+    .filterBtn {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .createBtnLong {
+        display: none;
+    }
+
+    .createBtnShort {
+        display: block;
+    }
+}

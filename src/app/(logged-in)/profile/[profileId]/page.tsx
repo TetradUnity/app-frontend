@@ -12,8 +12,6 @@ import {useQueryProfileStore} from "@/stores/queryProfileStore";
 
 // @ts-ignore
 const OpenFilterModal = ({openFilterVisible, setOpenFilterVisible, view, setView, sort, setSort, sortOrder, setSortOrder}) => {
-
-
     const onChangeSortOrder = (e: RadioChangeEvent) => {
         setSortOrder(e.target.value)
     };

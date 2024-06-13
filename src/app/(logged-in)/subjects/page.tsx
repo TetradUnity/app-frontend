@@ -1,28 +1,46 @@
 'use client'
 
-import {AutoComplete, Button, Divider, Empty, Flex, GetRef, Input, Pagination, Radio, Select, Spin, Tag} from "antd";
+import {
+    AutoComplete,
+    Button,
+    Divider,
+    Empty,
+    Flex,
+    GetRef,
+    Input,
+    Modal,
+    Pagination,
+    Radio,
+    Select,
+    Space,
+    Spin,
+    Tag
+} from "antd";
 import React, {useEffect, useState} from "react";
 
 import {
+    FilterOutlined,
     PlusCircleFilled,
     SearchOutlined
 } from "@ant-design/icons";
 
 import SubjectCard from "@/components/cards/AnouncedSubjectCard";
 import Link from "next/link";
-import { useProfileStore } from "@/stores/profileStore";
-import { useShallow } from "zustand/react/shallow";
-import  {IAnnouncedSubjectShort } from "@/types/api.types";
+import {useProfileStore} from "@/stores/profileStore";
+import {useShallow} from "zustand/react/shallow";
+import {IAnnouncedSubjectShort} from "@/types/api.types";
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { filterProps } from "@/services/announced_subject.service";
+import {LoadingOutlined} from '@ant-design/icons';
+import {filterProps} from "@/services/announced_subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
-import { TweenOneGroup } from "rc-tween-one";
+import {TweenOneGroup} from "rc-tween-one";
 
-import { PlusOutlined } from "@ant-design/icons";
-import { TagsService } from "@/services/tags.service";
-import { debounce } from "lodash";
-import { AnnouncedSubjectService } from "@/services/announced_subject.service";
+import {PlusOutlined} from "@ant-design/icons";
+import {TagsService} from "@/services/tags.service";
+import {debounce} from "lodash";
+import {AnnouncedSubjectService} from "@/services/announced_subject.service";
+import styles from "./styles.module.css";
+import Filters from "@/components/subjects/Filters";
 
 export default function Subjects() {
     const profileRole = useProfileStore(useShallow(state => state.role));
@@ -33,6 +51,8 @@ export default function Subjects() {
     const [maximumPages, setMaximumPages] = useState(1);
 
     /* Filters */
+    const [filterModalVisible, setFilterModalVisible] = useState(false);
+
     const [withExam, setWithExam] = useState<number | undefined>(undefined);
     const [teacherFirstName, setTeacherFirstName] = useState('');
     const [teacherLastName, setTeacherLastName] = useState('');
@@ -63,7 +83,7 @@ export default function Subjects() {
 
     const fetch = (page: number) => {
         setIsFetching(true);
-        
+
         AnnouncedSubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
             setIsFetching(false);
             if (!res.success) {
@@ -151,9 +171,13 @@ export default function Subjects() {
     }, [])
 
     const resetFilters = () => {
-        setWithExam(undefined); setTeacherFirstName(''); setTeacherLastName(''); setTags([]);
+        setWithExam(undefined);
+        setTeacherFirstName('');
+        setTeacherLastName('');
+        setTags([]);
         setMaximumPages(1);
         fetch(1);
+        applyFilters()
     }
 
     const applyFilters = () => {
@@ -171,23 +195,36 @@ export default function Subjects() {
             }}>
                 <Flex justify="space-between" align="flex-end">
                     <h2 style={{fontWeight: 350}}>Предмети</h2>
-                    <Flex gap={15}>
+                    <Flex gap={16}>
                         {profileRole == "CHIEF_TEACHER" &&
-                            <Button size="small" type="primary" style={{fontSize: 15}} icon={<PlusCircleFilled/>}>
-                                <Link href="/subject/create">Створити новий предмет</Link>
-                            </Button>
+                            <>
+                                <div className={styles.createBtnLong}>
+                                    <Button size="small" type="primary"
+                                            icon={<PlusCircleFilled/>}>
+                                        <Link href="/subject/create">Створити новий предмет</Link>
+                                    </Button>
+                                </div>
+                                <div className={styles.createBtnShort}>
+                                    <Button size="small" type="primary" style={{width: "100%"}}
+                                            icon={<PlusCircleFilled/>} href="/subject/create"/>
+                                </div>
+                            </>
                         }
                     </Flex>
                 </Flex>
-
-                <Input
-                    placeholder="Пошук по назві"
-                    prefix={<SearchOutlined/>}
-                    onPressEnter={applyFilters}
-                    value={titleSearch}
-                    onChange={e => setTitleSearch(e.target.value)}
-                />
-
+                <div style={{display: "flex", gap: "var(--gap)"}}>
+                    <Input
+                        placeholder="Пошук по назві"
+                        prefix={<SearchOutlined/>}
+                        onPressEnter={applyFilters}
+                        value={titleSearch}
+                        onChange={e => setTitleSearch(e.target.value)}
+                    />
+                    <div className={styles.filterBtn}>
+                        <Button style={{width:"100%"}} icon={<FilterOutlined/>}
+                                onClick={() => setFilterModalVisible(true)}></Button>
+                    </div>
+                </div>
 
                 {isFetching &&
                     <Spin
@@ -210,7 +247,7 @@ export default function Subjects() {
                     opacity: isFetching ? 0.4 : 1,
                 }}>
                     {subjects.map(subject => (
-                        <SubjectCard key={subject.id} subject={subject} filters={getFilters()} />
+                        <SubjectCard key={subject.id} subject={subject} filters={getFilters()}/>
                     ))}
                 </div>
 
@@ -227,125 +264,63 @@ export default function Subjects() {
                     }}
                 />
             </Flex>
-            <div style={{
-                background: 'var(--foreground)',
-                padding: "12px 16px",
-                borderRadius: 8,
-                position: "sticky",
-                top: 'calc(58px + var(--gap))',
-                height: "fit-content",
-                width: "270px",
-            }}>
-                <h2>Фільтри</h2>
-                
-                <Divider style={{margin: "10px 0"}} />
-
-                <h4 style={{marginBottom: 5}}>Екзамен:</h4>
-                <Radio.Group
-                    value={withExam}
-                    onChange={e => {
-                        setWithExam(e.target.value);
-                    }}
-                >
-                    <Radio value={1}>З</Radio>
-                    <Radio value={2}>Без</Radio>
-                </Radio.Group>
-
-                <Divider style={{margin: "10px 0"}} />
-
-                <h4 style={{marginBottom: 5}}>Вчитель:</h4>
-                <div>
-                    <Flex gap={38}>
-                        <p>Ім'я:</p>
-                        <Input
-                            value={teacherFirstName}
-                            onChange={e => setTeacherFirstName(e.target.value)}
-                            size="small"
-                        />
-                    </Flex>
-
-                    <Flex style={{marginTop: 10}} gap={10}>
-                        <p>Фамілія:</p>
-                        <Input
-                            value={teacherLastName}
-                            onChange={e => setTeacherLastName(e.target.value)}
-                            size="small"
-                        />
-                    </Flex>
-                </div>
-
-                <Divider style={{margin: "10px 0"}} />
-
-                <h4>Теги:</h4>
-                <div>
-                    <TweenOneGroup
-                        appear={false}
-                        enter={{ scale: 0.8, opacity: 0, type: 'from', duration: 100 }}
-                        leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-                        style={{display: "inline-block"}}
-                        onEnd={(e) => {
-                            if (e.type === 'appear' || e.type === 'enter') {
-                            (e.target as any).style = 'display: inline-block';
-                            }
-                        }}
-                    >
-                        {tags.map(tag => 
-                        <span key={tag} style={{display: "inline-block"}}>
-                                <Tag
-                                    style={{marginTop: 10}}
-                                    closable
-                                    onClose={(e) => {
-                                        e.preventDefault();
-                                        removeTag(tag)
-                                    }}
-                                >
-                                    {tag}
-                                </Tag>
-                        </span>
-                        )}
-                    </TweenOneGroup>
-
-                    {tagInputVisible
-                        ? <AutoComplete
-                            ref={tagInputRef}
-                            style={{width: 140, height: 25, marginTop: 10}}
-                            value={tagInputValue}
-                            onChange={onInputChange}
-                            onBlur={onInputConfirm}
-                            backfill
-                            options={tagOptions}
-                            onSelect={tag => setTagInputValue(tag)}
-                            onDropdownVisibleChange={open => setTagDropdownVisible(open)}
-                            onSearch={debounce(searchTags, 400)}
-                            onKeyDown={e => {
-                                if (e.key == "Enter" && !tagDropdownVisible) {
-                                    onInputConfirm();
-                                }
-                            }}
-                            notFoundContent={tagsLoading && <Spin spinning style={{display: "block", margin: "auto"}} />}
-                        />
-                        :  <Tag
-                                onClick={showInput}
-                                style={{
-                                    borderStyle: "dashed",
-                                    cursor: "pointer",
-                                    display: "inline-block",
-                                    marginTop: 10
-                                }}
-                                color="cyan"
-                            >
-                                <PlusOutlined /> Добавити
-                            </Tag>
-                    }
-                </div>
-
-                <Divider style={{margin: "10px 0"}} />
-
-                <div style={{width: "fit-content", display: "block", marginLeft: "auto"}}>
-                    <Button onClick={resetFilters} size="small" style={{fontSize: 14, marginRight: 5}}>Скинути</Button>
-                    <Button onClick={applyFilters} size="small" style={{fontSize: 14}} type="primary">Застосувати</Button>
-                </div>
-            </div>
+            <Filters
+                withExam={withExam}
+                setWithExam={setWithExam}
+                teacherFirstName={teacherFirstName}
+                setTeacherFirstName={setTeacherFirstName}
+                teacherLastName={teacherLastName}
+                setTeacherLastName={setTeacherLastName}
+                tags={tags}
+                setTags={setTags}
+                resetFilters={resetFilters}
+                applyFilters={applyFilters}
+                searchTags={searchTags}
+                removeTag={removeTag}
+                showInput={showInput}
+                onInputChange={onInputChange}
+                onInputConfirm={onInputConfirm}
+                tagInputVisible={tagInputVisible}
+                tagInputValue={tagInputValue}
+                tagOptions={tagOptions}
+                tagInputRef={tagInputRef}
+                tagDropdownVisible={tagDropdownVisible}
+                tagsLoading={tagsLoading}
+                setTagInputVisible={setTagInputVisible}
+                setTagInputValue={setTagInputValue}
+                setTagOptions={setTagOptions}
+                setTagDropdownVisible={setTagDropdownVisible}
+            />
+            <Modal visible={filterModalVisible} onCancel={() => setFilterModalVisible(false)} footer={null} centered>
+                <Filters
+                    withExam={withExam}
+                    setWithExam={setWithExam}
+                    teacherFirstName={teacherFirstName}
+                    setTeacherFirstName={setTeacherFirstName}
+                    teacherLastName={teacherLastName}
+                    setTeacherLastName={setTeacherLastName}
+                    tags={tags}
+                    setTags={setTags}
+                    resetFilters={resetFilters}
+                    applyFilters={applyFilters}
+                    searchTags={searchTags}
+                    removeTag={removeTag}
+                    showInput={showInput}
+                    onInputChange={onInputChange}
+                    onInputConfirm={onInputConfirm}
+                    tagInputVisible={tagInputVisible}
+                    tagInputValue={tagInputValue}
+                    tagOptions={tagOptions}
+                    tagInputRef={tagInputRef}
+                    tagDropdownVisible={tagDropdownVisible}
+                    tagsLoading={tagsLoading}
+                    setTagInputVisible={setTagInputVisible}
+                    setTagInputValue={setTagInputValue}
+                    setTagOptions={setTagOptions}
+                    setTagDropdownVisible={setTagDropdownVisible}
+                    style={{position: "static", width: "100%", background: 'none'}}
+                />
+            </Modal>
         </Flex>
     );
 }
