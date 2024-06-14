@@ -225,7 +225,7 @@ export default function AppHeader() {
                             display: "flex",
                             alignItems: "center",
                             gap: "var(--gap)",
-                            marginRight: 20,
+                            marginRight: 0,
                         }}><span className="login-text">Авторизація</span><LoginOutlined/> </Link>
                     </div>}
             </div>

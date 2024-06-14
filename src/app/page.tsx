@@ -54,24 +54,26 @@ export default function LandPage() {
                         display: "flex",
                         justifyContent: "center",
                         flexWrap: "wrap",
+                        gap: "36px",
+                        padding: "16px 0"
                     }}>
                         <div className={styles.item}>
-                            <BookOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <BookOutlined className={styles.icon}/>
                             <h3>Курси та модулі</h3>
                             <p>Легке створення та управління курсами.</p>
                         </div>
                         <div className={styles.item}>
-                            <StarOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <StarOutlined className={styles.icon}/>
                             <h3>Оцінювання та тести</h3>
                             <p>Автоматичні тести та система оцінювання.</p>
                         </div>
                         <div className={styles.item}>
-                            <VideoCameraOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <VideoCameraOutlined className={styles.icon}/>
                             <h3>Підтримка відеозв'язку</h3>
                             <p>Легке надання посилань на відеоконференції.</p>
                         </div>
                         <div className={styles.item}>
-                            <MoreOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <MoreOutlined className={styles.icon}/>
                             <h3>Та багато іншого!</h3>
                         </div>
                     </div>
@@ -82,24 +84,26 @@ export default function LandPage() {
                         display: "flex",
                         justifyContent: "center",
                         flexWrap: "wrap",
+                        gap: "var(--gap)",
+                        padding: "16px 0"
                     }}>
                         <div className={styles.item}>
-                            <PicLeftOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <PicLeftOutlined className={styles.icon}/>
                             <h3>Інтуїтивний інтерфейс</h3>
                             <p>Простий у використанні навіть для новачків.</p>
                         </div>
                         <div className={styles.item}>
-                            <ClusterOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <ClusterOutlined className={styles.icon}/>
                             <h3>Гнучкість</h3>
                             <p>Платформа підходить як для малих груп, так і для великих навчальних закладів.</p>
                         </div>
                         <div className={styles.item}>
-                            <LockOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <LockOutlined className={styles.icon}/>
                             <h3>Безпека</h3>
                             <p>Високий рівень захисту даних.</p>
                         </div>
                         <div className={styles.item}>
-                            <CommentOutlined style={{fontSize: 50, marginBottom: 10}}/>
+                            <CommentOutlined className={styles.icon}/>
                             <h3>Підтримка 24/7</h3>
                             <p>Наша команда підтримки завжди готова допомогти вам.</p>
                         </div>
