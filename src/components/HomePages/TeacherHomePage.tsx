@@ -4,12 +4,12 @@ import styles from "@/components/HomePages/styles.module.css";
 import {tempSubjects} from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
 import Foreground from "@/components/Foreground";
-import { ISubjectShort } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import { Divider, Empty } from "antd";
 
 type mockType = {
-    active: ISubjectShort[],
-    other: ISubjectShort[],
+    active: SubjectNamespace.ISubjectShort[],
+    other: SubjectNamespace.ISubjectShort[],
 }
 const subjects: mockType = {
     active: [
@@ -17,7 +17,8 @@ const subjects: mockType = {
             id: 0,
             type: "ACTIVE_SUBJECT",
             title: "Tyzologia",
-            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg"
+            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
+            info: 0
         }
     ],
     other: [
@@ -25,19 +26,22 @@ const subjects: mockType = {
             id: 0,
             type: "ANNOUNCED_SUBJECT",
             title: "Tyzologia",
-            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg"
+            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
+            info: 0
         },
         {
             id: 0,
             type: "PREPARING_SUBJECT",
             title: "Tyzologia",
-            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg"
+            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
+            info: 0
         },
         {
             id: 0,
             type: "READY_SUBJECT",
             title: "Tyzologia",
-            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg"
+            banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
+            info: 0
         }
     ]
 }

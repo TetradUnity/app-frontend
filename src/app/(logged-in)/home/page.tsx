@@ -65,29 +65,30 @@ export default function HomePage() {
     }
 
     return (
-        <Foreground>
+        <>
+            <Foreground>
             <h1 style={{marginBottom: 10}}>Активні предмети:</h1>
             {activeSubjects.length > 0
-                ? <div className={styles.subject_container}>
-                        {activeSubjects.map(subject => 
+                ?
+                <div className={styles.subject_container}>
+                        {activeSubjects.map(subject =>
                             <SubjectCard subject={subject} />
                         )}
                     </div>
                 : <Empty description="Порожньо." />
             }
+            </Foreground>
 
             {otherSubjects.length > 0 &&
-                <>
-                    <Divider />
-
+                <Foreground>
                     <h1 style={{marginBottom: 10}}>Інші:</h1>
                     <div className={styles.subject_container}>
-                        {otherSubjects.map(subject => 
+                        {otherSubjects.map(subject =>
                             <SubjectCard subject={subject} />
                         )}
                     </div>
-                </>
+                </Foreground>
             }
-        </Foreground>
+        </>
     );
 }
