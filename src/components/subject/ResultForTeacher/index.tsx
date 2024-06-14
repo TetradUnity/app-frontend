@@ -1,6 +1,6 @@
 'use client';
 
-import { IStudentShortInfo, SubjectNamespace } from "@/types/api.types"
+import { SubjectNamespace } from "@/types/api.types"
 import { Avatar, Empty, Spin } from "antd"
 
 import { ArrowRightOutlined } from "@ant-design/icons";
@@ -49,7 +49,7 @@ export default function ResultForTeacher({type} : ResultForTeacherProps) {
     }, []);
 
     if (error) {
-        return <p style={{textAlign: "center", fontSize: 20, marginTop: 15}}>Не вдалось завантажити учнів: {translateRequestError(error)}</p>
+        return <p style={{textAlign: "center", fontSize: 20, marginTop: 15}}>Не вдалося завантажити учнів: {translateRequestError(error)}</p>
     }
 
     if (loading) {
@@ -57,7 +57,7 @@ export default function ResultForTeacher({type} : ResultForTeacherProps) {
     }
 
     if (students.length < 1) {
-        return <Empty description="Немає ні єдиного студента." />
+        return <Empty description="Немає жодного студента." />
     }
 
     return (

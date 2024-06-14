@@ -60,7 +60,7 @@ export default function SubjectCard({subject} : Props) {
                 {subject.type == "ANNOUNCED_SUBJECT" &&
                     <p style={{marginTop: 10, fontSize: 15, color: "rgb(210,210,0)"}}>
                         <ClockCircleOutlined style={{marginRight: 7}} />
-                        До початку відбору залишось {dayjs().to(subject.info, true)}.
+                        До початку відбору залишося {dayjs().to(subject.info, true)}.
                     </p>
                 }
                 {subject.type == "PREPARING_SUBJECT" &&
@@ -72,7 +72,7 @@ export default function SubjectCard({subject} : Props) {
                  {subject.type == "READY_SUBJECT" &&
                     <p style={{marginTop: 10, fontSize: 15, color: "rgb(0,210,0)"}}>
                         <ClockCircleOutlined style={{marginRight: 7}} />
-                        До початку предмета залишось {dayjs().to(subject.info, true)}.
+                        До початку предмета залишося {dayjs().to(subject.info, true)}.
                     </p>
                 }
             </Flex>

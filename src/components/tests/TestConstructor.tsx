@@ -190,7 +190,7 @@ ref) => {
         ) {
             modal.confirm({
                 title: "Попередження",
-                content: "Якщо ви змінюєте тип з одної/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей на даний момент зникнуть.",
+                content: "Якщо ви змінюєте тип з однієї/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей зникнуть.",
                 okText: "Продовжити",
                 cancelText: "Відмінити",
                 closable: false,
@@ -377,7 +377,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             modal.error({
                 title: "Помилка.",
                 maskClosable: true,
-                content: <p>Має бути хочаб одне питання.</p>
+                content: <p>Має бути принаймні одне питання..</p>
             })
             return false;
         }
@@ -386,7 +386,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
         if (testTimestanp && (testTimestanp < 10_000 || testTimestanp > 18_000_000)) {
             modal.error({
                 title: "Помилка.",
-                content: <p>Час тесту повинен бути в межах від 10 секунд до 5 часов.</p>
+                content: <p>Час тесту повинен бути в межах від 10 секунд до 5 годин.</p>
             });
             return;
         }
@@ -408,14 +408,14 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             if (question.type != "TEXT") {
                 if (question.answers.length < 2) {
-                    err(i, "К-сть відповідей не може бути меншою за 2.");
+                    err(i, "Кількість відповідей не може бути меншою за 2.");
                     return false;
                 }
                 let isOneCorrect = false;
                 for (let j = 0; j < question.answers.length; j++) {
                     question.answers[j].content = question.answers[j].content.trim();
                     if (countWordsInHtmlString(question.answers[j].content) == 0) {
-                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути порожньою.");
                         return false;
                     }
                     if (question.answers[j].isCorrect) {
@@ -437,14 +437,14 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
                 for (let j = 0; j < question.answers.length; j++) {
                     question.answers[j].content = question.answers[j].content.trim();
                     if (countWordsInHtmlString(question.answers[j].content) == 0) {
-                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути порожньою.");
                         return false;
                     }
                 }
             }
 
             if (question.answers.length > 5) {
-                err(i, "В питанні може існувати не більше 5-ти відповідей.");
+                err(i, "В питанні може бути не більше 5 відповідей.");
                 return false;
             }
         }
@@ -461,7 +461,6 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             return [
                 {
-                    // time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
                     time: dayjsTimeToMs(testDuration),
                     ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
@@ -596,7 +595,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
-            <p>В заголовках запитання, або в текстових відповідях можна форматувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
+            <p>В заголовках запитання або в текстових відповідях можна форматувати текст або додавати математичні формули. Докладніше про це можна дізнатися за цим <a href="/faq/text_formatting">посиланням.</a></p>
             
             <Reorder.Group
                 axis="y"

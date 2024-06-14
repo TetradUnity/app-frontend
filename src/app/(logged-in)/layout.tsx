@@ -41,7 +41,7 @@ const UploadProgressOuter = () => {
             >
                 {uploadStore.error
                     ? <p>Щось пішло не так: {uploadStore.error}</p>
-                    : <p>Файл завантажився на сервер!</p>
+                    : <p>Файл завантажено  на сервер!</p>
                 }
             </motion.div>
         </motion.div>
@@ -118,7 +118,7 @@ export default function ILayout({
                     <Result
                         status="error"
                         title="Не вдалося завантажити сайт"
-                        subTitle="Провірте підключення до інтернету або статус серверу."
+                        subTitle="Перевірте підключення до Інтернету або статус сервера."
                         extra={[
                             <Button
                                 type="primary"
@@ -134,7 +134,7 @@ export default function ILayout({
                     <Result
                         status="403"
                         title="У вас немає доступу до цієї сторінки"
-                        subTitle="Щоб зайти на цю сторінку, вам потрібно зайти в свій аккаунт."
+                        subTitle="Щоб відкрити цю сторінку, вам потрібно увійти у свій обліковий запис."
                         extra={[
                             <Button
                                 type="primary"

@@ -52,7 +52,7 @@ const DateInfoModal = (
             setBlocked(false);
 
             if (!resp.success) {
-                msg.error("Не вдалось назначити конференцію: " + translateRequestError(resp.error_code));
+                msg.error("Не вдалося назначити конференцію: " + translateRequestError(resp.error_code));
                 return;
             }
 
@@ -79,12 +79,12 @@ const DateInfoModal = (
             setBlocked(false);
 
             if (!resp.success) {
-                msg.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
+                msg.error("Не вдалося виставити бал: " + translateRequestError(resp.error_code));
                 return;
             }
 
             setSelectedConference(-1);
-            msg.success("Бал було виставлено!");
+            msg.success("Бал був виставлений!");
         })
     }
 

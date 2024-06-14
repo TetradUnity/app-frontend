@@ -67,16 +67,13 @@ export default function Subjects() {
         AnnouncedSubjectService.getAnnouncedSubjects(page, getFilters()).then(res => {
             setIsFetching(false);
             if (!res.success) {
-                // @ts-ignore
-                setIsError(res.error_code);
+                setIsError(res.error_code!);
                 setSubjects([]);
                 return;
             }
 
-            // @ts-ignore
-            setSubjects(res.data);
-            // @ts-ignore
-            setMaximumPages(res.count_pages);
+            setSubjects(res.data!);
+            setMaximumPages(res.count_pages!);
             setIsError(null);
         })
     }
@@ -174,7 +171,7 @@ export default function Subjects() {
                     <Flex gap={15}>
                         {profileRole == "CHIEF_TEACHER" &&
                             <Button size="small" type="primary" style={{fontSize: 15}} icon={<PlusCircleFilled/>}>
-                                <Link href="/subject/create">Створити новий предмет</Link>
+                                <Link href="/subject/create">Створити предмет</Link>
                             </Button>
                         }
                     </Flex>

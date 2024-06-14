@@ -1,14 +1,12 @@
 'use client';
 
-import { useSubjectStore } from "@/stores/subjectStore"
 import { SubjectNamespace } from "@/types/api.types";
 import { useShallow } from "zustand/react/shallow";
 
 import styles from "../styles.module.css";
 import dayjs from "dayjs";
-import {Empty, List, Spin, message} from "antd";
+import {Empty, Spin, message} from "antd";
 import { useEffect, useRef, useState } from "react";
-import { EducationService } from "@/services/education.service";
 import { GradeService } from "@/services/grade.service";
 import { notFound, useParams } from "next/navigation";
 import translateRequestError from "@/utils/ErrorUtils";
@@ -88,7 +86,7 @@ export default function SubjectGradesPage() {
                 ?  grades.map((item, k) => (
                         <GradeSlot item={item} key={k} />
                     ))
-                : <Empty description={<p className={styles.empty_text}>У Вас оцінок поки ще немає.</p>} />
+                : <Empty description={<p className={styles.empty_text}>У вас поки що немає оцінок.</p>} />
             }
         </>
     )

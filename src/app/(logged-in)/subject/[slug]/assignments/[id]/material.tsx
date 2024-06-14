@@ -1,10 +1,7 @@
 'use client';
 
-import Foreground from "@/components/Foreground";
 import Tiptap from "@/components/Tiptap";
-import BackButton from "@/components/subject/BackButton";
-import { mockMaterialContent } from "@/temporary/data";
-import { Button, Divider, Modal, Spin, message } from "antd";
+import { Button, Divider, message } from "antd";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react"
 import translateRequestError from "@/utils/ErrorUtils";
@@ -37,7 +34,7 @@ const RenderForTeacher = ({material} : Props) => {
     return (
         isDedline
             ? <ResultForTeacher type="material" />
-            : <p style={{textAlign: "center"}}>Ви зможете подивитись домашнє завдання учнів після того, як пройде дедлайн.</p>
+            : <p style={{textAlign: "center"}}>Ви зможете переглянути домашні завдання учнів після завершення терміну здачі.</p>
     )
 }
 
@@ -67,7 +64,7 @@ const RenderForStudent = ({material} : Props) => {
     if (isDedline) {
         return (
             <>
-                <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Срок сдачі вийшов</p>
+                <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Термін здачі минув.</p>
                 <p style={{fontSize: 18, textAlign: "center", color: "rgb(220,220,220)"}}>
                     {isDedline
                         ? "Ви встигли надіслати домашнє завдання"
@@ -89,7 +86,7 @@ const RenderForStudent = ({material} : Props) => {
         for (let i = 0; i < fileList.length; i++) {
             const resp = await UploadService.upload(UploadType.HOMEWORK, fileList[i].originFileObj as RcFile);
             if (!resp.success) {
-                msg.error("Не вдалось загрузити файл: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+                msg.error("Не вдалося завантажити файл: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
                 setIsBlocked(false);
                 return;
             }
@@ -101,7 +98,7 @@ const RenderForStudent = ({material} : Props) => {
         setIsBlocked(false);
 
         if (!resp.success) {
-            msg.error("Не вдалось загрузити домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            msg.error("Не вдалося завантажити домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
             return;
         }
 
@@ -116,7 +113,7 @@ const RenderForStudent = ({material} : Props) => {
         setIsBlocked(false);
 
         if (!resp.success) {
-            msg.error("Не вдалось скасувати домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            msg.error("Не вдалося скасувати домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
             return;
         }
 

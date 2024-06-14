@@ -260,8 +260,8 @@ export default function PassTestPage({isEducation} : Props) {
                         <p>
                             Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
                             {isPassed
-                                ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
-                                : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
+                                ? " Ви успішно склали екзамен! Відповіді будуть надіслані вчителю. Слідкуйте за повідомленнями у своїй скриньці!"
+                                : " На жаль, ви не склали екзамен. Однак, ви можете спробувати інші наші курси!"}
                         </p>,
                     onOk: () => window.location.href = "/subjects",
                     onCancel: () => window.location.href = "/subjects"
@@ -283,7 +283,7 @@ export default function PassTestPage({isEducation} : Props) {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка під час збереження",
-                    content: <p>При зберіганні відповіді трапилась помилка: {translateRequestError(resp.error_code)}</p>
+                    content: <p>Під час збереження відповіді трапилася помилка: {translateRequestError(resp.error_code)}</p>
                 })
             }
         }
@@ -309,7 +309,6 @@ export default function PassTestPage({isEducation} : Props) {
 
 
     if (!isLoaded) {
-        console.log("not loaded.")
         return <Spin fullscreen spinning />;
     }
 
@@ -413,8 +412,8 @@ export default function PassTestPage({isEducation} : Props) {
                 }}>
                     <h1>Час вичерпано</h1>
                     {isEducation
-                        ? <p>Відповіді, які ви встигли обрати, були передані вчителю.</p>
-                        : <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
+                        ? <p>Відповіді, які ви встигли вибрати, були передані вчителю.</p>
+                        : <p>Відповіді, які ви встигли вибрати, були передані вчителю. Слідкуйте за повідомленнями у поштовій скриньці!</p>
                     }
                 </div>
             }

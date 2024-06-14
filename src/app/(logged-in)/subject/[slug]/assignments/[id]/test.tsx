@@ -4,7 +4,7 @@ import { Button, Divider } from "antd";
 
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
-import { IStudentShortInfo, SubjectNamespace, TestsNamespace } from "@/types/api.types";
+import { SubjectNamespace, TestsNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 
 import { FormOutlined, ClockCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
@@ -62,7 +62,7 @@ const RenderForTeacher = ({material} : Props) => {
 
             {isDedline
                 ? <ResultForTeacher type="test" />
-                : <p style={{textAlign: "center"}}>Ви зможете подивитись домашнє завдання учнів після того, як пройде дедлайн.</p>
+                : <p style={{textAlign: "center"}}>Ви зможете переглянути домашні завдання учнів після завершення терміну здачі.</p>
             }
         </div>
     )

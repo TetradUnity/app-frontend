@@ -73,7 +73,7 @@ export default function MaterialViewerModal({isOpen, student, setStudent, close}
 
     const applyGrade = () => {
         if (grade < 1 || grade > 100) {
-            msg.error("Бал повинен бути в межах від 1 до 100.");
+            msg.error("Бал має бути в межах від 1 до 100.");
             return;
         }
 

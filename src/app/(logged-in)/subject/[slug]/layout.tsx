@@ -9,10 +9,7 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { Button, Modal, Segmented } from "antd";
 import { motion } from "framer-motion";
-import { EducationService } from "@/services/education.service";
-import { UploadService, UploadType } from "@/services/upload.service";
 import Link from "next/link";
-import {SubjectNamespace} from "@/types/api.types";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
 import translateRequestError from "@/utils/ErrorUtils";
@@ -110,14 +107,14 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                     if (!resp.success) {
                         modal.error({
                             title: "Невдача",
-                            content: <p>Не получилось завершити предмет: ${translateRequestError(resp.error_code)}</p>
+                            content: <p>Не вдалося завершити предмет: ${translateRequestError(resp.error_code)}</p>
                         });
                         return;
                     }
 
                     modal.success({
                         title: "Успіх",
-                        content: <p>Ваш предмет був завершений!</p>,
+                        content: <p>Ваш предмет було завершено!</p>,
                         onOk: () => window.location.href = "/",
                         onCancel: () => window.location.href = "/"
                     });

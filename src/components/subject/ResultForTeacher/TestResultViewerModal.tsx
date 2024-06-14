@@ -3,7 +3,7 @@
 import TestResult from "@/components/TestResult";
 import { EducationService } from "@/services/education.service";
 import { GradeService } from "@/services/grade.service";
-import { IStudentShortInfo, SubjectNamespace, TestsNamespace } from "@/types/api.types";
+import { SubjectNamespace, TestsNamespace } from "@/types/api.types";
 import translateRequestError from "@/utils/ErrorUtils";
 import { Button, Divider, Flex, Input, InputNumber, Modal, Spin, message } from "antd";
 import { useEffect, useState } from "react";
@@ -40,7 +40,7 @@ const ContentViewer = ({student} : {student: SubjectNamespace.IStudentHomeworkSh
     }
 
     if (!questions) {
-        return <p style={{textAlign: "center"}}>Студент не здав тест.</p>
+        return <p style={{textAlign: "center"}}>Учень не здав тест.</p>
     }
 
     return (
@@ -116,7 +116,7 @@ export default function TestResultViewerModal({isOpen, student, setStudent, clos
                             value={grade > 0 ? grade : 0}
                             onChange={val => setGrade(val || 0)}
                         />
-                        <Button onClick={applyGrade}>Змінити</Button>
+                        <Button disabled={blocked} onClick={applyGrade}>Змінити</Button>
                     </Flex>
                 </>}
             </Modal>

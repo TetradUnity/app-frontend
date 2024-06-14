@@ -3,8 +3,6 @@
 import { IStudentShortInfo } from "@/types/api.types";
 import styles from "../styles.module.css";
 import Link from "next/link";
-import { useEffect } from "react";
-import { SubjectService } from "@/services/subject.service";
 import { useSubjectStore } from "@/stores/subjectStore";
 import { Avatar, Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
@@ -44,7 +42,7 @@ export default function SubjectStudentsPage() {
     }
     if (status == "error") {
         return (
-            <p style={{fontSize: 30, textAlign: "center"}}>Сталася помилка. Попробуйте ще раз!</p>
+            <p style={{fontSize: 30, textAlign: "center"}}>Сталася помилка. Спробуйте ще раз!</p>
         );
     }
 

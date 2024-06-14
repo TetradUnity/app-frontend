@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Foreground from "@/components/Foreground";
 
-import { SubjectNamespace, TestsNamespace } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import { Divider, Empty, Spin } from "antd";
 
 import styles from "@/components/HomePages/styles.module.css";

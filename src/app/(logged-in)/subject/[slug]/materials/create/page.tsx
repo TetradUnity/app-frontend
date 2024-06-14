@@ -15,7 +15,6 @@ import {useShallow} from "zustand/react/shallow";
 import {UploadType} from "@/services/upload.service";
 import {EducationService} from "@/services/education.service";
 import translateRequestError from "@/utils/ErrorUtils";
-import {useSubjectStore} from "@/stores/subjectStore";
 
 const draftStore = DraftService.createStore<Drafts.Material>("material_create_draft");
 
@@ -37,7 +36,7 @@ export default function MaterialCreatePage() {
 
     const onSubmit = () => {
         modal.confirm({
-            title: "Створення матеріалу.",
+            title: "Створення матеріалу",
             content: <p>Ви впевнені?</p>,
             onOk: async () => {
                 const editor = tiptapRef.current?.getEditor();
@@ -56,19 +55,16 @@ export default function MaterialCreatePage() {
                 if (!response.success) {
                     modal.error({
                         title: "Помилка",
-                            content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
+                            content: <p>Трапилась помилка при створенні матеріалу: {translateRequestError(response.error_code)}</p>
                     });
                     return;
                 }
 
                 modal.success({
                     title: "Успіх!",
-                    content: <p>Ви створили новий матеріал</p>,
+                    content: <p>Ви створили новий матеріал.</p>,
+                    maskClosable: false,
                     onOk: () => {
-                        draftStore.remove();
-                        push("/subject/" + slug + "/assignments");
-                    },
-                    onCancel: () => {
                         draftStore.remove();
                         push("/subject/" + slug + "/assignments");
                     }
@@ -127,7 +123,7 @@ export default function MaterialCreatePage() {
                     if (!data) {
                         modal.error({
                             title: "Помилка",
-                            content: <p>Не вдалось загрузити чорновик. Пошкоджені дані.</p>
+                            content: <p>Не вдалося завантажити чернетку. Ймовірно, дані пошкоджені.</p>
                         });
                         return;
                     }
@@ -188,8 +184,8 @@ export default function MaterialCreatePage() {
             >
                 <Form.Item name="title" label="Заголовок:" rules={[
                     { required: true, message: "Обов'язкове поле!" },
-                    { min: 2, message: "Заголовок повина мати більше ніж 2 символа." },
-                    { max: 25, message: "Заголовок не може мати більше аніж 25 символів." }
+                    { min: 2, message: "Заголовок повинен мати більше ніж 2 символи." },
+                    { max: 25, message: "Заголовок не може мати більше ніж 25 символів." }
                 ]}>
                     <Input />
                 </Form.Item>
@@ -205,7 +201,7 @@ export default function MaterialCreatePage() {
                 }
 
                 <Form.Item label="Матеріал:" required>
-                    <p>Тут можна форматувати текст. Подробніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
+                    <p>Тут можна форматувати текст. Докладніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
                     <Tiptap
                         ref={tiptapRef}
                         className="tiptap-text-area"

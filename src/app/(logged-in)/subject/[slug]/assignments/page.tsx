@@ -1,7 +1,6 @@
 'use client';
 
-import { useSubjectStore } from "@/stores/subjectStore"
-import { IMaterialShortInfo, SubjectNamespace } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import { useShallow } from "zustand/react/shallow";
 
 import { RightOutlined, PlusCircleFilled } from "@ant-design/icons";
@@ -125,7 +124,7 @@ export default function AssigmnentsPage() {
             
             {(materials.length > 0)
                     ? materials.map((item) => <MaterialSlot item={item} key={item.id} />)
-                    : <Empty description={<p className={styles.empty_text}>Завданнь поки ще немає.</p>}/>
+                    : <Empty description={<p className={styles.empty_text}>Завдань поки що немає.</p>}/>
             }
         </>
     )

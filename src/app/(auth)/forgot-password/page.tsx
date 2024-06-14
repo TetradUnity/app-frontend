@@ -3,8 +3,8 @@
 import { Button, Flex, Form, Input, message } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { CSSProperties, useState } from "react";
-import Link from "next/link";
 import { AuthService } from "@/services/auth.service";
+import translateRequestError from "@/utils/ErrorUtils";
 
 const formStyle: CSSProperties = {
     width: 400,
@@ -14,41 +14,27 @@ const formStyle: CSSProperties = {
     borderRadius: 10
 }
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
     const [isLoading, setLoading] = useState(false);
 
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
 
     const onFormSubmitted = async () => {
         setLoading(true);
 
-        const resp = await AuthService.login(email, password);
+        const resp = await AuthService.forgotPassword(email);
 
         setLoading(false);
 
         if (!resp.success) {
-            let errToDisplay;
-
-            switch(resp.error_code) {
-                case "user_not_found":
-                    errToDisplay = "Користувача з таким email не знайдено.";
-                    break;
-                case "incorrect_password":
-                    errToDisplay = "Пароль невірний.";
-                    break;
-                default:
-                    errToDisplay = "Сталася невідома помилка. Спробуйте ще раз!";
-                    break;
-            }
-
-            messageApi.error(errToDisplay);
+            messageApi.error("Сталася помилка: " + translateRequestError(resp.error_code));
             return;
         }
         
-        window.location.href = "/home";
+        messageApi.success("Найближчим часом вам надійде повідомлення на електронну пошту з інструкціями щодо скидання паролю.");
+        setEmail('');
     }
 
     return (
@@ -62,7 +48,8 @@ export default function LoginPage() {
                     onFinish={onFormSubmitted}
                     style={{ ...formStyle }}
                 >
-                    <h1 style={{textAlign: "center", marginBottom: 30}}>Увійти в акаунт</h1>
+                    <h1 style={{textAlign: "center", marginBottom: 15}}>Скидання паролю</h1>
+                    <p style={{textAlign: "center", marginBottom: 30}}>На вашу електронну пошту надійде повідомлення з інструкціями щодо скидання паролю.</p>
 
                     <Form.Item label="Email" name="email" rules={[
                         { required: true, message: "Це поле є обов'язковим!" },
@@ -73,25 +60,11 @@ export default function LoginPage() {
                         />
                     </Form.Item>
 
-                    <Form.Item label="Пароль" name="password" rules={[
-                        { required: true, message: "Це поле є обов'язковим!" },
-                    ]}>
-                        <Input
-                            value={password}
-                            onChange={(e) => setPassword(e.currentTarget.value)}
-                            type="password"
-                        />
-                    </Form.Item>
-
                     <Form.Item style={{marginTop: 40, marginBottom: 10}} wrapperCol={{ offset: 7, span: 30 }}>
                         <Button loading={isLoading} type="primary" htmlType="submit">
                             Продовжити
                         </Button>
                     </Form.Item>
-
-                    <p style={{marginBottom: 20}}>
-                        Забули пароль? Відновіть його <Link href="/forgot-password">тут</Link>.
-                    </p>
                 </Form>
             </Flex>
             {contextHolder}
