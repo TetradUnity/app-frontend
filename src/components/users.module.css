@@ -9,7 +9,22 @@
     gap: var(--gap);
 }
 
-@media screen and (max-width: 500px) {
+.ScrollToTopButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: all .1s ease-in-out;
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+.SlideUp {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media screen and (max-width: 536px) {
     .Header {
         flex-direction: column;
         gap: 8px;

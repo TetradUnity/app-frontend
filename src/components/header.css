@@ -39,6 +39,9 @@
 
 
 @media screen and (max-width: 768px){
+    .header-grid{
+        grid-template-columns: 1.5fr 2fr 1fr;
+    }
     .nav-buttons{
         display: none;
     }
