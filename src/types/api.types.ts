@@ -101,7 +101,7 @@ export namespace SubjectNamespace {
         id: number,
         value: number,
         date: number,
-        reason: "test" | "education_material" | "conferences"
+        reason: "TEST" | "EDUCATION_MATERIAL" | "CONFERENCES"
     }
 
     export interface IEvent {
@@ -174,7 +174,9 @@ export interface IAnnouncedSubjectShort {
     banner: string
 }
 
-export type IStudentShortInfo = ITeacherShortInfo;
+export type IStudentShortInfo = ITeacherShortInfo & {
+    average_grade?: number
+};
 
 export interface IGrade {
     grade: number,

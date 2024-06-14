@@ -3,11 +3,13 @@
 import { IStudentShortInfo } from "@/types/api.types";
 import styles from "../styles.module.css";
 import Link from "next/link";
-import { useSubjectStore } from "@/stores/subjectStore";
-import { Avatar, Spin } from "antd";
-import { LoadingOutlined } from '@ant-design/icons';
-import {useShallow} from "zustand/react/shallow";
+import { Avatar, Divider, Spin, message } from "antd";
 import {getUserAvatar} from "@/utils/OtherUtils";
+import { useEffect, useRef, useState } from "react";
+import { SubjectService } from "@/services/subject.service";
+import { useParams } from "next/navigation";
+import translateRequestError from "@/utils/ErrorUtils";
+import { pluralize } from "@/utils/InternalizationUtils";
 
 function StudentSlot({item} : {item: IStudentShortInfo}) {
     return (
@@ -20,33 +22,85 @@ function StudentSlot({item} : {item: IStudentShortInfo}) {
                     size="large"
                     alt="avatar"
                 />
-                <h2>{item.first_name} {item.last_name}</h2>
+                <div>
+                    <h2>{item.first_name} {item.last_name}</h2>
+                    {(item.average_grade)
+                        ? <p>Середні бал: {Math.round(item.average_grade)}</p>
+                        : null
+                    }
+                </div>
             </Link>
          </div>
     )
 }
 
 export default function SubjectStudentsPage() {
-    const subject_id = useSubjectStore(useShallow(state => state.subject.id));
+    const { slug } = useParams();
 
-    const [students, status] = useSubjectStore(useShallow(state => [state.students, state.studentsFetchingStatus]));
+    const [students, setStudents] = useState<IStudentShortInfo[]>([]);
+    const [totalStudents, setTotalStudents] = useState(0);
 
-    if (status == "fetching") {
-        return (
-            <Spin
-                style={{display: "block", margin: "auto"}}
-                indicator={<LoadingOutlined style={{fontSize: 60}}/>}
-                spinning={true}
-            />
-        );
+    const [loading, setLoading] = useState(false);
+
+    const [msg, msgCtx] = message.useMessage();
+
+    const fetchRef = useRef({
+        loading: false,
+        page: 1,
+        isEnd: false
+    });
+
+    const fetch = async () => {
+        if (fetchRef.current.isEnd) return;
+        if (fetchRef.current.loading) return;
+
+        setLoading(true);
+        fetchRef.current.loading = true;
+
+        const response = await SubjectService.getStudents(parseFloat(slug as string), fetchRef.current.page);
+
+        if (!response.success) {
+            setLoading(false);
+            msg.error("Трапилась помилка при завантажені студентів: " + translateRequestError(response.error_code))
+            return;
+        }
+
+        setStudents(prev => [...prev, ...response.data!]);
+        setTotalStudents(response.count!);
+        fetchRef.current.isEnd = response.data!.length == 0;
+        fetchRef.current.page += 1;
+        fetchRef.current.loading = false;
+        setLoading(false);
     }
-    if (status == "error") {
-        return (
-            <p style={{fontSize: 30, textAlign: "center"}}>Сталася помилка. Спробуйте ще раз!</p>
-        );
-    }
+
+    useEffect(() => {
+        fetch();
+
+        const handleScroll = () => {
+            if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) {
+                return;
+            }
+
+            fetch();
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        students.map((item, k) => <StudentSlot item={item} key={k} />)
+        <>
+            {loading
+                ? <Spin size="large" style={{display: "block", margin: "auto"}} spinning />
+                : <>
+                    <h1 className={styles.studentsTitle}>{pluralize(totalStudents, ["студент", "студента", "студентів"])}</h1>
+
+                    <Divider className={styles.studentsDivider} />
+
+                    {students.map((item, k) => <StudentSlot item={item} key={k} />)}
+                </>
+            }
+            {msgCtx}
+        </>
     )
 }

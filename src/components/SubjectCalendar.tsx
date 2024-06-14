@@ -122,7 +122,7 @@ const DateInfoModal = (
                         <section>
                             <h3>Навчальні матеріали:</h3>
                             {info.materials.map((item, i) =>
-                                <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
+                                <Link href={"/subject/" + slug + "/assignments/" + item.id} style={{display: "block"}} key={i}>
                                     <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
@@ -138,7 +138,7 @@ const DateInfoModal = (
                         <section>
                             <h3>Тести:</h3>
                             {info.tests.map((item, i) =>
-                                <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
+                                <Link href={"/subject/" + slug + "/assignments/" + item.id} key={i}>
                                     <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
@@ -155,9 +155,9 @@ const DateInfoModal = (
                             <h3>Конференції:</h3>
                             {info.conferences.map((item, i) =>
                                 <div key={i} className={styles.conference_modal_p + " " + styles.modal_conference}>
-                                    <p><LinkOutlined /> Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
+                                    <p>{(i+1)+". "}Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
                                     <Link href={(item as SubjectNamespace.IEvent).title}>
-                                        {(item as SubjectNamespace.IEvent).title}
+                                        <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                     </Link>
 
                                     {(role == "TEACHER" && (Date.now() > item.date)) &&
@@ -232,7 +232,7 @@ const DateInfoModal = (
                             <h3>Оцінки:</h3>
                             {info.grades.map((item, i) =>
                                 <div className={styles.conference_modal_p} key={i}>
-                                    <LinkOutlined /> 
+                                    {(i+1)+". "}
                                     Ви отримали {pluralize(Math.round((item as SubjectNamespace.IGrade).value), ["бал ", "бала ", "балів "])}
                                     за {translateGradeReason((item as SubjectNamespace.IGrade).reason)}.
                                 </div>
@@ -367,7 +367,7 @@ export default function SubjectCalendar() {
     const fetchStudents = () => {
         setLoading(true);
 
-        SubjectService.getStudents(parseInt(slug as string)).then(resp => {
+        SubjectService.getAllStudents(parseInt(slug as string)).then(resp => {
             if (!resp.success) {
                 setError(resp.error_code!);
                 return;

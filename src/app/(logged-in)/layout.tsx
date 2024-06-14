@@ -15,7 +15,7 @@ import { useUploadStore } from "@/stores/uploadStore";
 import { motion } from "framer-motion";
 import { AuthService } from "@/services/auth.service";
 
-const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/", "/profile/"];
+const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/exam/", "/profile/"];
 
 const UploadProgressOuter = () => {
     const uploadStore = useUploadStore();

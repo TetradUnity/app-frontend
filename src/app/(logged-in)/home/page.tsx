@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useProfileStore } from "@/stores/profileStore"
 import { useShallow } from "zustand/react/shallow";

@@ -115,15 +115,17 @@ export const EducationService = {
         }
     },
 
-    async viewHomeworks(educationMaterialId: number): Promise<ITArrResponse<SubjectNamespace.IStudentHomeworkShortInfo>> {
+    async viewHomeworks(educationMaterialId: number, page: number): Promise<ITArrResponse<SubjectNamespace.IStudentHomeworkShortInfo> & {count_homework?: number, average_grade?: number}> {
         try {
             const response = await api.get("/education/view-homeworks", {
-                params: { education_id: educationMaterialId }
+                params: { education_id: educationMaterialId, page }
             });
 
             return {
                 success: true,
-                data: response.data.homeworks
+                data: response.data.homeworks,
+                count_homework: response.data.count_homework,
+                average_grade: response.data.average_grade
             }
         } catch (error) {
             return catchApiError(error);

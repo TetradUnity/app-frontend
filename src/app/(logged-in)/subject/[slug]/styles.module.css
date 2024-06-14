@@ -59,9 +59,25 @@
     justify-content: flex-start;
     align-items: center;
 }
-.student_slot h2 {
+
+.student_slot > a > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     margin-left: 15px;
 }
+
+.student_slot > a h2, .student_slot > a p {
+    width: fit-content;
+}
+
+.student_slot > a p {
+    font-size: 15px;
+    font-style: italic;
+    color: rgb(230,230,230);
+}
+
 .student_avatar {
     height: 50px;
     border-radius: 0;
@@ -182,5 +198,13 @@
     .homework_title {
         font-size: 25px;
         text-align: center;
+    }
+
+    .studentsTitle {
+        font-size: 29px;
+    }
+
+    .studentsDivider {
+        margin: 10px 0 !important;
     }
 }

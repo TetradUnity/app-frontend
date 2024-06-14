@@ -8,6 +8,7 @@ import {
     ITResponse,
     SubjectNamespace
 } from "@/types/api.types";
+import { isAxiosError } from "axios";
 
 export const SubjectService = {
     async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubjectShort>> {
@@ -38,9 +39,25 @@ export const SubjectService = {
         }
     },
 
-    async getStudents(subjectId: number): Promise<ITArrResponse<IStudentShortInfo>> {
+    async getStudents(subjectId: number, page: number): Promise<ITArrResponse<IStudentShortInfo> & {count?: number}> {
         try {
             const response = await api.get("/subject/get-students", {
+                params: { subject_id: subjectId, page }
+            });
+
+            return {
+                success: true,
+                data: response.data.students,
+                count: response.data.count
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
+    async getAllStudents(subjectId: number): Promise<ITArrResponse<IStudentShortInfo>> {
+        try {
+            const response = await api.get("/subject/get-all-students", {
                 params: { subject_id: subjectId }
             });
 
@@ -53,9 +70,14 @@ export const SubjectService = {
         }
     },
 
-    async finishSubject(subject_id: number): Promise<IResponse> {
+    async finishSubject(subject_id: number): Promise<IResponse & {
+        no_rate_task_id?: number,
+        no_rate_task_title?: string,
+        no_ended_task_id?: number,
+        no_ended_task_title?: string,
+    }> {
         try {
-            await api.delete("/subject/finish-subject", {
+            const response = await api.delete("/subject/finish-subject", {
                params: { subject_id }
             });
 
@@ -63,6 +85,18 @@ export const SubjectService = {
                success: true
            }
        } catch (e) {
+            if (isAxiosError(e) && e.response) {
+                let body = e.response.data;
+
+                return {
+                    success: false,
+                    error_code: body.error,
+                    no_rate_task_id: body.no_rate_task_id,
+                    no_rate_task_title: body.no_rate_task_title,
+                    no_ended_task_id: body.no_ended_task_id,
+                    no_ended_task_title: body.no_ended_task_title
+                };
+            }
            return catchApiError(e);
        }
     }

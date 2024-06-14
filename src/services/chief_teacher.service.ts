@@ -5,12 +5,13 @@ import { CreateSubjectParams, IResponse, ISearchUserResult, ITArrResponse } from
 
 export const ChiefTeacherService = {
     // users
-    async findTeacherByEmail(emailFind: string): Promise<ITArrResponse<ISearchUserResult>> {
+    async findTeacherByEmail(emailFind: string, page?: number, limit?: number): Promise<ITArrResponse<ISearchUserResult>> {
         try {
             const response = await api.get("/user/get_options", {
                 params: {
                     email: emailFind,
-                    role: "TEACHER"
+                    role: "TEACHER",
+                    page, limit
                 }
             });
 

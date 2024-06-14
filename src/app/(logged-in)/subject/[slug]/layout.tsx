@@ -15,6 +15,8 @@ import { useShallow } from "zustand/react/shallow";
 import translateRequestError from "@/utils/ErrorUtils";
 import { useDeviceStore } from "@/stores/deviceStore";
 
+import { LinkOutlined } from "@ant-design/icons";
+
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
     let { slug } = params;
@@ -41,22 +43,6 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     if (!subjectId || subjectId < 0) {
         notFound();
     }
-
-    useEffect(() => {
-        if ((pathname.endsWith("students")) && store.studentsFetchingStatus == "NOT_FETCHED") {
-            store.updateStudentsFetchStatus("FETCHING");
-
-            SubjectService.getStudents(subjectId).then(response => {
-                if (!response.data) {
-                    store.updateStudentsFetchStatus(response.error_code as string);
-                    return;
-                }
-
-                store.updateStudents(response.data);
-                store.updateStudentsFetchStatus("SUCCESS");
-            })
-        }
-    }, [pathname]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -105,23 +91,43 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
         modal.confirm({
             title: "Завершення предмету",
             content: <p>Ви впевнені що хочете завершити предмет? Всі завдання, тести та навчальні матеріали зникнуть.</p>,
-            onOk: () => {
-                SubjectService.finishSubject(subjectId).then(resp => {
-                    if (!resp.success) {
+            onOk: async () => {
+                const resp = await SubjectService.finishSubject(subjectId);
+
+                if (!resp.success) {
+                    if (resp.no_ended_task_id) {
                         modal.error({
                             title: "Невдача",
-                            content: <p>Не вдалося завершити предмет: {translateRequestError(resp.error_code)}</p>
+                            content: <>
+                                <p>Зачекайте завершення дедлайну:</p>
+                                <Link href={"/subject/" + slug + "/assignments/" + resp.no_ended_task_id}><LinkOutlined /> {resp.no_ended_task_title}</Link>
+                            </>
                         });
                         return;
                     }
-
-                    modal.success({
-                        title: "Успіх",
-                        content: <p>Ваш предмет було завершено!</p>,
-                        onOk: () => window.location.href = "/",
-                        onCancel: () => window.location.href = "/"
+                    if (resp.no_rate_task_id) {
+                        modal.error({
+                            title: "Невдача",
+                            content: <>
+                                <p>Ви ще не оцінили роботу учня:</p>
+                                <Link href={"/subject/" + slug + "/assignments/" + resp.no_rate_task_id}><LinkOutlined /> {resp.no_rate_task_title}</Link>
+                            </>
+                        });
+                        return;
+                    }
+                    modal.error({
+                        title: "Невдача",
+                        content: <p>Не вдалося завершити предмет: {translateRequestError(resp.error_code)}</p>
                     });
-                })
+                    return;
+                }
+
+                modal.success({
+                    title: "Успіх",
+                    content: <p>Ваш предмет було завершено!</p>,
+                    onOk: () => window.location.href = "/",
+                    onCancel: () => window.location.href = "/"
+                });
             }
         })
     }
