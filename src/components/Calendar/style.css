@@ -76,7 +76,6 @@
 
 .cd_calendar .cd_body .cd_cell {
   position: relative;
-  height: 5em;
   border-right: 1px solid var(--foreground-lighter-2);
   overflow: hidden;
   cursor: pointer;
@@ -84,6 +83,7 @@
   transition: 0.25s ease-out;
   height: 130px;
 }
+
 .cd_calendar .cd_body .cd_cell, .cd_calendar .cd_body .cd_cell * {
   user-select: none;
 }
@@ -111,14 +111,14 @@
   border-right: none;
 }
 
-.cd_calendar .cd_body .cd_cell .number {
+/* .cd_calendar .cd_body .cd_cell .number {
   position: absolute;
   font-size: 82.5%;
   line-height: 1;
   top: .75em;
   right: .75em;
   font-weight: 700;
-}
+} */
 
 .cd_calendar .cd_body .cd_disabled {
   color: #ccc;
@@ -151,4 +151,43 @@
   flex-grow: 0;
   flex-basis: calc(100%/7);
   width: calc(100%/7);
+}
+
+@media only screen and (max-device-width: 768px) {
+  .cd_bg {
+    visibility: hidden;
+  }
+
+  .cd_calendar .cd_body .cd_cell {
+    height: 60px;
+  }
+
+  .cd_calendar .cd_body .cd_cell .cd_number {
+    position: relative;
+    top: -10px;
+    font-size: 11px;
+  }
+
+  .cd_calendar .cd_body .cd_cell > div {
+    position: relative;
+    top: -15px;
+    left: -5px;
+  }
+
+  .cd_calendar .cd_body .cd_cell > div > span {
+    width: 10px; height: 10px;
+    transform: scale(0.7);
+  }
+
+  .cd_calendar .cd_days {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  .cd_calendar .cd_days div {
+    width: calc(100% / 7);
+    font-size: 14px;
+    text-align: center;
+  }
 }

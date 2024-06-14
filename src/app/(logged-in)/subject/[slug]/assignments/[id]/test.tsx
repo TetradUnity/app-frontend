@@ -10,6 +10,7 @@ import ResultForTeacher from "@/components/subject/ResultForTeacher";
 import { FormOutlined, ClockCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import styles from "@/styles/announced_subject.module.css";
+import styles2 from "../../styles.module.css";
 import TestResult from "@/components/TestResult";
 import dayjs from "dayjs";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
@@ -156,7 +157,7 @@ export default function TestInfoPage({material} : Props) {
 
     return (
         <>
-            <h1><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <h1 className={styles2.title}><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
             
             {(material.deadline > 0) &&

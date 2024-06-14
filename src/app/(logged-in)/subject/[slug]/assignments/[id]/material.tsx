@@ -22,6 +22,9 @@ import { UploadService, UploadType } from "@/services/upload.service";
 import { RcFile } from "antd/es/upload";
 import { EducationService } from "@/services/education.service";
 
+import styles from "../../styles.module.css";
+import { useDeviceStore } from "@/stores/deviceStore";
+
 const RenderForTeacher = ({material} : Props) => {
     let isDedline = material.deadline && material.deadline > 0;
 
@@ -222,7 +225,7 @@ export default function MaterialInfoPage({material} : Props) {
 
     return (
         <>
-            <h1><FileTextOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <h1 className={styles.title}><FileTextOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
             {(material.deadline > 0) &&
                 <p style={{fontSize: 15}}>Здати до: <i>{dayjs(material.deadline).format("D MMMM о HH:mm")}</i></p>
@@ -232,19 +235,19 @@ export default function MaterialInfoPage({material} : Props) {
 
             <Tiptap
                 content={material.content}
+                style={{fontSize: 17}}
                 editable={false}
             />
 
             <Divider style={{marginTop: 14, marginBottom: 14}} />
 
-
             {role == "TEACHER" 
                 ? <>
-                    <h1>Домашні завдання:</h1>
+                    <h1 className={styles.homework_title}>Домашні завдання:</h1>
                     <RenderForTeacher material={material} /> 
                 </>
                 : <>
-                    <h1>Домашнє завдання:</h1>
+                    <h1 className={styles.homework_title}>Домашнє завдання:</h1>
                     <RenderForStudent material={material} />
                 </>
             }

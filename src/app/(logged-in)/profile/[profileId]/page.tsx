@@ -4,9 +4,7 @@ import {useEffect, useState} from "react";
 import {useProfileStore} from "@/stores/profileStore";
 import {FilterOutlined, RightOutlined, SearchOutlined} from "@ant-design/icons";
 import Link from "next/link";
-import styles from "./styles.module.css"
-import {tempTeachers} from "@/temporary/data";
-import {tempSubjects} from "@/temporary/data";
+import styles from "./styles.module.css";
 import SubjectCard from "@/components/cards/SubjectCard";
 import {useQueryProfileStore} from "@/stores/queryProfileStore";
 

@@ -37,20 +37,34 @@
     background: var(--foreground-darker);
     margin-bottom: 10px;
 }
+
+.material_slot h2, .material_slot p {
+    width: 450px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+}
+
 .slot_with_arrow {
     background: linear-gradient(to right, var(--foreground-darker) 70%, var(--foreground-lighter));
 }
 
-.student_slot > a > * {
-    display: inline-block;
-    vertical-align: middle;
+.student_slot h2 {
+    width: auto;
+}
+
+.student_slot > a  {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.student_slot h2 {
+    margin-left: 15px;
 }
 .student_avatar {
     height: 50px;
     border-radius: 0;
-}
-.student_slot h2 {
-    margin-left: 15px;
 }
 
 .material_slot * {
@@ -106,4 +120,67 @@
 
 .modal_conference {
     margin-top: 10px;
+}
+
+.segmented {
+    margin: 20px 0 !important;
+}
+
+.createMaterialButton {
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-device-width: 768px) {
+    .material_slot h2 {
+        width: 250px;
+        font-size: 20px;
+    }
+    .material_slot p {
+        width: 250px;
+        font-size: 14px;
+    }
+
+    .header_div {
+        padding: 13px;
+    }
+
+    .header_div h1 {
+        font-size: 23px;
+        color: white;
+    }
+    .header_div a {
+        font-size: 14px;
+        color: rgb(240, 240, 240);
+    }
+
+    .segmented {
+        height: 35px;
+        align-items: center;
+        font-size: 17px !important;
+        margin: 10px 0 !important;
+    }
+    .segmented > * {
+        height: 100%;
+    }
+
+    .createMaterialDivider {
+        margin: 15px 0 !important;
+    }
+
+    .deleteSubjectButton {
+        font-size: 12px !important;
+    }
+
+    .student_slot h2 {
+        font-size: 18px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .homework_title {
+        font-size: 25px;
+        text-align: center;
+    }
 }

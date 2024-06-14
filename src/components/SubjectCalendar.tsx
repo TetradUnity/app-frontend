@@ -17,6 +17,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { ConferenceService } from '@/services/conference.service';
 import Link from 'next/link';
 import { SubjectService } from '@/services/subject.service';
+import { useDeviceStore } from '@/stores/deviceStore';
+import { BadgeProps } from 'antd/lib';
 
 const DateInfoModal = (
     { modalVisible, setModalVisible, info, callFetch, students }
@@ -314,6 +316,8 @@ export default function SubjectCalendar() {
 
     const [students, setStudents] = useState<IStudentShortInfo[]>([]);
 
+    const deviceType = useDeviceStore(state => state.type);
+
     const fetch = (subjectId?: number) => {
         let id = subjectId;
         if (!subjectId) {
@@ -406,10 +410,10 @@ export default function SubjectCalendar() {
     }
 
     useEffect(() => {
-        if (!(!slug && subjects.length)) {
+        if (!slug && !subjects.length) {
             return;
         }
-        if (!(slug && role == "TEACHER" && students.length)) {
+        if (slug && role == "TEACHER" && !students.length) {
             return;
         }
         fetch();
@@ -456,37 +460,57 @@ export default function SubjectCalendar() {
             return dict;
         }, [items]);
 
+        const RenderBadge = ({count, plural, color}: {count: number, plural: string[], color: BadgeProps["color"]}) => {
+            if (deviceType == "mobile") {
+                return (
+                    <Badge
+                        size='small'
+                        count={count}
+                        color={color}
+                        style={{ display: "inline-block", color: "white" }}
+                    />
+                )
+            }
+            return (
+                <Badge
+                    text={pluralize(count, plural)}
+                    color={color}
+                    style={{ display: "block" }}
+                />
+            )
+        }
+
         return (
             <div style={{ display: "block" }}>
                 {(attachedToThisDate.grades > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.grades, ['оцінка', 'оцінки', 'оцінок'])}
-                        status="warning"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.grades}
+                        plural={['оцінка', 'оцінки', 'оцінок']}
+                        color='cyan'
                     />
                 }
 
                 {(attachedToThisDate.materials > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.materials, ['завдання', 'завдання', 'завдань'])}
-                        status="processing"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.materials}
+                        plural={['матеріал', 'матеріала', 'матеріалів']}
+                        color='geekblue'
                     />
                 }
 
                 {(attachedToThisDate.conferences > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.conferences, ['конференція', 'конференції', 'конференцій'])}
-                        status="success"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.conferences}
+                        plural={['конференція', 'конференції', 'конференцій']}
+                        color='pink'
                     />
                 }
 
                 {(attachedToThisDate.tests > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.tests, ['тест', 'теста', 'тестів'])}
-                        status="error"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.tests}
+                        plural={['тест', 'теста', 'тестів']}
+                        color='yellow'
                     />
                 }
             </div>

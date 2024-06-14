@@ -49,7 +49,7 @@ export default function ResultForTeacher({type} : ResultForTeacherProps) {
     }, []);
 
     if (error) {
-        return <p style={{textAlign: "center", fontSize: 20, marginTop: 15}}>Не вдалося завантажити учнів: {translateRequestError(error)}</p>
+        return <p style={{textAlign: "center", fontSize: 20, marginTop: 5}}>Не вдалося завантажити учнів: {translateRequestError(error)}</p>
     }
 
     if (loading) {

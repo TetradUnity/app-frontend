@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
 import translateRequestError from "@/utils/ErrorUtils";
+import { useDeviceStore } from "@/stores/deviceStore";
 
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
@@ -34,6 +35,8 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     const role = useProfileStore(useShallow(state => state.role));
 
     const [modal, modalCtx] = Modal.useModal();
+
+    const deviceType = useDeviceStore(state => state.type);
 
     if (!subjectId || subjectId < 0) {
         notFound();
@@ -107,7 +110,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
                     if (!resp.success) {
                         modal.error({
                             title: "Невдача",
-                            content: <p>Не вдалося завершити предмет: ${translateRequestError(resp.error_code)}</p>
+                            content: <p>Не вдалося завершити предмет: {translateRequestError(resp.error_code)}</p>
                         });
                         return;
                     }
@@ -135,19 +138,19 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
                         {role == "TEACHER" &&
                             <div className={styles.delete_subject}>
-                                <Button danger type="primary" onClick={deleteSubject}>Завершити предмет</Button>
+                                <Button className={styles.deleteSubjectButton} danger type="primary" onClick={deleteSubject}>Завершити предмет</Button>
                             </div>
                         }
                 </div>
 
                 <Segmented
-                    style={{margin: "20px 0"}}
+                    className={styles.segmented}
                     defaultValue={pathname.split("/")[3]}
                     options={sections}
                     onChange={key => {
                         push("/subject/" + slug + "/" + key);
                     }}
-                    size="large"
+                    size={deviceType == "mobile" ? "middle" : "large"}
                     block
                 />
             </motion.div>

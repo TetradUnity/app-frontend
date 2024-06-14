@@ -9,6 +9,9 @@ import dayjs from 'dayjs';
 import "dayjs/locale/uk";
 
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useDeviceStore } from "@/stores/deviceStore";
+import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
 
 dayjs.locale('uk');
 dayjs.extend(relativeTime);
@@ -18,6 +21,18 @@ export default function BaseLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const setDeviceType = useDeviceStore(useShallow(state => state.setType));
+
+    useEffect(() => {
+        function handleWindowSizeChange() {
+            setDeviceType((window.innerWidth <= 768) ? "mobile" : "desktop");
+        }
+
+        handleWindowSizeChange();
+        window.addEventListener('resize', handleWindowSizeChange);
+        return () =>window.removeEventListener('resize', handleWindowSizeChange);
+    }, []);
+
     return (
         <AntdRegistry>
             <ConfigProvider

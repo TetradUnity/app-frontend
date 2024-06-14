@@ -1,5 +1,5 @@
 import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "antd";
-import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined } from "@ant-design/icons";
+import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined, DragOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
 import React, { useImperativeHandle, useState } from "react";
@@ -11,7 +11,7 @@ import ImageUploadModal from "../modals/ImageUploadModal";
 import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
 import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { Reorder } from "framer-motion";
+import { DragControls, Reorder, useDragControls } from "framer-motion";
 import { dayjsTimeToMs } from "@/utils/OtherUtils";
 
 type AnswerRef = {
@@ -131,8 +131,8 @@ type QuestionRef = {
 };
 
 const Question = React.forwardRef((
-    {index, modal, deleteQuestion, orderQuestion, openImageUploadModal} :
-    {index: number, modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
+    {index, modal, deleteQuestion, orderQuestion, openImageUploadModal, controls} :
+    {index: number, modal: HookAPI, controls: DragControls , deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
 ref) => {
     const questionTitleEditorRef = React.useRef<TiptapRef>();
     const [type, setType] = useState<TestsNamespace.Question["type"]>("ONE_ANSWER");
@@ -252,6 +252,7 @@ ref) => {
     return (
         <div className={styles.question}>
             <div className={styles.question_order_buttons}>
+                <Button onPointerDown={(e) => controls.start(e)} type="dashed" shape="circle" icon={<DragOutlined />} />
                 <Button onClick={() => orderQuestion(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
                 <Button onClick={() => orderQuestion(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
             </div>
@@ -548,6 +549,8 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
         setUploadModalOpen(true);
     }
 
+    const controls = useDragControls();
+
     const orderQuestion = (question: question, up: boolean) => {
         let index = questions.findIndex(item => item === question);
 
@@ -601,6 +604,8 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
                 axis="y"
                 values={questions}
                 onReorder={setQuestions}
+                dragListener={false}
+                dragControls={controls}
             >
                 {questions.map((item,i) => 
                     <Reorder.Item
@@ -619,6 +624,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
                             orderQuestion={orderQuestion.bind(null, item)}
                             modal={modal}
                             openImageUploadModal={openImageUploadModal}
+                            controls={controls}
                         />
                     </Reorder.Item>
                 )}

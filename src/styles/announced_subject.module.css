@@ -71,3 +71,9 @@
     color: rgb(210, 210, 210);
     font-style: italic;
 }
+
+@media only screen and (max-device-width: 768px) {
+    .content section h1 {
+        font-size: 20px;
+    }
+}

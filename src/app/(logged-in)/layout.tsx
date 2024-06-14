@@ -84,6 +84,7 @@ export default function ILayout({
 
         AuthService.isValidToken().then(response => {
             if (!response.success) {
+                setAppLoading(false);
                 setIsFailedToLoad(true);
                 return;
             }

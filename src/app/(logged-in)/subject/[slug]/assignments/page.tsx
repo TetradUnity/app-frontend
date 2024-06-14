@@ -100,11 +100,11 @@ export default function AssigmnentsPage() {
            {role == "TEACHER" &&
                 <>
                     <Button
-                    icon={<PlusCircleFilled/>}
-                    type="dashed"
-                    block
-                    style={{marginBottom: 10}}
-                    onClick={() => push("/subject/" + slug + "/tests/create")}
+                        className={styles.createMaterialButton}
+                        icon={<PlusCircleFilled/>}
+                        type="dashed"
+                        block
+                        onClick={() => push("/subject/" + slug + "/tests/create")}
                     >
                         Створити тест
                     </Button>
@@ -112,13 +112,12 @@ export default function AssigmnentsPage() {
                         icon={<PlusCircleFilled/>}
                         type="dashed"
                         block
-                        style={{marginBottom: 15}}
                         onClick={() => push("/subject/" + slug + "/materials/create")}
                     >
                         Створити матеріал
                     </Button>
 
-                    <Divider />
+                    <Divider className={styles.createMaterialDivider} />
                 </>
             }
             
