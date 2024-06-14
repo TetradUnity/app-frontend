@@ -1,6 +1,6 @@
 .header_div {
     padding: 30px;
-    height: 150px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -106,4 +106,31 @@
 
 .modal_conference {
     margin-top: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .header_div {
+        height: 150px;
+    }
+    .header_div h1 {
+        font-size: 30px;
+    }
+
+}
+
+@media screen and (max-width: 536px) {
+    .header_div {
+        height: 130px;
+        padding-bottom: 50px;
+    }
+    .header_div h1 {
+        font-size: 18px;
+    }
+    .header_div a {
+        font-size: 12px;
+    }
+    .delete_subject {
+        bottom: 5px;
+        right: 5px;
+    }
 }
