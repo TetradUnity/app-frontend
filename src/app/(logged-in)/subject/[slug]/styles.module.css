@@ -154,9 +154,9 @@
     }
 
     .segmented {
-        height: 35px;
+        height: 30px;
         align-items: center;
-        font-size: 17px !important;
+        font-size: 12px !important;
         margin: 10px 0 !important;
     }
     .segmented > * {
@@ -168,7 +168,7 @@
     }
 
     .deleteSubjectButton {
-        font-size: 12px !important;
+        font-size: 10px !important;
     }
 
     .student_slot h2 {

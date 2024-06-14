@@ -16,6 +16,7 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
 import { pluralize } from "@/utils/InternalizationUtils";
 import { EducationService } from "@/services/education.service";
+import { useDeviceStore } from "@/stores/deviceStore";
 
 // TODO: Content Security Policy
 
@@ -144,6 +145,8 @@ export default function PassTestPage({isEducation} : Props) {
     const [modal, modalCtx] = Modal.useModal();
 
     const testStore = useTestStore();
+
+    const deviceType = useDeviceStore(state => state.type);
 
     const fetch = () => {
         type Response = {
@@ -320,7 +323,7 @@ export default function PassTestPage({isEducation} : Props) {
         <>
             {!isTimeUp ?
                 <div className={styles.main}>
-                    <div id="test-navigation" style={{
+                    <div className={styles.nav} id="test-navigation" style={{
                         display: "flex",
                         flexDirection: "column",
                         gap: 'var(--gap-half)',
@@ -343,7 +346,15 @@ export default function PassTestPage({isEducation} : Props) {
                             {questions.map((question, i) =>
                                 <Button
                                     key={i}
-                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    type={
+                                        selectedQuestion == i
+                                        ? "primary"
+                                        : (
+                                            (testStore.answers[i] && testStore.answers[i]?.length)
+                                            ? "default"
+                                            : "dashed"
+                                        )
+                                    }
                                     block
                                     onClick={() => setSelectedQuestion(i)}
                                     style={{
@@ -376,11 +387,19 @@ export default function PassTestPage({isEducation} : Props) {
 
                             <div className={styles.buttons}>
                                 <Button onClick={prevQuestion}
-                                        disabled={selectedQuestion == 0} style={{display: "block"}} type="primary">Попереднє
-                                    питання</Button>
+                                        disabled={selectedQuestion == 0}
+                                        style={{display: "block"}} type="primary"
+                                    >
+                                            {deviceType == "mobile" ? "<" : "Попереднє питання"}
+                                        </Button>
+
                                 <Button onClick={nextQuestion}
-                                        disabled={selectedQuestion == questions.length - 1} style={{display: "block"}}
-                                        type="primary">Наступне питання</Button>
+                                        disabled={selectedQuestion == questions.length - 1}
+                                        style={{display: "block"}}
+                                        type="primary"
+                                    >
+                                        {deviceType == "mobile" ? ">" : "Наступне питання"}
+                                    </Button>
                             </div>
 
                             {(selectedQuestion == questions.length - 1) &&

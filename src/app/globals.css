@@ -121,3 +121,9 @@ body {
 .rm-pe, .rm-pe * {
     pointer-events: none;
 }
+
+@media only screen and (max-device-width: 768px) {
+    .upload_outer p {
+        font-size: 20px;
+    }
+}

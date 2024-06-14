@@ -20,6 +20,8 @@ import { SubjectService } from '@/services/subject.service';
 import { useDeviceStore } from '@/stores/deviceStore';
 import { BadgeProps } from 'antd/lib';
 
+import { LinkOutlined } from "@ant-design/icons";
+
 const DateInfoModal = (
     { modalVisible, setModalVisible, info, callFetch, students }
         :
@@ -121,7 +123,7 @@ const DateInfoModal = (
                             <h3>Навчальні матеріали:</h3>
                             {info.materials.map((item, i) =>
                                 <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
-                                    {(i + 1) + ". "}{(item as SubjectNamespace.IEvent).title}
+                                    <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
                         </section>
@@ -137,7 +139,7 @@ const DateInfoModal = (
                             <h3>Тести:</h3>
                             {info.tests.map((item, i) =>
                                 <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
-                                    {(i + 1) + ". "}{(item as SubjectNamespace.IEvent).title}
+                                    <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
                         </section>
@@ -153,7 +155,7 @@ const DateInfoModal = (
                             <h3>Конференції:</h3>
                             {info.conferences.map((item, i) =>
                                 <div key={i} className={styles.conference_modal_p + " " + styles.modal_conference}>
-                                    <p>{(i + 1) + ". "}Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
+                                    <p><LinkOutlined /> Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
                                     <Link href={(item as SubjectNamespace.IEvent).title}>
                                         {(item as SubjectNamespace.IEvent).title}
                                     </Link>
@@ -230,7 +232,7 @@ const DateInfoModal = (
                             <h3>Оцінки:</h3>
                             {info.grades.map((item, i) =>
                                 <div className={styles.conference_modal_p} key={i}>
-                                    {(i + 1) + ". "}
+                                    <LinkOutlined /> 
                                     Ви отримали {pluralize(Math.round((item as SubjectNamespace.IGrade).value), ["бал ", "бала ", "балів "])}
                                     за {translateGradeReason((item as SubjectNamespace.IGrade).reason)}.
                                 </div>

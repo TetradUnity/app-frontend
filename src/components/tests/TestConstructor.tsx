@@ -52,7 +52,7 @@ const Answer = React.forwardRef((
 
     return (
         <div className={styles.answer}>
-            <h4>Вірна відповідь:</h4>
+            <h4 className={styles.answer_title}>Вірна відповідь:</h4>
             <Checkbox
                 checked={isCorrect}
                 onChange={e => {
@@ -60,25 +60,29 @@ const Answer = React.forwardRef((
                     setIsCorrect(!isCorrect);
                 }}
                 style={{marginRight: 10}}
+                className={styles.answer_checkbox}
             />
 
             
             <Tiptap
-                className="ant-input ant-input-outlined"
+                className={"ant-input ant-input-outlined " + styles.answer_input}
                 style={{flex: 1}}
                 ref={editorRef}
                 openImageUploadModal={openImageUploadModal}
             />
 
-            <Button
-                danger
-                shape="circle"
-                type="text"
-                icon={<CloseCircleOutlined />}
-                onClick={deleteAnswer}
-            />
+            
 
-            <div>
+            <div className={styles.answer_buttons}>
+                <Button
+                    danger
+                    shape="circle"
+                    type="text"
+                    size="large"
+                    icon={<CloseCircleOutlined />}
+                    onClick={deleteAnswer}
+                    className={styles.answerDeleteButton}
+                />
                 <Button onClick={() => orderAnswer(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
                 <Button onClick={() => orderAnswer(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
             </div>
@@ -131,8 +135,8 @@ type QuestionRef = {
 };
 
 const Question = React.forwardRef((
-    {index, modal, deleteQuestion, orderQuestion, openImageUploadModal, controls} :
-    {index: number, modal: HookAPI, controls: DragControls , deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
+    {index, modal, deleteQuestion, orderQuestion, openImageUploadModal} :
+    {index: number, modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
 ref) => {
     const questionTitleEditorRef = React.useRef<TiptapRef>();
     const [type, setType] = useState<TestsNamespace.Question["type"]>("ONE_ANSWER");
@@ -252,7 +256,6 @@ ref) => {
     return (
         <div className={styles.question}>
             <div className={styles.question_order_buttons}>
-                <Button onPointerDown={(e) => controls.start(e)} type="dashed" shape="circle" icon={<DragOutlined />} />
                 <Button onClick={() => orderQuestion(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
                 <Button onClick={() => orderQuestion(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
             </div>
@@ -383,8 +386,9 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             return false;
         }
 
-        let testTimestanp = testDuration ? (testDuration.unix() * 1000) : undefined;
-        if (testTimestanp && (testTimestanp < 10_000 || testTimestanp > 18_000_000)) {
+        let testTimestamp = testDuration ? dayjsTimeToMs(testDuration) : undefined;
+        if (testTimestamp && (testTimestamp < 10_000 || testTimestamp > 18_000_000)) {
+
             modal.error({
                 title: "Помилка.",
                 content: <p>Час тесту повинен бути в межах від 10 секунд до 5 годин.</p>
@@ -549,8 +553,6 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
         setUploadModalOpen(true);
     }
 
-    const controls = useDragControls();
-
     const orderQuestion = (question: question, up: boolean) => {
         let index = questions.findIndex(item => item === question);
 
@@ -600,35 +602,16 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             
             <p>В заголовках запитання або в текстових відповідях можна форматувати текст або додавати математичні формули. Докладніше про це можна дізнатися за цим <a href="/faq/text_formatting">посиланням.</a></p>
             
-            <Reorder.Group
-                axis="y"
-                values={questions}
-                onReorder={setQuestions}
-                dragListener={false}
-                dragControls={controls}
-            >
-                {questions.map((item,i) => 
-                    <Reorder.Item
-                        as="div"
-                        key={item.id}
-                        value={item}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                        style={{marginBottom: 20}}
-                    >
-                        <Question
-                            index={i}
-                            ref={item.ref}
-                            deleteQuestion={deleteQuestion.bind(null, item)}
-                            orderQuestion={orderQuestion.bind(null, item)}
-                            modal={modal}
-                            openImageUploadModal={openImageUploadModal}
-                            controls={controls}
-                        />
-                    </Reorder.Item>
-                )}
-            </Reorder.Group>
+            {questions.map((item,i) =>
+                <Question
+                    index={i}
+                    ref={item.ref}
+                    deleteQuestion={deleteQuestion.bind(null, item)}
+                    orderQuestion={orderQuestion.bind(null, item)}
+                    modal={modal}
+                    openImageUploadModal={openImageUploadModal}
+                />
+            )}
             
             <Button
                 block
