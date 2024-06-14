@@ -13,7 +13,6 @@ import {useProfileStore} from "@/stores/profileStore";
 import {useShallow} from "zustand/react/shallow";
 import { EducationService } from "@/services/education.service";
 import translateRequestError from "@/utils/ErrorUtils";
-import { useSubjectStore } from "@/stores/subjectStore";
 
 const draftStore = DraftService.createStore<Drafts.TestMaterial>("test_material_create_draft");
 
@@ -54,7 +53,7 @@ export default function TestCreatePage() {
                 if (!response.success) {
                     modal.error({
                         title: "Помилка",
-                            content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
+                        content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
                     });
                     return;
                 }

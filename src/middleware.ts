@@ -9,7 +9,8 @@ const authorizedUrls = [
     '/profile',
     '/subject',
     '/students',
-    '/teachers'
+    '/teachers',
+    '/calendar'
 ];
 const availableForBoth = [
     '/subjects', '/profile', '/subject/announced/'

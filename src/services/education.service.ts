@@ -56,7 +56,8 @@ export const EducationService = {
                     homework: response.data.homework ? JSON.parse(response.data.homework) : [],
                     title: response.data.title,
                     is_test: response.data.is_test,
-                    grade: response.data.grade
+                    grade: response.data.grade,
+                    is_test_going: response.data.is_test_going
                 }
             }
         } catch (error) {

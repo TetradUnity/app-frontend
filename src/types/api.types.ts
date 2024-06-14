@@ -101,7 +101,7 @@ export namespace SubjectNamespace {
         id: number,
         value: number,
         date: number,
-        reason: string
+        reason: "test" | "education_material" | "conferences"
     }
 
     export interface IEvent {
@@ -129,7 +129,8 @@ export namespace SubjectNamespace {
         amount_questions: number,
         duration: number,
         test: TestsNamespace.CandidateQuestion[],
-        grade?: number
+        grade?: number,
+        is_test_going: boolean
     }
 }
 

@@ -10,7 +10,7 @@ import {
 } from "@/types/api.types";
 
 export const SubjectService = {
-    async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubject>> {
+    async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubjectShort>> {
         try {
             const response = await api.get("/subject/get-subjects");
 

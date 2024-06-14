@@ -33,6 +33,8 @@ const RenderForTeacher = ({material} : Props) => {
 
     return (
         <div>
+            <Divider style={{marginTop: 14, marginBottom: 14}} />
+
             <div className={styles.content + " " + styles.no_padding}>
                 <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
                 <section>
@@ -79,11 +81,13 @@ const RenderForStudent = ({material} : Props) => {
         <div>
             {!isDedline 
             ? <>
-                    <div className={styles.content + " " + styles.no_padding}>
+                <Divider style={{marginTop: 14, marginBottom: 14}} />
+                
+                <div className={styles.content + " " + styles.no_padding}>
                     <h3 style={{marginBottom: 10}}>Загальна інформація:</h3>
                     <section>
                         <h1 style={{marginBottom: 5}}><ClockCircleOutlined style={{color: "#e62780"}} /> Час на проходження:</h1>
-                        <p>{(material.duration > 0) ? formatTimeInSeconds(material.duration / 1000) : "не вказано"}</p>
+                        <p>{(material.duration > 0) ? formatTimeInSeconds(material.duration / 1000) : "до кінця дедлайну"}</p>
                     </section>
 
                     <section>
@@ -96,27 +100,29 @@ const RenderForStudent = ({material} : Props) => {
                         <p>{material.your_attempts}/{material.available_attempt}</p>
                     </section>
 
-                    {material.grade ?
+                    {(typeof material.grade == "number") ?
                         <section>
                             <h1 style={{marginBottom: 5}}><InfoCircleOutlined style={{color: "#3489eb"}} /> Оцінка:</h1>
                             <p>{material.grade}</p>
                         </section>
                     : null}
                 </div>
-
-                <Divider />
             </>
             : null
             }
 
             {material.test &&
                 <>
+                    <Divider />
+
                     <h3>Ваші відповіді:</h3>
                     <TestResult slotColor="var(--foreground-lighter)" questions={material.test} />
                 </>
             }
             {(isDedline && !material.test) &&
                 <>
+                    <Divider />
+
                     <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Срок сдачі вийшов</p>
                     <p style={{fontSize: 18, textAlign: "center", color: "rgb(220,220,220)"}}>
                         Ви не встигли надіслати домашнє завдання
@@ -127,9 +133,13 @@ const RenderForStudent = ({material} : Props) => {
             {!isDedline &&
                 <>
                     <Divider />
+                    
                     <Link href={"/subject/" + slug + "/tests/" + id}>
                         <Button disabled={isDedline || isMaxAttempts} style={{display: "block", margin: "auto"}} type="primary">
-                            Пройти тест
+                            {material.is_test_going
+                                ? "Продовжити тест"
+                                : "Пройти тест"
+                            }
                         </Button>
                     </Link>
                 </>
@@ -148,11 +158,10 @@ export default function TestInfoPage({material} : Props) {
         <>
             <h1><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
+            
             {(material.deadline > 0) &&
                 <p style={{fontSize: 15}}>Здати до: <i>{dayjs(material.deadline).format("D MMMM о HH:mm")}</i></p>
             }
-
-            <Divider style={{marginTop: 14, marginBottom: 14}} />
 
             {role == "TEACHER" ? <RenderForTeacher material={material} /> : <RenderForStudent material={material} />}
         </>

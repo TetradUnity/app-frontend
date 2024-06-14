@@ -25,10 +25,10 @@ export const ConferenceService = {
         }
     },
 
-    async evaluateConference(grade: number, conferenceId: number): Promise<IResponse> {
+    async evaluateConference(conferenceId: number, studentId: number, grade: number): Promise<IResponse> {
         try {
-            const response = await api.post("/conference/rate-conference", {}, {
-                params: { result: grade, conference_id: conferenceId}
+            const response = await api.post("/conference/rate-conference", {
+                conference_id: conferenceId, student_id: studentId, result: grade
             });
 
             return {

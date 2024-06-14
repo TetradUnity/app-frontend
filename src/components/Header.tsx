@@ -13,12 +13,14 @@ import {
     SettingOutlined,
     StarOutlined,
     TeamOutlined,
-    UserOutlined
+    UserOutlined,
+    CalendarOutlined
 } from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
+import { useShallow } from "zustand/react/shallow";
 
 let myProfileId = -1;
 const items: MenuProps['items'] = [
@@ -67,12 +69,13 @@ export default function AppHeader() {
     const [isLoggedIn, setLoggedIn] = useState(false)
     const profile = useProfileStore();
 
+    const role = useProfileStore(useShallow(state => state.role));
 
     useEffect(() => {
         setLoggedIn(AuthTokensService.getAuthToken() !== "");
     }, [])
 
-    const items: MenuProps['items'] = [
+    let items: MenuProps['items'] = [
         {
             label: (
                 <Link href={`/profile/${profile.id}`} style={{
@@ -113,7 +116,7 @@ export default function AppHeader() {
         {key: 'divider', type: 'divider'},
         {
             label: (
-                <Link href={`/profile/${profile.id}/subjects`} style={{display: "flex", alignItems: "center"}}>
+                <Link href={`/home`} style={{display: "flex", alignItems: "center"}}>
                     <BookOutlined/>
                     <div style={{paddingLeft: 8}}>Мої предмети</div>
                 </Link>
@@ -122,22 +125,14 @@ export default function AppHeader() {
         },
         {
             label: (
-                <Link href={`/profile/${profile.id}/grades`} style={{display: "flex", alignItems: "center"}}>
-                    <StarOutlined/>
-                    <div style={{paddingLeft: 8}}>Оцінки</div>
-                </Link>
-            ),
-            key: '2',
-        },
-        {
-            label: (
-                <Link href={`/profile/${profile.id}/achievements`} style={{display: "flex", alignItems: "center"}}>
+                <Link href={`/profile/${profile.id}/certificates`} style={{display: "flex", alignItems: "center"}}>
                     <RiseOutlined/>
-                    <div style={{paddingLeft: 8}}>Досягнення</div>
+                    <div style={{paddingLeft: 8}}>Сертифікати</div>
                 </Link>
             ),
             key: '3',
         },
+
         {key: 'divider2', type: 'divider'},
         {
             label: (
@@ -168,6 +163,14 @@ export default function AppHeader() {
 
 
     ]
+
+    if (role == "STUDENT") {
+        items = items.toSpliced(4, 0, {
+            label: <Link href={`/calendar`}>Календар</Link>,
+            icon: <CalendarOutlined/>,
+            key: '7',
+        });
+    }
 
     // const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
     const gridTemplateColumns = "250px 1fr 200px";
