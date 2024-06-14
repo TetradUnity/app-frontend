@@ -16,7 +16,7 @@ export const useProfileStore = create<State & Action>(set => ({
     last_name: "",
     role: "GUEST",
     avatar: "",
-    avatar_url: "/imgs/guest_avatar.png",
+    avatar_url: "/imgs/default-unknown-avatar.png",
 
     updateProfile: (profile) => set(state => {
         if (!profile) {
