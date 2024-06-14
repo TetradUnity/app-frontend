@@ -1,6 +1,5 @@
 "use client"
 
-import ProfileHead from "@/components/profile/ProfileHead";
 import React, { useEffect, useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import { Layout } from "antd";
@@ -68,7 +67,6 @@ export default function ProfileLayout({
 
     return (
         <Layout style={{gap:'var(--gap)'}}>
-            <ProfileHead/>
             {children}
         </Layout>
     )

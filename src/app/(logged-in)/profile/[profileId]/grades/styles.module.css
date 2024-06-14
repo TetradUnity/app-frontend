@@ -1,4 +1,0 @@
-.collapse:not(:first-child) {
-    border-top: solid 1px #444;
-    border-radius: 0;
-}

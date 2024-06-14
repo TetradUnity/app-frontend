@@ -1,6 +1,6 @@
 'use client'
 
-import { api, catchApiError } from "@/api";
+import {api, catchApiError} from "@/api";
 import {
     ICertificate,
     IResponse,
@@ -8,9 +8,13 @@ import {
 } from "@/types/api.types";
 
 export const CertificateService = {
-    async getCertificates(): Promise<ITArrResponse<ICertificate[]>> {
+    async getCertificates(student_id: number): Promise<ITArrResponse<ICertificate[]>> {
         try {
-            const response = await api.get("/certificate/get-certificates");
+            const response = await api.get("/get-certificates", {
+                params: {
+                    student_id: student_id
+                }
+            })
 
             return {
                 success: true,
@@ -21,10 +25,10 @@ export const CertificateService = {
         }
     },
 
-    async checkCertificate(uid: string): Promise<IResponse & {isCorrect?: boolean}> {
+    async checkCertificate(uid: string): Promise<IResponse & { isCorrect?: boolean }> {
         try {
             const response = await api.post("/certificate/check-certificate", {}, {
-                params: { uid }
+                params: {uid}
             });
 
             return {
