@@ -236,7 +236,7 @@ const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
                 type="dashed"
                 shape="round"
                 icon={<FileImageOutlined />}
-                style={{display: "block", marginLeft: "auto"}}
+                style={{display: "block", marginLeft: "auto", marginTop: 5}}
 
                 //@ts-ignore
                 onClick={() => props.openImageUploadModal(callback)}

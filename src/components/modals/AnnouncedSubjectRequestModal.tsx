@@ -41,7 +41,7 @@ const AnnouncedSubjectRequestModal = React.forwardRef((
 
         if (choose == "not_registered") {
             if (!(data.firstName && data.lastName)) {
-                messageApi.error("Введіть корректні дані.");
+                messageApi.error("Введіть коректні дані.");
                 return;
             }
         }
@@ -58,7 +58,7 @@ const AnnouncedSubjectRequestModal = React.forwardRef((
 
     return (
         <Modal
-            title="Заявка на вхід до предмету"
+            title="Заявка на вхід до предмета"
             open={isOpen}
             okText="Подати заявку"
             onOk={onOk}

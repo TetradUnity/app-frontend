@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Segmented, UploadFile, UploadProps } from "antd";
+import { Button, Input, Modal, Segmented, UploadFile } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import { useState } from "react";
 

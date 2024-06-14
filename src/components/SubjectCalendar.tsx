@@ -17,6 +17,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { ConferenceService } from '@/services/conference.service';
 import Link from 'next/link';
 import { SubjectService } from '@/services/subject.service';
+import { useDeviceStore } from '@/stores/deviceStore';
+import { BadgeProps } from 'antd/lib';
+
+import { LinkOutlined } from "@ant-design/icons";
 
 const DateInfoModal = (
     { modalVisible, setModalVisible, info, callFetch, students }
@@ -52,7 +56,7 @@ const DateInfoModal = (
             setBlocked(false);
 
             if (!resp.success) {
-                msg.error("Не вдалось назначити конференцію: " + translateRequestError(resp.error_code));
+                msg.error("Не вдалося назначити конференцію: " + translateRequestError(resp.error_code));
                 return;
             }
 
@@ -79,12 +83,12 @@ const DateInfoModal = (
             setBlocked(false);
 
             if (!resp.success) {
-                msg.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
+                msg.error("Не вдалося виставити бал: " + translateRequestError(resp.error_code));
                 return;
             }
 
             setSelectedConference(-1);
-            msg.success("Бал було виставлено!");
+            msg.success("Бал був виставлений!");
         })
     }
 
@@ -118,8 +122,8 @@ const DateInfoModal = (
                         <section>
                             <h3>Навчальні матеріали:</h3>
                             {info.materials.map((item, i) =>
-                                <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
-                                    {(i + 1) + ". "}{(item as SubjectNamespace.IEvent).title}
+                                <Link href={"/subject/" + slug + "/assignments/" + item.id} style={{display: "block"}} key={i}>
+                                    <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
                         </section>
@@ -134,8 +138,8 @@ const DateInfoModal = (
                         <section>
                             <h3>Тести:</h3>
                             {info.tests.map((item, i) =>
-                                <Link href={"/subject/" + slug + "/assignments/" + item.id} className={styles.modal_item} key={i}>
-                                    {(i + 1) + ". "}{(item as SubjectNamespace.IEvent).title}
+                                <Link href={"/subject/" + slug + "/assignments/" + item.id} key={i}>
+                                    <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                 </Link>
                             )}
                         </section>
@@ -151,9 +155,9 @@ const DateInfoModal = (
                             <h3>Конференції:</h3>
                             {info.conferences.map((item, i) =>
                                 <div key={i} className={styles.conference_modal_p + " " + styles.modal_conference}>
-                                    <p>{(i + 1) + ". "}Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
+                                    <p>{(i+1)+". "}Конференція {dayjs(item.date).format("D MMMM о HH:mm")}</p>
                                     <Link href={(item as SubjectNamespace.IEvent).title}>
-                                        {(item as SubjectNamespace.IEvent).title}
+                                        <LinkOutlined /> {(item as SubjectNamespace.IEvent).title}
                                     </Link>
 
                                     {(role == "TEACHER" && (Date.now() > item.date)) &&
@@ -228,7 +232,7 @@ const DateInfoModal = (
                             <h3>Оцінки:</h3>
                             {info.grades.map((item, i) =>
                                 <div className={styles.conference_modal_p} key={i}>
-                                    {(i + 1) + ". "}
+                                    {(i+1)+". "}
                                     Ви отримали {pluralize(Math.round((item as SubjectNamespace.IGrade).value), ["бал ", "бала ", "балів "])}
                                     за {translateGradeReason((item as SubjectNamespace.IGrade).reason)}.
                                 </div>
@@ -314,6 +318,8 @@ export default function SubjectCalendar() {
 
     const [students, setStudents] = useState<IStudentShortInfo[]>([]);
 
+    const deviceType = useDeviceStore(state => state.type);
+
     const fetch = (subjectId?: number) => {
         let id = subjectId;
         if (!subjectId) {
@@ -361,7 +367,7 @@ export default function SubjectCalendar() {
     const fetchStudents = () => {
         setLoading(true);
 
-        SubjectService.getStudents(parseInt(slug as string)).then(resp => {
+        SubjectService.getAllStudents(parseInt(slug as string)).then(resp => {
             if (!resp.success) {
                 setError(resp.error_code!);
                 return;
@@ -406,10 +412,10 @@ export default function SubjectCalendar() {
     }
 
     useEffect(() => {
-        if (!(!slug && subjects.length)) {
+        if (!slug && !subjects.length) {
             return;
         }
-        if (!(slug && role == "TEACHER" && students.length)) {
+        if (slug && role == "TEACHER" && !students.length) {
             return;
         }
         fetch();
@@ -456,37 +462,57 @@ export default function SubjectCalendar() {
             return dict;
         }, [items]);
 
+        const RenderBadge = ({count, plural, color}: {count: number, plural: string[], color: BadgeProps["color"]}) => {
+            if (deviceType == "mobile") {
+                return (
+                    <Badge
+                        size='small'
+                        count={count}
+                        color={color}
+                        style={{ display: "inline-block", color: "white" }}
+                    />
+                )
+            }
+            return (
+                <Badge
+                    text={pluralize(count, plural)}
+                    color={color}
+                    style={{ display: "block" }}
+                />
+            )
+        }
+
         return (
             <div style={{ display: "block" }}>
                 {(attachedToThisDate.grades > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.grades, ['оцінка', 'оцінки', 'оцінок'])}
-                        status="warning"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.grades}
+                        plural={['оцінка', 'оцінки', 'оцінок']}
+                        color='cyan'
                     />
                 }
 
                 {(attachedToThisDate.materials > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.materials, ['завдання', 'завдання', 'завдань'])}
-                        status="processing"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.materials}
+                        plural={['матеріал', 'матеріала', 'матеріалів']}
+                        color='geekblue'
                     />
                 }
 
                 {(attachedToThisDate.conferences > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.conferences, ['конференція', 'конференції', 'конференцій'])}
-                        status="success"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.conferences}
+                        plural={['конференція', 'конференції', 'конференцій']}
+                        color='pink'
                     />
                 }
 
                 {(attachedToThisDate.tests > 0) &&
-                    <Badge
-                        text={pluralize(attachedToThisDate.tests, ['тест', 'теста', 'тестів'])}
-                        status="error"
-                        style={{ display: "block" }}
+                    <RenderBadge
+                        count={attachedToThisDate.tests}
+                        plural={['тест', 'теста', 'тестів']}
+                        color='yellow'
                     />
                 }
             </div>

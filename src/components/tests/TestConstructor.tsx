@@ -1,5 +1,5 @@
 import { Button, Checkbox, Divider, Input, Modal, Select, TimePicker } from "antd";
-import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined } from "@ant-design/icons";
+import { PlusCircleFilled, CloseCircleOutlined, UpCircleOutlined, DownCircleOutlined, DragOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.css";
 import React, { useImperativeHandle, useState } from "react";
@@ -11,7 +11,7 @@ import ImageUploadModal from "../modals/ImageUploadModal";
 import { moveElementLeftInArray, moveElementRightInArray } from "@/utils/ArrayUtils";
 import { countWordsInHtmlString } from "@/utils/StringUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { Reorder } from "framer-motion";
+import { DragControls, Reorder, useDragControls } from "framer-motion";
 import { dayjsTimeToMs } from "@/utils/OtherUtils";
 
 type AnswerRef = {
@@ -52,7 +52,7 @@ const Answer = React.forwardRef((
 
     return (
         <div className={styles.answer}>
-            <h4>Вірна відповідь:</h4>
+            <h4 className={styles.answer_title}>Вірна відповідь:</h4>
             <Checkbox
                 checked={isCorrect}
                 onChange={e => {
@@ -60,25 +60,29 @@ const Answer = React.forwardRef((
                     setIsCorrect(!isCorrect);
                 }}
                 style={{marginRight: 10}}
+                className={styles.answer_checkbox}
             />
 
             
             <Tiptap
-                className="ant-input ant-input-outlined"
+                className={"ant-input ant-input-outlined " + styles.answer_input}
                 style={{flex: 1}}
                 ref={editorRef}
                 openImageUploadModal={openImageUploadModal}
             />
 
-            <Button
-                danger
-                shape="circle"
-                type="text"
-                icon={<CloseCircleOutlined />}
-                onClick={deleteAnswer}
-            />
+            
 
-            <div>
+            <div className={styles.answer_buttons}>
+                <Button
+                    danger
+                    shape="circle"
+                    type="text"
+                    size="large"
+                    icon={<CloseCircleOutlined />}
+                    onClick={deleteAnswer}
+                    className={styles.answerDeleteButton}
+                />
                 <Button onClick={() => orderAnswer(true)} type="dashed" shape="circle" icon={<UpCircleOutlined />} />
                 <Button onClick={() => orderAnswer(false)} type="dashed" shape="circle" icon={<DownCircleOutlined />} />
             </div>
@@ -190,7 +194,7 @@ ref) => {
         ) {
             modal.confirm({
                 title: "Попередження",
-                content: "Якщо ви змінюєте тип з одної/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей на даний момент зникнуть.",
+                content: "Якщо ви змінюєте тип з однієї/кількох відповідей на текст (чи навпаки), існуючі варіанти відповідей зникнуть.",
                 okText: "Продовжити",
                 cancelText: "Відмінити",
                 closable: false,
@@ -377,16 +381,17 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             modal.error({
                 title: "Помилка.",
                 maskClosable: true,
-                content: <p>Має бути хочаб одне питання.</p>
+                content: <p>Має бути принаймні одне питання..</p>
             })
             return false;
         }
 
-        let testTimestanp = testDuration ? (testDuration.unix() * 1000) : undefined;
-        if (testTimestanp && (testTimestanp < 10_000 || testTimestanp > 18_000_000)) {
+        let testTimestamp = testDuration ? dayjsTimeToMs(testDuration) : undefined;
+        if (testTimestamp && (testTimestamp < 10_000 || testTimestamp > 18_000_000)) {
+
             modal.error({
                 title: "Помилка.",
-                content: <p>Час тесту повинен бути в межах від 10 секунд до 5 часов.</p>
+                content: <p>Час тесту повинен бути в межах від 10 секунд до 5 годин.</p>
             });
             return;
         }
@@ -408,14 +413,14 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             if (question.type != "TEXT") {
                 if (question.answers.length < 2) {
-                    err(i, "К-сть відповідей не може бути меншою за 2.");
+                    err(i, "Кількість відповідей не може бути меншою за 2.");
                     return false;
                 }
                 let isOneCorrect = false;
                 for (let j = 0; j < question.answers.length; j++) {
                     question.answers[j].content = question.answers[j].content.trim();
                     if (countWordsInHtmlString(question.answers[j].content) == 0) {
-                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути порожньою.");
                         return false;
                     }
                     if (question.answers[j].isCorrect) {
@@ -437,14 +442,14 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
                 for (let j = 0; j < question.answers.length; j++) {
                     question.answers[j].content = question.answers[j].content.trim();
                     if (countWordsInHtmlString(question.answers[j].content) == 0) {
-                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути пустою.");
+                        err(i, "У відповіді №"+(j+1)+": Відповідь не може бути порожньою.");
                         return false;
                     }
                 }
             }
 
             if (question.answers.length > 5) {
-                err(i, "В питанні може існувати не більше 5-ти відповідей.");
+                err(i, "В питанні може бути не більше 5 відповідей.");
                 return false;
             }
         }
@@ -461,7 +466,6 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             return [
                 {
-                    // time: testDuration ? ((testDuration.unix() - 1717880400) * 1000) : undefined,
                     time: dayjsTimeToMs(testDuration),
                     ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
@@ -596,34 +600,18 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
 
             <Divider orientationMargin={30} orientation="right" dashed>Питання</Divider>
             
-            <p>В заголовках запитання, або в текстових відповідях можна форматувати текст, або додавати математичні формули. Подробніше за цим посиланням <a href="/faq/text_formatting">тут.</a></p>
+            <p>В заголовках запитання або в текстових відповідях можна форматувати текст або додавати математичні формули. Докладніше про це можна дізнатися за цим <a href="/faq/text_formatting">посиланням.</a></p>
             
-            <Reorder.Group
-                axis="y"
-                values={questions}
-                onReorder={setQuestions}
-            >
-                {questions.map((item,i) => 
-                    <Reorder.Item
-                        as="div"
-                        key={item.id}
-                        value={item}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                        style={{marginBottom: 20}}
-                    >
-                        <Question
-                            index={i}
-                            ref={item.ref}
-                            deleteQuestion={deleteQuestion.bind(null, item)}
-                            orderQuestion={orderQuestion.bind(null, item)}
-                            modal={modal}
-                            openImageUploadModal={openImageUploadModal}
-                        />
-                    </Reorder.Item>
-                )}
-            </Reorder.Group>
+            {questions.map((item,i) =>
+                <Question
+                    index={i}
+                    ref={item.ref}
+                    deleteQuestion={deleteQuestion.bind(null, item)}
+                    orderQuestion={orderQuestion.bind(null, item)}
+                    modal={modal}
+                    openImageUploadModal={openImageUploadModal}
+                />
+            )}
             
             <Button
                 block

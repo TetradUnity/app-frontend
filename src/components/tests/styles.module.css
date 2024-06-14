@@ -52,3 +52,41 @@
     display: block;
     margin: auto;
 }
+
+
+@media only screen and (max-device-width: 768px) {
+    .answer {
+        display: block;
+    }
+
+    .answer_input {
+        display: block;
+        margin-top: 10px !important;
+    }
+
+    .answer_title {
+        width: fit-content;
+        display: inline-block;
+    }
+
+    .answer_checkbox {
+        display: inline-block;
+    }
+
+    .answer_buttons {
+        margin-top: 10px;
+        width: fit-content;
+        display: block;
+        margin-left: auto;
+    }
+
+    .answer_buttons > * {
+        display: inline-block;
+    }
+    .answerDeleteButton {
+        position: relative;
+        top: 2px;
+        left: 8px;
+        transform: scale(1.38);
+    }
+}

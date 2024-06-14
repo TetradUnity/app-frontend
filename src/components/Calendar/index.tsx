@@ -8,6 +8,7 @@ import "./style.css";
 import { Button } from 'antd';
 
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { useDeviceStore } from '@/stores/deviceStore';
 
 dayjs.extend(weekdayPlugin);
 
@@ -38,6 +39,8 @@ export default function Calendar({cellRenderer : CellRenderer, initialDate, onCh
   const now = dayjs();
   const [currentMonth, setCurrentMonth] = useState(initialDate || now);
   const [arrayOfDays, setArrayOfDays] = useState<{ dates: DateObject[] }[]>([]);
+
+  const deviceType = useDeviceStore(state => state.type);
 
   const nextMonth = () => {
     const plus = currentMonth.add(1, "month");
@@ -127,7 +130,7 @@ export default function Calendar({cellRenderer : CellRenderer, initialDate, onCh
   };
 
   const renderDays = () => {
-    const dateFormat = "dddd";
+    const dateFormat = deviceType == "mobile" ? "dd" : "dddd";
     const days = [];
     for (let i = 0; i < 7; i++) {
       days.push(

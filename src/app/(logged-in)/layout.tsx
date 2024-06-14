@@ -15,7 +15,7 @@ import { useUploadStore } from "@/stores/uploadStore";
 import { motion } from "framer-motion";
 import { AuthService } from "@/services/auth.service";
 
-const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/test/", "/profile/"];
+const NOT_REQUIRED_AUTH_URLS = ["/subjects", "/subject/announced/", "/exam/", "/profile/"];
 
 const UploadProgressOuter = () => {
     const uploadStore = useUploadStore();
@@ -41,7 +41,7 @@ const UploadProgressOuter = () => {
             >
                 {uploadStore.error
                     ? <p>Щось пішло не так: {uploadStore.error}</p>
-                    : <p>Файл завантажився на сервер!</p>
+                    : <p>Файл завантажено  на сервер!</p>
                 }
             </motion.div>
         </motion.div>
@@ -84,6 +84,7 @@ export default function ILayout({
 
         AuthService.isValidToken().then(response => {
             if (!response.success) {
+                setAppLoading(false);
                 setIsFailedToLoad(true);
                 return;
             }
@@ -118,7 +119,7 @@ export default function ILayout({
                     <Result
                         status="error"
                         title="Не вдалося завантажити сайт"
-                        subTitle="Провірте підключення до інтернету або статус серверу."
+                        subTitle="Перевірте підключення до Інтернету або статус сервера."
                         extra={[
                             <Button
                                 type="primary"
@@ -134,7 +135,7 @@ export default function ILayout({
                     <Result
                         status="403"
                         title="У вас немає доступу до цієї сторінки"
-                        subTitle="Щоб зайти на цю сторінку, вам потрібно зайти в свій аккаунт."
+                        subTitle="Щоб відкрити цю сторінку, вам потрібно увійти у свій обліковий запис."
                         extra={[
                             <Button
                                 type="primary"

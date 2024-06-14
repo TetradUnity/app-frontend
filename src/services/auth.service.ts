@@ -48,7 +48,35 @@ export const AuthService = {
         }
     },
 
-    // dev-only
+    async forgotPassword(email: string): Promise<IResponse> {
+        try {
+            await api.post("/authorization/forgot-password", {}, {
+                params: { email }
+            });
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
+    async recoveryPassword(recoveryUID: string, newPassword: string): Promise<IResponse> {
+        try {
+            await api.post("/authorization/recovery-password/" + recoveryUID, {
+                model: newPassword
+            });
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
+    // chief teacher
     async register(email: string, first_name: string, last_name: string, password: string, role: string): Promise<IResponse> {
         try {
             const response = await api.post("/authorization/create-admin", {

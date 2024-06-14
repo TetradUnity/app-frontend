@@ -3,8 +3,6 @@
 import { Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import {useParams, usePathname, useRouter} from "next/navigation";
-import {useSubjectStore} from "@/stores/subjectStore";
-import {useShallow} from "zustand/react/shallow";
 
 export default function BackButton({navTo} : {navTo?: string}) {
     const pathname = usePathname();

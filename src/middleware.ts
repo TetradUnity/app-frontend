@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const notAuthorizedUrls = [
-    '/', '/login'
+    '/', '/login', '/forgot-password'
 ];
 const authorizedUrls = [
     '/home',

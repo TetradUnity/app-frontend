@@ -1,10 +1,7 @@
 'use client';
 
-import Foreground from "@/components/Foreground";
 import Tiptap from "@/components/Tiptap";
-import BackButton from "@/components/subject/BackButton";
-import { mockMaterialContent } from "@/temporary/data";
-import { Button, Divider, Modal, Spin, message } from "antd";
+import { Button, Divider, message } from "antd";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react"
 import translateRequestError from "@/utils/ErrorUtils";
@@ -25,6 +22,9 @@ import { UploadService, UploadType } from "@/services/upload.service";
 import { RcFile } from "antd/es/upload";
 import { EducationService } from "@/services/education.service";
 
+import styles from "../../styles.module.css";
+import { useDeviceStore } from "@/stores/deviceStore";
+
 const RenderForTeacher = ({material} : Props) => {
     let isDedline = material.deadline && material.deadline > 0;
 
@@ -37,7 +37,7 @@ const RenderForTeacher = ({material} : Props) => {
     return (
         isDedline
             ? <ResultForTeacher type="material" />
-            : <p style={{textAlign: "center"}}>Ви зможете подивитись домашнє завдання учнів після того, як пройде дедлайн.</p>
+            : <p style={{textAlign: "center"}}>Ви зможете переглянути домашні завдання учнів після завершення терміну здачі.</p>
     )
 }
 
@@ -67,7 +67,7 @@ const RenderForStudent = ({material} : Props) => {
     if (isDedline) {
         return (
             <>
-                <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Срок сдачі вийшов</p>
+                <p style={{fontSize: 27, textAlign: "center", marginTop: 15, fontWeight: "bold"}}>Термін здачі минув.</p>
                 <p style={{fontSize: 18, textAlign: "center", color: "rgb(220,220,220)"}}>
                     {isDedline
                         ? "Ви встигли надіслати домашнє завдання"
@@ -89,7 +89,7 @@ const RenderForStudent = ({material} : Props) => {
         for (let i = 0; i < fileList.length; i++) {
             const resp = await UploadService.upload(UploadType.HOMEWORK, fileList[i].originFileObj as RcFile);
             if (!resp.success) {
-                msg.error("Не вдалось загрузити файл: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+                msg.error("Не вдалося завантажити файл: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
                 setIsBlocked(false);
                 return;
             }
@@ -101,7 +101,7 @@ const RenderForStudent = ({material} : Props) => {
         setIsBlocked(false);
 
         if (!resp.success) {
-            msg.error("Не вдалось загрузити домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            msg.error("Не вдалося завантажити домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
             return;
         }
 
@@ -116,7 +116,7 @@ const RenderForStudent = ({material} : Props) => {
         setIsBlocked(false);
 
         if (!resp.success) {
-            msg.error("Не вдалось скасувати домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
+            msg.error("Не вдалося скасувати домашню роботу: " + translateRequestError(resp.error_code) + ". Спробуйте ще раз!")
             return;
         }
 
@@ -225,7 +225,7 @@ export default function MaterialInfoPage({material} : Props) {
 
     return (
         <>
-            <h1><FileTextOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <h1 className={styles.title}><FileTextOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
             {(material.deadline > 0) &&
                 <p style={{fontSize: 15}}>Здати до: <i>{dayjs(material.deadline).format("D MMMM о HH:mm")}</i></p>
@@ -235,19 +235,19 @@ export default function MaterialInfoPage({material} : Props) {
 
             <Tiptap
                 content={material.content}
+                style={{fontSize: 17}}
                 editable={false}
             />
 
             <Divider style={{marginTop: 14, marginBottom: 14}} />
 
-
             {role == "TEACHER" 
                 ? <>
-                    <h1>Домашні завдання:</h1>
+                    <h1 className={styles.homework_title}>Домашні завдання:</h1>
                     <RenderForTeacher material={material} /> 
                 </>
                 : <>
-                    <h1>Домашнє завдання:</h1>
+                    <h1 className={styles.homework_title}>Домашнє завдання:</h1>
                     <RenderForStudent material={material} />
                 </>
             }

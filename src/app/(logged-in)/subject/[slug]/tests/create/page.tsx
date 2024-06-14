@@ -25,7 +25,7 @@ export default function TestCreatePage() {
 
     const onSubmit = () => {
         modal.confirm({
-            title: "Створення матеріалу.",
+            title: "Створення тесту.",
             content: <p>Ви впевнені?</p>,
             onOk: async () => {
                 let test = undefined;
@@ -53,19 +53,16 @@ export default function TestCreatePage() {
                 if (!response.success) {
                     modal.error({
                         title: "Помилка",
-                        content: <p>Матеріал не був створений: {translateRequestError(response.error_code)}</p>
+                        content: <p>Трапилась помилка при створенні тесту: {translateRequestError(response.error_code)}</p>
                     });
                     return;
                 }
 
                 modal.success({
                     title: "Успіх!",
-                    content: <p>Ви створили новий матеріал</p>,
+                    content: <p>Ви створили тест</p>,
+                    maskClosable: false,
                     onOk: () => {
-                        draftStore.remove();
-                        push("/subject/" + slug + "/assignments");
-                    },
-                    onCancel: () => {
                         draftStore.remove();
                         push("/subject/" + slug + "/assignments");
                     }

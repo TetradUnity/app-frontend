@@ -1,6 +1,5 @@
 import FullscreenImageModal from "@/components/FullscreenImage";
-import { IStudentShortInfo } from "@/types/api.types";
-import { Avatar, Button, Divider, Flex, Input, Modal } from "antd";
+import { Avatar, Button, Flex } from "antd";
 import { useState } from "react";
 
 import { FileFilled, EyeFilled, DownloadOutlined } from "@ant-design/icons";

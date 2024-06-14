@@ -4,12 +4,13 @@ import { Button, Divider } from "antd";
 
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
-import { IStudentShortInfo, SubjectNamespace, TestsNamespace } from "@/types/api.types";
+import { SubjectNamespace, TestsNamespace } from "@/types/api.types";
 import ResultForTeacher from "@/components/subject/ResultForTeacher";
 
 import { FormOutlined, ClockCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import styles from "@/styles/announced_subject.module.css";
+import styles2 from "../../styles.module.css";
 import TestResult from "@/components/TestResult";
 import dayjs from "dayjs";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
@@ -62,7 +63,7 @@ const RenderForTeacher = ({material} : Props) => {
 
             {isDedline
                 ? <ResultForTeacher type="test" />
-                : <p style={{textAlign: "center"}}>Ви зможете подивитись домашнє завдання учнів після того, як пройде дедлайн.</p>
+                : <p style={{textAlign: "center"}}>Ви зможете переглянути домашні завдання учнів після завершення терміну здачі.</p>
             }
         </div>
     )
@@ -156,7 +157,7 @@ export default function TestInfoPage({material} : Props) {
 
     return (
         <>
-            <h1><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
+            <h1 className={styles2.title}><FormOutlined style={{color: "var(--primary-light)"}} /> {material.title}</h1>
             <p style={{fontSize: 15, marginTop: 5}}>Опубліковано: <i>{dayjs(material.date).format("D MMMM о HH:mm")}</i></p>
             
             {(material.deadline > 0) &&

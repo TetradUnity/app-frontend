@@ -9,13 +9,13 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { Button, Modal, Segmented } from "antd";
 import { motion } from "framer-motion";
-import { EducationService } from "@/services/education.service";
-import { UploadService, UploadType } from "@/services/upload.service";
 import Link from "next/link";
-import {SubjectNamespace} from "@/types/api.types";
 import { useProfileStore } from "@/stores/profileStore";
 import { useShallow } from "zustand/react/shallow";
 import translateRequestError from "@/utils/ErrorUtils";
+import { useDeviceStore } from "@/stores/deviceStore";
+
+import { LinkOutlined } from "@ant-design/icons";
 
 export default function SubjectLayout({children} : {children?: React.ReactNode}) {
     const params = useParams();
@@ -38,25 +38,11 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
     const [modal, modalCtx] = Modal.useModal();
 
+    const deviceType = useDeviceStore(state => state.type);
+
     if (!subjectId || subjectId < 0) {
         notFound();
     }
-
-    useEffect(() => {
-        if ((pathname.endsWith("students")) && store.studentsFetchingStatus == "NOT_FETCHED") {
-            store.updateStudentsFetchStatus("FETCHING");
-
-            SubjectService.getStudents(subjectId).then(response => {
-                if (!response.data) {
-                    store.updateStudentsFetchStatus(response.error_code as string);
-                    return;
-                }
-
-                store.updateStudents(response.data);
-                store.updateStudentsFetchStatus("SUCCESS");
-            })
-        }
-    }, [pathname]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -105,23 +91,43 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
         modal.confirm({
             title: "Завершення предмету",
             content: <p>Ви впевнені що хочете завершити предмет? Всі завдання, тести та навчальні матеріали зникнуть.</p>,
-            onOk: () => {
-                SubjectService.finishSubject(subjectId).then(resp => {
-                    if (!resp.success) {
+            onOk: async () => {
+                const resp = await SubjectService.finishSubject(subjectId);
+
+                if (!resp.success) {
+                    if (resp.no_ended_task_id) {
                         modal.error({
                             title: "Невдача",
-                            content: <p>Не получилось завершити предмет: ${translateRequestError(resp.error_code)}</p>
+                            content: <>
+                                <p>Зачекайте завершення дедлайну:</p>
+                                <Link href={"/subject/" + slug + "/assignments/" + resp.no_ended_task_id}><LinkOutlined /> {resp.no_ended_task_title}</Link>
+                            </>
                         });
                         return;
                     }
-
-                    modal.success({
-                        title: "Успіх",
-                        content: <p>Ваш предмет був завершений!</p>,
-                        onOk: () => window.location.href = "/",
-                        onCancel: () => window.location.href = "/"
+                    if (resp.no_rate_task_id) {
+                        modal.error({
+                            title: "Невдача",
+                            content: <>
+                                <p>Ви ще не оцінили роботу учня:</p>
+                                <Link href={"/subject/" + slug + "/assignments/" + resp.no_rate_task_id}><LinkOutlined /> {resp.no_rate_task_title}</Link>
+                            </>
+                        });
+                        return;
+                    }
+                    modal.error({
+                        title: "Невдача",
+                        content: <p>Не вдалося завершити предмет: {translateRequestError(resp.error_code)}</p>
                     });
-                })
+                    return;
+                }
+
+                modal.success({
+                    title: "Успіх",
+                    content: <p>Ваш предмет було завершено!</p>,
+                    onOk: () => window.location.href = "/",
+                    onCancel: () => window.location.href = "/"
+                });
             }
         })
     }
@@ -138,19 +144,19 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
 
                         {role == "TEACHER" &&
                             <div className={styles.delete_subject}>
-                                <Button danger type="primary" onClick={deleteSubject}>Завершити предмет</Button>
+                                <Button className={styles.deleteSubjectButton} danger type="primary" onClick={deleteSubject}>Завершити предмет</Button>
                             </div>
                         }
                 </div>
 
                 <Segmented
-                    style={{margin: "20px 0"}}
+                    className={styles.segmented}
                     defaultValue={pathname.split("/")[3]}
                     options={sections}
                     onChange={key => {
                         push("/subject/" + slug + "/" + key);
                     }}
-                    size="large"
+                    size={deviceType == "mobile" ? "middle" : "large"}
                     block
                 />
             </motion.div>

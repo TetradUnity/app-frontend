@@ -8,11 +8,11 @@ export function pluralize(count: number, words: string[]): string {
 }
 
 export function translateGradeReason(type: SubjectNamespace.IGrade["reason"]) {
-    if (type == "conferences") {
+    if (type == "CONFERENCES") {
         return "участь в конференції";
     }
 
-    if (type == "education_material") {
+    if (type == "EDUCATION_MATERIAL") {
         return "навчальний матеріал";
     }
 

@@ -1,7 +1,6 @@
 'use client';
 
-import { useSubjectStore } from "@/stores/subjectStore"
-import { IMaterialShortInfo, SubjectNamespace } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import { useShallow } from "zustand/react/shallow";
 
 import { RightOutlined, PlusCircleFilled } from "@ant-design/icons";
@@ -105,11 +104,11 @@ export default function AssigmnentsPage() {
            {role == "TEACHER" &&
                 <>
                     <Button
-                    icon={<PlusCircleFilled/>}
-                    type="dashed"
-                    block
-                    style={{marginBottom: 10}}
-                    onClick={() => push("/subject/" + slug + "/tests/create")}
+                        className={styles.createMaterialButton}
+                        icon={<PlusCircleFilled/>}
+                        type="dashed"
+                        block
+                        onClick={() => push("/subject/" + slug + "/tests/create")}
                     >
                         Створити тест
                     </Button>
@@ -117,19 +116,18 @@ export default function AssigmnentsPage() {
                         icon={<PlusCircleFilled/>}
                         type="dashed"
                         block
-                        style={{marginBottom: 15}}
                         onClick={() => push("/subject/" + slug + "/materials/create")}
                     >
                         Створити матеріал
                     </Button>
 
-                    <Divider />
+                    <Divider className={styles.createMaterialDivider} />
                 </>
             }
             
             {(materials.length > 0)
                     ? materials.map((item) => <MaterialSlot item={item} key={item.id} />)
-                    : <Empty description={<p className={styles.empty_text}>Завданнь поки ще немає.</p>}/>
+                    : <Empty description={<p className={styles.empty_text}>Завдань поки що немає.</p>}/>
             }
         </>
     )

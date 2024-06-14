@@ -16,6 +16,7 @@ import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import translateRequestError from "@/utils/ErrorUtils";
 import { pluralize } from "@/utils/InternalizationUtils";
 import { EducationService } from "@/services/education.service";
+import { useDeviceStore } from "@/stores/deviceStore";
 
 // TODO: Content Security Policy
 
@@ -145,6 +146,8 @@ export default function PassTestPage({isEducation} : Props) {
 
     const testStore = useTestStore();
 
+    const deviceType = useDeviceStore(state => state.type);
+
     const fetch = () => {
         type Response = {
             data: TestsNamespace.ProdTest,
@@ -260,8 +263,8 @@ export default function PassTestPage({isEducation} : Props) {
                         <p>
                             Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
                             {isPassed
-                                ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
-                                : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
+                                ? " Ви успішно склали екзамен! Відповіді будуть надіслані вчителю. Слідкуйте за повідомленнями у своїй скриньці!"
+                                : " На жаль, ви не склали екзамен. Однак, ви можете спробувати інші наші курси!"}
                         </p>,
                     onOk: () => window.location.href = "/subjects",
                     onCancel: () => window.location.href = "/subjects"
@@ -283,7 +286,7 @@ export default function PassTestPage({isEducation} : Props) {
             if (!resp.success) {
                 modal.error({
                     title: "Помилка під час збереження",
-                    content: <p>При зберіганні відповіді трапилась помилка: {translateRequestError(resp.error_code)}</p>
+                    content: <p>Під час збереження відповіді трапилася помилка: {translateRequestError(resp.error_code)}</p>
                 })
             }
         }
@@ -309,7 +312,6 @@ export default function PassTestPage({isEducation} : Props) {
 
 
     if (!isLoaded) {
-        console.log("not loaded.")
         return <Spin fullscreen spinning />;
     }
 
@@ -321,7 +323,7 @@ export default function PassTestPage({isEducation} : Props) {
         <>
             {!isTimeUp ?
                 <div className={styles.main}>
-                    <div id="test-navigation" style={{
+                    <div className={styles.nav} id="test-navigation" style={{
                         display: "flex",
                         flexDirection: "column",
                         gap: 'var(--gap-half)',
@@ -344,7 +346,15 @@ export default function PassTestPage({isEducation} : Props) {
                             {questions.map((question, i) =>
                                 <Button
                                     key={i}
-                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    type={
+                                        selectedQuestion == i
+                                        ? "primary"
+                                        : (
+                                            (testStore.answers[i] && testStore.answers[i]?.length)
+                                            ? "default"
+                                            : "dashed"
+                                        )
+                                    }
                                     block
                                     onClick={() => setSelectedQuestion(i)}
                                     style={{
@@ -377,11 +387,19 @@ export default function PassTestPage({isEducation} : Props) {
 
                             <div className={styles.buttons}>
                                 <Button onClick={prevQuestion}
-                                        disabled={selectedQuestion == 0} style={{display: "block"}} type="primary">Попереднє
-                                    питання</Button>
+                                        disabled={selectedQuestion == 0}
+                                        style={{display: "block"}} type="primary"
+                                    >
+                                            {deviceType == "mobile" ? "<" : "Попереднє питання"}
+                                        </Button>
+
                                 <Button onClick={nextQuestion}
-                                        disabled={selectedQuestion == questions.length - 1} style={{display: "block"}}
-                                        type="primary">Наступне питання</Button>
+                                        disabled={selectedQuestion == questions.length - 1}
+                                        style={{display: "block"}}
+                                        type="primary"
+                                    >
+                                        {deviceType == "mobile" ? ">" : "Наступне питання"}
+                                    </Button>
                             </div>
 
                             {(selectedQuestion == questions.length - 1) &&
@@ -413,8 +431,8 @@ export default function PassTestPage({isEducation} : Props) {
                 }}>
                     <h1>Час вичерпано</h1>
                     {isEducation
-                        ? <p>Відповіді, які ви встигли обрати, були передані вчителю.</p>
-                        : <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
+                        ? <p>Відповіді, які ви встигли вибрати, були передані вчителю.</p>
+                        : <p>Відповіді, які ви встигли вибрати, були передані вчителю. Слідкуйте за повідомленнями у поштовій скриньці!</p>
                     }
                 </div>
             }
