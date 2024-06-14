@@ -198,6 +198,7 @@ export default function AppHeader() {
                         display: "flex",
                         position: "relative",
                         justifyContent: "flex-end",
+                        marginRight: 12,
                     }}>
                         <Link href={`/profile/${profile.id}`}>
                             <Avatar shape="square" alt="avatar" size={32} style={{margin: 0, padding: 0}}
