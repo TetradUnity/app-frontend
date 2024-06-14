@@ -24,6 +24,12 @@
     text-decoration: underline;
 }
 
+.delete_subject {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
 .material_slot {
     position: relative;
     border-radius: 10px;
@@ -85,4 +91,19 @@
 
 .timetable_cell_today {
     background: var(--primary);
+}
+
+
+.modal_item {
+    display: block;
+    color: white;
+}
+
+.modal_item:hover {
+    color: rgb(220, 220, 220);
+    text-decoration: underline;
+}
+
+.modal_conference {
+    margin-top: 10px;
 }

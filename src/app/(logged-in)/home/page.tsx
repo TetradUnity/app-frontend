@@ -36,7 +36,7 @@ export default function HomePage() {
             }
 
 
-            const subjects = response.data as SubjectNamespace.ISubjectShort[];
+            const subjects = response.data!;
 
             setActiveSubjects(subjects.filter(subject => subject.type == "ACTIVE_SUBJECT"));
             setOtherSubjects(subjects.filter(subject => subject.type != "ACTIVE_SUBJECT"));

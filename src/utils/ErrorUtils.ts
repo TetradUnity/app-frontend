@@ -10,7 +10,8 @@ const SERVER_ERRORS = {
     "very_short": "дуже коротко",
     "late": "пізно",
     "you_already_tried": "ви вже зареєструвались",
-    "not_found": "не знайдено"
+    "not_found": "не знайдено",
+    "incorrect_link": "невірне посилання"
 
 } as const;
 

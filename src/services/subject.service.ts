@@ -2,6 +2,7 @@
 
 import { api, catchApiError } from "@/api";
 import {
+    IResponse,
     IStudentShortInfo,
     ITArrResponse,
     ITResponse,
@@ -9,7 +10,7 @@ import {
 } from "@/types/api.types";
 
 export const SubjectService = {
-    async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubject>> {
+    async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubjectShort>> {
         try {
             const response = await api.get("/subject/get-subjects");
 
@@ -50,5 +51,19 @@ export const SubjectService = {
         } catch (error) {
             return catchApiError(error);
         }
+    },
+
+    async finishSubject(subject_id: number): Promise<IResponse> {
+        try {
+            await api.delete("/subject/finish-subject", {
+               params: { subject_id }
+            });
+
+           return {
+               success: true
+           }
+       } catch (e) {
+           return catchApiError(e);
+       }
     }
 };

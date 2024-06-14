@@ -3,6 +3,7 @@
 import { api, catchApiError } from "@/api";
 import {
     ITArrResponse,
+    ITResponse,
     SubjectNamespace
 } from "@/types/api.types";
 
@@ -12,7 +13,7 @@ export type CalendarFilter = {
 };
 
 export const CalendarService = {
-    async getMonth(year: number, month: number, filter: CalendarFilter): Promise<ITArrResponse<SubjectNamespace.IGrade[] | SubjectNamespace.IEvent[]>> {
+    async getMonth(year: number, month: number, filter: CalendarFilter): Promise<ITResponse<SubjectNamespace.IGrade[] | SubjectNamespace.IEvent[]>> {
         try {
             const response = await api.post("/calendar/get-month", filter, {
                 params: { year, month }

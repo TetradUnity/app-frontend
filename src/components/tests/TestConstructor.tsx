@@ -382,6 +382,15 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             return false;
         }
 
+        let testTimestanp = testDuration ? (testDuration.unix() * 1000) : undefined;
+        if (testTimestanp && (testTimestanp < 10_000 || testTimestanp > 18_000_000)) {
+            modal.error({
+                title: "Помилка.",
+                content: <p>Час тесту повинен бути в межах від 10 секунд до 5 часов.</p>
+            });
+            return;
+        }
+
         let question;
         for (let i = 0; i < data.length; i++)  {
             question = data[i];

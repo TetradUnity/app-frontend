@@ -56,7 +56,8 @@ export const EducationService = {
                     homework: response.data.homework ? JSON.parse(response.data.homework) : [],
                     title: response.data.title,
                     is_test: response.data.is_test,
-                    grade: response.data.grade
+                    grade: response.data.grade,
+                    is_test_going: response.data.is_test_going
                 }
             }
         } catch (error) {
@@ -135,9 +136,11 @@ export const EducationService = {
                 params: { grade_id: gradeId }
             });
 
+            let toParse = response.data.test || response.data.files;
+
             return {
                 success: true,
-                data: JSON.parse(response.data.test || response.data.files)
+                data: toParse ? JSON.parse(toParse) : undefined
             }
         } catch (error) {
             return catchApiError(error);

@@ -97,11 +97,11 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
         return null;
     }
 
-    const [_, setForce] = useState(false);
+    const [secondsLeft, setSecondsLeft] = useState(0);
 
     useEffect(() => {
         let id = setInterval(() => {
-            setForce(v => !v);
+            setSecondsLeft(Math.max(timeEnd - Date.now(), 0) / 1000);
             
             if (Date.now() > timeEnd) {
                 setIsTimeUp(true);
@@ -113,10 +113,12 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
     }, []);
 
     return (
-        <div className={styles.clock}>
-            <ClockCircleOutlined style={{color: "#349feb"}}/>
-            <p>{formatTimeInSeconds2(Math.max(timeEnd - Date.now(), 0) / 1000)}</p>
-        </div>
+       (secondsLeft < 8 * 3600)
+            ? <div className={styles.clock}>
+                <ClockCircleOutlined style={{color: "#349feb"}}/>
+                <p>{formatTimeInSeconds2(secondsLeft)}</p>
+            </div>
+            : undefined
     )
 }
 
@@ -226,12 +228,13 @@ export default function PassTestPage({isEducation} : Props) {
             }
             
             const result = resp.result as number;
+            const isPassed = result > 0;
 
-            modal.success({
-                title: "Успіх",
+            modal[isPassed ? "success" : "error"]({
+                title: isPassed ? "Успіх" : "Невдача",
                 content:
                     <p>
-                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])}!
+                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])}.
                     </p>,
                 onOk: () => window.location.href = "/subject/" + params.slug + "/",
                 onCancel: () => window.location.href = "/subject/" + params.slug + "/"
@@ -409,7 +412,10 @@ export default function PassTestPage({isEducation} : Props) {
                     gap: "var(--gap)"
                 }}>
                     <h1>Час вичерпано</h1>
-                    <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
+                    {isEducation
+                        ? <p>Відповіді, які ви встигли обрати, були передані вчителю.</p>
+                        : <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
+                    }
                 </div>
             }
             {modalCtx}

@@ -10,13 +10,15 @@ import {Empty, List, Spin, message} from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EducationService } from "@/services/education.service";
 import { GradeService } from "@/services/grade.service";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import translateRequestError from "@/utils/ErrorUtils";
+import { useProfileStore } from "@/stores/profileStore";
+import { translateGradeReason } from "@/utils/InternalizationUtils";
 
 function GradeSlot({item} : {item: SubjectNamespace.IGrade}) {
     return (
         <div className={styles.material_slot}>
-            <h4>Виставлено оцінку {item.value}: {item.reason}</h4>
+            <h4>Виставлено оцінку {item.value} за {translateGradeReason(item.reason)}.</h4>
             <p><i>{dayjs(item.date).format("D MMMM о HH:mm")}</i></p>
          </div>
     )
@@ -28,6 +30,8 @@ export default function SubjectGradesPage() {
     const [grades, setGrades] = useState<SubjectNamespace.IGrade[]>([]);
     const [loading, setLoading] = useState(false);
     
+    const role = useProfileStore(useShallow(state => state.role));
+
     const fetchRef = useRef({
         loading: false,
         page: 1,
@@ -71,20 +75,19 @@ export default function SubjectGradesPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    if (role != "STUDENT") {
+        notFound();
+    }
+
     return (
         (loading)
         ? <Spin size="large" style={{display: "block", margin: "auto"}} spinning />
         : <>
             {
                 (grades.length > 0)
-                ?  <List
-                        pagination={{pageSize: 10}}
-                        dataSource={grades}
-                        size="small"
-                        renderItem={(item, k) => (
-                            <GradeSlot item={item} key={k} />
-                        )}
-                    />
+                ?  grades.map((item, k) => (
+                        <GradeSlot item={item} key={k} />
+                    ))
                 : <Empty description={<p className={styles.empty_text}>У Вас оцінок поки ще немає.</p>} />
             }
         </>
