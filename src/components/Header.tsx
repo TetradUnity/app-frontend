@@ -20,7 +20,7 @@ import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import {useProfileStore} from "@/stores/profileStore";
 import "./header.css"
-import { useShallow } from "zustand/react/shallow";
+import {useShallow} from "zustand/react/shallow";
 
 function NavButton({path, icon, text}: { path: string, icon: React.ReactNode, text: string }) {
     const pathname = usePathname();
@@ -139,8 +139,6 @@ export default function AppHeader() {
         });
     }
 
-    // const gridTemplateColumns = isLoggedIn ? "250px 1fr 200px" : "250px 1fr";
-    const gridTemplateColumns = "250px 1fr 200px";
     return (
         <div style={{
             background: 'var(--header)',
@@ -158,42 +156,42 @@ export default function AppHeader() {
                            style={{height: 42}}/>
                     <Image className="logo-small" src="/logo.svg" alt="Logo" preview={false} style={{height: 42}}/>
                 </Link>
-
-                <div className="nav-buttons">
-                    <NavButton
-                        path="/subjects"
-                        icon={<BookOutlined/>}
-                        text="Предмети"
-                    />
-                    <NavButton
-                        path="/students"
-                        icon={<IdcardOutlined/>}
-                        text="Студенти"
-                    />
-                    <NavButton
-                        path="/teachers"
-                        icon={<TeamOutlined/>}
-                        text="Вчителі"
-                    />
-                </div>
-                <div className="nav-buttons-short">
-                    <NavButton
-                        path="/subjects"
-                        icon={<BookOutlined/>}
-                        text=""
-                    />
-                    <NavButton
-                        path="/students"
-                        icon={<IdcardOutlined/>}
-                        text=""
-                    />
-                    <NavButton
-                        path="/teachers"
-                        icon={<TeamOutlined/>}
-                        text=""
-                    />
-                </div>
-
+                {isLoggedIn ? <>
+                    <div className="nav-buttons">
+                        <NavButton
+                            path="/subjects"
+                            icon={<BookOutlined/>}
+                            text="Предмети"
+                        />
+                        <NavButton
+                            path="/students"
+                            icon={<IdcardOutlined/>}
+                            text="Студенти"
+                        />
+                        <NavButton
+                            path="/teachers"
+                            icon={<TeamOutlined/>}
+                            text="Вчителі"
+                        />
+                    </div>
+                    <div className="nav-buttons-short">
+                        <NavButton
+                            path="/subjects"
+                            icon={<BookOutlined/>}
+                            text=""
+                        />
+                        <NavButton
+                            path="/students"
+                            icon={<IdcardOutlined/>}
+                            text=""
+                        />
+                        <NavButton
+                            path="/teachers"
+                            icon={<TeamOutlined/>}
+                            text=""
+                        />
+                    </div>
+                </> : <div/>}
 
                 {isLoggedIn ?
                     <Space align="center" style={{
@@ -226,6 +224,7 @@ export default function AppHeader() {
                             display: "flex",
                             alignItems: "center",
                             gap: "var(--gap)",
+                            marginRight: 20,
                         }}><span className="login-text">Авторизація</span><LoginOutlined/> </Link>
                     </div>}
             </div>
