@@ -55,7 +55,7 @@ export default function ProfileHead() {
     return (
         <>
             <div className={styles.container}>
-                <Flex gap='var(--gap)' align="center">
+                <div className={styles.info}>
                     <Avatar src={profile.avatar_url} shape="square" alt='avatar' size={128} icon={<UserOutlined/>}/>
                     <div>
                         <strong style={{fontSize: 24}}>{profile.first_name + " " + profile.last_name}</strong>
@@ -63,8 +63,8 @@ export default function ProfileHead() {
                         {myRole === "TEACHER" || myRole === "CHIEF_TEACHER" || profile.isMe ?
                             <p style={{color: 'var(--text-secondary)'}}>{profile.email}</p> : null}
                     </div>
-                </Flex>
-                <div style={{display: "flex", flexDirection: "column", gap: 'var(--gap)', justifyContent: "center"}}>
+                </div>
+                <div className={styles.buttons}>
                     {profile.isMe &&
                         <Link href="/profile/settings">
                             <Button type="text" icon={<SettingOutlined/>} style={{

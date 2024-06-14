@@ -10,3 +10,38 @@
     overflow: hidden;
     white-space: nowrap;
 }
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    justify-content: center;
+}
+
+.info {
+    display: flex;
+    gap: var(--gap);
+    align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .buttons {
+        flex-direction: row;
+    }
+}
+
+@media screen and (max-width: 536px) {
+    .container {
+        padding: 8px 12px;
+    }
+    .buttons {
+        gap: var(--gap-half);
+    }
+    .info {
+        flex-direction: column;
+        justify-content: center;
+    }
+}
