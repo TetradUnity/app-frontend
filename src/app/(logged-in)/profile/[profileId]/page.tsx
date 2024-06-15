@@ -30,13 +30,15 @@ export default function ProfileHead() {
     const [certificatesVisible, setCertificatesVisible] = useState(false);
     const [certificates, setCertificates] = useState([]);
 
+    const [messageApi, contextHolder] = message.useMessage();
+
     const fetchCertificates = () => {
         CertificateService.getCertificates(profile.id).then(response => {
             if (response.success) {
                 // @ts-ignore
                 setCertificates(response.data);
             } else {
-                message.error("Помилка завантаження сертифікатів");
+                messageApi.error("Помилка завантаження сертифікатів");
             }
         })
     }
@@ -112,6 +114,7 @@ export default function ProfileHead() {
                     )) : <Empty description="Сертифікати відсутні"/>}
 
                 </div>}
+            {contextHolder}
         </>
     );
 }

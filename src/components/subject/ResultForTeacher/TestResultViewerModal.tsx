@@ -79,7 +79,7 @@ export default function TestResultViewerModal({isOpen, student, setStudent, clos
             setBlocked(false);
 
             if (!resp.success) {
-                message.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
+                msg.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
                 return;
             }
 
@@ -88,7 +88,7 @@ export default function TestResultViewerModal({isOpen, student, setStudent, clos
                 value: grade
             });
             close();
-            message.success("Бал був виставлений!");
+            msg.success("Бал був виставлений!");
         })
     }
 

@@ -1,5 +1,5 @@
 'use client'
-import {Button, Empty, Flex, Form, Input, Modal, Select, Space, Spin} from "antd";
+import {Button, Empty, Flex, Form, Input, message, Modal, Select, Space, Spin} from "antd";
 import UserCard from "@/components/cards/UserCard";
 import React, {useEffect, useState} from "react";
 import {IUser} from "@/types/api.types";
@@ -7,6 +7,7 @@ import styles from "./users.module.css";
 import {UserService} from "@/services/user.service";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {PlusOutlined, UpOutlined} from "@ant-design/icons";
+import {AuthService} from "@/services/auth.service";
 
 const pagination = 28;
 
@@ -14,6 +15,11 @@ interface UsersPageProps {
     title: string;
     type: "TEACHER" | "STUDENT";
 }
+
+const layout = {
+    labelCol: {span: 8},
+    wrapperCol: {span: 16},
+};
 
 export default function UsersPage({title, type}: UsersPageProps) {
     const [firstName, setFirstName] = useState("");
@@ -29,19 +35,38 @@ export default function UsersPage({title, type}: UsersPageProps) {
 
     const [modalOpen, setModalOpen] = useState(false);
 
-    const[firstNameCreate, setFirstNameCreate] = useState("");
-    const[lastNameCreate, setLastNameCreate] = useState("");
-    const[emailCreate, setEmailCreate] = useState("");
-    const[passwordCreate, setPasswordCreate] = useState("");
-    const[confirmPasswordCreate, setConfirmPasswordCreate] = useState("");
-    const[roleCreate, setRoleCreate] = useState(type);
+    const [firstNameCreate, setFirstNameCreate] = useState("");
+    const [lastNameCreate, setLastNameCreate] = useState("");
+    const [emailCreate, setEmailCreate] = useState("");
+    const [passwordCreate, setPasswordCreate] = useState("");
+    const [confirmPasswordCreate, setConfirmPasswordCreate] = useState("");
+    const [roleCreate, setRoleCreate] = useState(type);
+    const [messageApi, contextHolder] = message.useMessage();
+
 
     const showModal = () => {
         setModalOpen(true);
     }
 
     const handleOk = () => {
-        setModalOpen(false);
+        if (passwordCreate !== confirmPasswordCreate) {
+            messageApi.error("Паролі не співпадають");
+            return;
+        }
+        AuthService.createUser(emailCreate, firstNameCreate, lastNameCreate, passwordCreate).then((response) => {
+            if (response.success) {
+                setModalOpen(false);
+                setFirstNameCreate("");
+                setLastNameCreate("");
+                setEmailCreate("");
+                setPasswordCreate("");
+                setConfirmPasswordCreate("");
+                setRoleCreate(type);
+                messageApi.error("Користувача успішно створено")
+            } else {
+                messageApi.error("Помилка при створенні користувача")
+            }
+        })
     }
 
     const handleCancel = () => {
@@ -172,8 +197,14 @@ export default function UsersPage({title, type}: UsersPageProps) {
                         }}/>
             </div>
 
-            <Modal title="Додати користувача" open={modalOpen} footer={null} onCancel={handleCancel} onOk={handleOk}>
-                <Form>
+            <Modal title="Зареєструвати користувача" open={modalOpen} footer={null} onCancel={handleCancel}
+                   onOk={handleOk}>
+                <Form
+                    {...layout}
+                    name="basic"
+                    initialValues={{remember: true}}
+                    onFinish={handleOk}
+                >
                     <Form.Item label="Ім'я" name="first_name" rules={[{required: true}]}>
                         <Input value={firstNameCreate} onChange={(e) => setFirstNameCreate(e.target.value)}/>
                     </Form.Item>
@@ -186,8 +217,9 @@ export default function UsersPage({title, type}: UsersPageProps) {
                     <Form.Item label="Пароль" name="password" rules={[{required: true}]}>
                         <Input.Password value={passwordCreate} onChange={(e) => setPasswordCreate(e.target.value)}/>
                     </Form.Item>
-                    <Form.Item label="Підтвердження паролю" name="confirm_password" rules={[{required: true}]}>
-                        <Input.Password value={confirmPasswordCreate} onChange={(e) => setConfirmPasswordCreate(e.target.value)}/>
+                    <Form.Item label="Підтвердження" name="confirm_password" rules={[{required: true}]}>
+                        <Input.Password value={confirmPasswordCreate}
+                                        onChange={(e) => setConfirmPasswordCreate(e.target.value)}/>
                     </Form.Item>
                     <Form.Item label="Роль" name="role" rules={[{required: true}]}>
                         <Select
@@ -205,6 +237,7 @@ export default function UsersPage({title, type}: UsersPageProps) {
                     </Form.Item>
                 </Form>
             </Modal>
+            {contextHolder}
         </Flex>
 
     );

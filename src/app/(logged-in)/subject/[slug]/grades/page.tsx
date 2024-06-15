@@ -27,6 +27,7 @@ export default function SubjectGradesPage() {
 
     const [grades, setGrades] = useState<SubjectNamespace.IGrade[]>([]);
     const [loading, setLoading] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
     
     const role = useProfileStore(useShallow(state => state.role));
 
@@ -47,7 +48,7 @@ export default function SubjectGradesPage() {
 
         if (!response.success) {
             setLoading(false);
-            message.error("Трапилась помилка при завантажені оцінок: " + translateRequestError(response.error_code))
+            messageApi.error("Трапилась помилка при завантажені оцінок: " + translateRequestError(response.error_code))
             return;
         }
 
@@ -88,6 +89,7 @@ export default function SubjectGradesPage() {
                     ))
                 : <Empty description={<p className={styles.empty_text}>У вас поки що немає оцінок.</p>} />
             }
+                {contextHolder}
         </>
     )
 }

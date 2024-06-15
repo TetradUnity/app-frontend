@@ -65,6 +65,8 @@ export default function MaterialViewerModal({isOpen, student, setStudent, close}
     const [msg, msgCtx] = message.useMessage();
     const [blocked, setBlocked] = useState(false);
 
+    const [messageApi, contextHolder] = message.useMessage();
+
     useEffect(() => {
         if (student) {
             setGrade(student.value);
@@ -83,7 +85,7 @@ export default function MaterialViewerModal({isOpen, student, setStudent, close}
             setBlocked(false);
 
             if (!resp.success) {
-                message.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
+                messageApi.error("Не вдалось виставити бал: " + translateRequestError(resp.error_code));
                 return;
             }
 
@@ -92,7 +94,7 @@ export default function MaterialViewerModal({isOpen, student, setStudent, close}
                 value: grade
             });
             close();
-            message.success("Бал був виставлений!");
+            messageApi.success("Бал був виставлений!");
         })
     }
 
@@ -126,6 +128,7 @@ export default function MaterialViewerModal({isOpen, student, setStudent, close}
                 }
             </Modal>
             {msgCtx}
+            {contextHolder}
         </>
     )
 }
