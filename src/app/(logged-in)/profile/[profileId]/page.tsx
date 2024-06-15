@@ -74,12 +74,12 @@ export default function ProfileHead() {
                             }}>Налаштування</Button>
                         </Link>
                     }
-
-                    <Button type="text" icon={<ContainerOutlined/>} onClick={toggleCertificates} style={{
+                    {profile.role === 'STUDENT' &&
+                        < Button type="text" icon={<ContainerOutlined/>} onClick={toggleCertificates} style={{
                         padding: "0 8px",
                         display: "flex",
                         alignItems: "center"
-                    }}>Сертифікати</Button>
+                    }}>Сертифікати</Button>}
                 </div>
             </div>
             {certificatesVisible &&
