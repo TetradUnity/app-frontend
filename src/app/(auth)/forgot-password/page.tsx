@@ -8,7 +8,7 @@ import translateRequestError from "@/utils/ErrorUtils";
 
 const formStyle: CSSProperties = {
     width: 400,
-    padding: 30,
+    padding: "16px 20px",
     paddingBottom: 0,
     background: 'var(--foreground)',
     borderRadius: 10
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
 
     return (
         <Content>
-            <Flex style={{padding: 20}} justify="center" align="center">
+            <Flex justify="center" align="center">
                 <Form
                     variant="filled"
                     labelCol={{span: 7}}

@@ -11,6 +11,7 @@ import TextArea from "antd/es/input/TextArea";
 import ImgCropModal from "@/components/ImgCropModal";
 import { UploadService, UploadType } from "@/services/upload.service";
 import translateRequestError from "@/utils/ErrorUtils";
+import {getUserAvatar} from "@/utils/OtherUtils";
 
 export default function AccountSettingsPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
@@ -165,8 +166,8 @@ export default function AccountSettingsPage() {
                             shape={"square"}
                             src={avatarURL}
                         ></Avatar>
-                        <Button disabled={avatarURL === ""} type="default" icon={<DeleteOutlined/>} onClick={() => {
-                            setAvatarURL("");
+                        <Button disabled={avatarURL?.startsWith("/imgs") || avatarURL === ""} type="default" icon={<DeleteOutlined/>} onClick={() => {
+                            setAvatarURL(getUserAvatar(undefined));
                             setFileList([]);
                         }} style={{
                             position: "absolute",
@@ -206,15 +207,6 @@ export default function AccountSettingsPage() {
                            onChange={e => setLastName(e.target.value)}
                     ></Input>
                 </div>
-            </div>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--gap-half)",
-                marginBottom: "var(--gap)"
-            }}>
-                <span>Про себе</span>
-                <TextArea rows={4} value={"NOT IMPLEMENTED"}></TextArea>
             </div>
 
             <Button loading={loading} disabled={loading} type="primary" style={{marginLeft: "auto"}} onClick={save}>Зберегти</Button>
