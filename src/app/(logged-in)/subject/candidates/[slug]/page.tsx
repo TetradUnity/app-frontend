@@ -8,6 +8,8 @@ import { DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Input, Modal, Radio, Space, Spin, Table, TableColumnsType, Tooltip } from "antd";
 
 import styles from "@/styles/announced_subject.module.css";
+import "./fixANTD.css";
+
 import { UploadService, UploadType } from "@/services/upload.service";
 import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
@@ -51,7 +53,9 @@ const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateI
             onCancel={close}
             maskClosable
             centered
-            width={650}
+            style={{
+                padding: 10
+            }}
         >
             <Divider />
 
@@ -127,20 +131,19 @@ export default function AnnouncedSubject() {
             width: 1,
             render: (_, record, index) => {
                 return (
-                   <div style={{display: "block", margin: "auto", width: "fit-content"}}>
+                   <div style={{display: "flex", margin: "auto", width: "fit-content", gap: "var(--gap-half)"}}>
                         <Tooltip title="Відказати студенту бути участником вашого предмету">
                             <Button
                                 type="primary"
                                 shape="circle"
                                 danger
                                 icon={<DeleteOutlined />}
-                                style={{display: "inline-block", marginRight: 5}}
                                 onClick={() => rejectStudent(record.id, index)}
                             />
                         </Tooltip>
 
                        {hasExam &&
-                        <Tooltip title="Подробніше">
+                        <Tooltip title="Детальніше">
                             <Button
                                 type="dashed"
                                 shape="circle"
@@ -338,11 +341,8 @@ export default function AnnouncedSubject() {
                     pagination={false}
                 />
 
-                <div style={{display: "block", marginLeft: "auto", width: "fit-content", marginTop: 15}}>
+                <div className={styles.buttons}>
                     <Button
-                        style={{
-                            marginRight: 10
-                        }}
                         type="primary"
                         onClick={cancelSubject}
                         danger

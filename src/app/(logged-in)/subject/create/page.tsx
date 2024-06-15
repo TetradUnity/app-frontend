@@ -661,7 +661,7 @@ export default function CreateSubjectPage() {
                 </Form.Item>
 
                 <Form.Item required label="Повний опис предмету:">
-                    <p>Тут можна форматувати текст. Подробніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
+                    <p>Тут можна форматувати текст. Детальніше за посиланням <a href="/faq/text_formatting">тут.</a></p>
                     <p>Опис має складатись як мінімум з 50 символів.</p>
                     <Tiptap
                         ref={descRef}

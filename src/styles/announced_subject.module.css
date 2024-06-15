@@ -71,6 +71,13 @@
     font-style: italic;
 }
 
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--gap);
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 768px) {
     .banner h1 {
         font-size: 1.5em;
@@ -79,7 +86,7 @@
         font-size: 1em;
     }
     .banner {
-        height: 200px;
+        height: 170px;
     }
 }
 
@@ -91,6 +98,12 @@
         font-size: 0.8em;
     }
     .banner {
-        height: 150px;
+        height: 120px;
+    }
+    .content {
+        padding: 12px;
+    }
+    .buttons {
+        flex-direction: column;
     }
 }
