@@ -1,3 +1,4 @@
+
 'use client'
 
 import { api, catchApiError } from "@/api";
@@ -8,6 +9,7 @@ import {
     IResponse,
     ITArrResponse,
     ITResponse,
+    Responses,
     TestsNamespace
 } from "@/types/api.types";
 
@@ -20,7 +22,7 @@ export type filterProps = {
 };
 export const AnnouncedSubjectService = {
     // student or guest
-    async startExam(uid: string): Promise<ITResponse<TestsNamespace.ProdTest> & {time_end?: number, savedAnswers?: TestsNamespace.AnswerType[]}> {
+    async startExam(uid: string): Promise<Responses.StartExamResponse> {
         try {
             const response = await api.post("/subject/start-exam", {}, {
                 params: { uid }
@@ -51,7 +53,7 @@ export const AnnouncedSubjectService = {
         }
     },
 
-    async finishExam(uid: string, answers: TestsNamespace.AnswerType[]): Promise<IResponse & {result?: number, passing_grade?: number}> {
+    async finishExam(uid: string, answers: TestsNamespace.AnswerType[]): Promise<Responses.FinishExamResponse> {
         try {
             const response = await api.post("/subject/send-answer-exam", {
                 answer: JSON.stringify(answers), uid
@@ -67,7 +69,7 @@ export const AnnouncedSubjectService = {
         }
     },
 
-    async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number}> {
+    async getAnnouncedSubjects(page=1, filters?: filterProps): Promise<Responses.GetAnnouncedSubjectsResponse> {
         try {
             const response = await api.post("/subject/get-announce-subjects", {
                 title: filters?.title,
@@ -89,7 +91,7 @@ export const AnnouncedSubjectService = {
         }
     },
 
-    async getAnnouncedSubjectInfo(id: number): Promise<ITResponse<IAnnouncedSubject>> {
+    async getAnnouncedSubjectInfo(id: number): Promise<Responses.GetAnnouncedSubjectResponse> {
         try {
             const response = await api.get("/subject/get-detail-announce-subject", {
                 params: {
@@ -107,7 +109,7 @@ export const AnnouncedSubjectService = {
     },
     async register(subject_id: number, email?: string, first_name?: string, last_name?: string): Promise<IResponse> {
         try {
-            const response = await api.post("/subject/apply-subject", {
+            await api.post("/subject/apply-subject", {
                 subject_id, email,
                 first_name, last_name
             });
@@ -147,7 +149,7 @@ export const AnnouncedSubjectService = {
             return catchApiError(e);
         }
     },
-    async getCandidates(subjectId: number, page: number): Promise<ITArrResponse<ICandidate> & {title?: string, banner?: string, has_exam?: boolean, average_result?: number, count_candidates?: number}> {
+    async getCandidates(subjectId: number, page: number): Promise<Responses.GetCandidatesResponse> {
         try {
             const response = await api.get("/subject/get-candidates", {
                params: { subjectId, page }
@@ -166,7 +168,7 @@ export const AnnouncedSubjectService = {
            return catchApiError(e);
        }
     },
-    async getAnswersCandidate(id: number): Promise<ITResponse<TestsNamespace.CandidateQuestion[]>> {
+    async getAnswersCandidate(id: number): Promise<Responses.GetAnswersCandidateResponse> {
         try {
             const response = await api.get("/subject/get-answers-candidate", {
                params: { id }

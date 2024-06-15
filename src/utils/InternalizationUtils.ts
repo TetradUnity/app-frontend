@@ -1,6 +1,6 @@
 'use client';
 
-import { SubjectNamespace } from "@/types/api.types";
+import { ICertificate, SubjectNamespace } from "@/types/api.types";
 
 export function pluralize(count: number, words: string[]): string {
     var cases = [2, 0, 1, 1, 1, 2];
@@ -17,4 +17,16 @@ export function translateGradeReason(type: SubjectNamespace.IGrade["reason"]) {
     }
 
     return "тест"; 
+}
+
+export function translateCertificatyType(type: ICertificate["type"]) {
+    if (type == "EXCELLENT_RESULTS") {
+        return "За відмінні результати!";
+    }
+
+    if (type == "GOOD_RESULTS") {
+        return "За гарні результати!";
+    }
+    
+    return "За участь!"; 
 }

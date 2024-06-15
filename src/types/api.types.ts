@@ -277,3 +277,76 @@ export interface ICertificate {
     title: string,
     type: "PARTICIPATION" | "GOOD_RESULTS" | "EXCELLENT_RESULTS"
 }
+
+export namespace Responses {
+    // announced_subject.service.ts
+    export type StartExamResponse = ITResponse<TestsNamespace.ProdTest> & {
+        time_end?: number,
+        savedAnswers?: TestsNamespace.AnswerType[]
+    };
+    export type FinishExamResponse = IResponse & {result?: number, passing_grade?: number};
+    export type GetAnnouncedSubjectsResponse = ITArrResponse<IAnnouncedSubjectShort> & {count_pages?: number};
+    export type GetAnnouncedSubjectResponse = ITResponse<IAnnouncedSubject>;
+    export type GetCandidatesResponse = ITArrResponse<ICandidate> & {
+        title?: string,
+        banner?: string,
+        has_exam?: boolean,
+        average_result?: number,
+        count_candidates?: number
+    };
+    export type GetAnswersCandidateResponse = ITResponse<TestsNamespace.CandidateQuestion[]>;
+
+    // calendar.service.ts
+    export type GetMonthResponse = ITResponse<SubjectNamespace.IGrade[] | SubjectNamespace.IEvent[]>;
+
+    // certificate.service.ts
+    export type GetCertifacatesResponse = ITResponse<ICertificate[]>;
+    export type CheckCertificateResponse = IResponse & { isCorrect?: boolean };
+
+    // chief_teacher.service.ts
+    export type FindTeacherByEmailResponse = ITArrResponse<ISearchUserResult>;
+    export type CreateSubjectResponse = IResponse & {subject_id?: number};
+
+    // conference.service.ts
+    export type CreateConferenceResponse = IResponse & {id?: number};
+
+    // education.service.ts
+    export type GetEducationMaterialsResponse = ITArrResponse<SubjectNamespace.IEducationMaterial>;
+    export type GetEducationMaterialResponse = ITResponse<SubjectNamespace.ISingleEducationMaterial & SubjectNamespace.ISingleEducationTest>;
+    export type StartTestResponse = ITResponse<TestsNamespace.ProdTest> & {
+        savedAnswers?: TestsNamespace.AnswerType[];
+        time_end?: number
+    };
+    export type SendHomeworkResponse = IResponse & {
+        result?: number
+    };
+    export type ViewHomeworksResponse = ITArrResponse<SubjectNamespace.IStudentHomeworkShortInfo> & {
+        count_homework?: number,
+        average_grade?: number
+    };
+    export type ViewHomeworkResponse = ITResponse<TestsNamespace.Question[] | string[]>;
+
+    // grade.service.ts
+    export type GetGradesResponse = ITArrResponse<SubjectNamespace.IGrade>;
+
+    // subject.service.ts
+    export type GetSubjectsResponse = ITArrResponse<SubjectNamespace.ISubjectShort>;
+    export type GetSubjectResponse = ITResponse<SubjectNamespace.ISubject>;
+    export type GetStudentsResponse = ITArrResponse<IStudentShortInfo> & {
+        count?: number
+    };
+    export type GetAllStudentsResponse = ITArrResponse<IStudentShortInfo>;
+    export type FinishSubjectResponse = IResponse & {
+        no_rate_task_id?: number,
+        no_rate_task_title?: string,
+        no_ended_task_id?: number,
+        no_ended_task_title?: string,
+    };
+
+    // tags.service.ts
+    export type TagsSearchResponse = ITResponse<string[]>;
+
+    // user.service.ts
+    export type GetProfileResponse = ITResponse<IUser>;
+    export type FindUsersResponse = ITResponse<IUser[]>;
+}

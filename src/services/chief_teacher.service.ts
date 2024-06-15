@@ -1,11 +1,11 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { CreateSubjectParams, IResponse, ISearchUserResult, ITArrResponse } from "@/types/api.types";
+import { CreateSubjectParams, IResponse, ISearchUserResult, ITArrResponse, Responses } from "@/types/api.types";
 
 export const ChiefTeacherService = {
     // users
-    async findTeacherByEmail(emailFind: string, page?: number, limit?: number): Promise<ITArrResponse<ISearchUserResult>> {
+    async findTeacherByEmail(emailFind: string, page?: number, limit?: number): Promise<Responses.FindTeacherByEmailResponse> {
         try {
             const response = await api.get("/user/find-users", {
                 params: {
@@ -42,7 +42,7 @@ export const ChiefTeacherService = {
     },
 
     // subject
-    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam, banner} : CreateSubjectParams): Promise<IResponse & {subject_id?: number}> {
+    async createSubject({start, exam_end, title, short_description, description, duration, timetable, teacherEmail, tags, exam, banner} : CreateSubjectParams): Promise<Responses.CreateSubjectResponse> {
         try {
             const response = await api.post("/subject/create", {
                 time_start: start, time_exam_end: exam_end,

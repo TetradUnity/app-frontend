@@ -4,6 +4,7 @@ import { api, catchApiError } from "@/api";
 import {
     IResponse,
     ITArrResponse,
+    Responses,
     SubjectNamespace
 } from "@/types/api.types";
 
@@ -23,7 +24,7 @@ export const GradeService = {
         }
     },
 
-    async getGrades(subject_id: number, page?: number): Promise<ITArrResponse<SubjectNamespace.IGrade>> {
+    async getGrades(subject_id: number, page?: number): Promise<Responses.GetGradesResponse> {
         try {
             const response = await api.get("/grade/get-grades", {
                 params: { subject_id, page }

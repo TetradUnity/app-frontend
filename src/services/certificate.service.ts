@@ -4,11 +4,12 @@ import {api, catchApiError} from "@/api";
 import {
     ICertificate,
     IResponse,
-    ITArrResponse
+    ITResponse,
+    Responses
 } from "@/types/api.types";
 
 export const CertificateService = {
-    async getCertificates(student_id: number): Promise<ITArrResponse<ICertificate[]>> {
+    async getCertificates(student_id: number): Promise<Responses.GetCertifacatesResponse> {
         try {
             const response = await api.get("/certificate/get-certificates", {
                 params: {
@@ -25,9 +26,9 @@ export const CertificateService = {
         }
     },
 
-    async checkCertificate(uid: string): Promise<IResponse & { isCorrect?: boolean }> {
+    async checkCertificate(uid: string): Promise<Responses.CheckCertificateResponse> {
         try {
-            const response = await api.post("/certificate/check-certificate", {}, {
+            const response = await api.get("/certificate/check-certificate", {
                 params: {uid}
             });
 

@@ -3,13 +3,12 @@
 import { api, catchApiError } from "@/api";
 import {
     IResponse,
-    IStudentShortInfo,
     ITArrResponse,
-    ITResponse, SubjectNamespace, TestsNamespace
+    ITResponse, Responses, SubjectNamespace, TestsNamespace
 } from "@/types/api.types";
 
 export const EducationService = {
-    async getEducationMaterials(subjectId: number, page: number): Promise<ITArrResponse<SubjectNamespace.IEducationMaterial>> {
+    async getEducationMaterials(subjectId: number, page: number): Promise<Responses.GetEducationMaterialsResponse> {
         try {
             const response = await api.get("/education/get-education-materials", {
                 params: { subject_id: subjectId, page: page }
@@ -36,7 +35,7 @@ export const EducationService = {
         }
     },
 
-    async getEducationMaterial(educationId: number): Promise<ITResponse<SubjectNamespace.ISingleEducationMaterial & SubjectNamespace.ISingleEducationTest>> {
+    async getEducationMaterial(educationId: number): Promise<Responses.GetEducationMaterialResponse> {
         try {
             const response = await api.post("/education/open-education-material", {}, {
                 params: { education_id: educationId }
@@ -65,7 +64,7 @@ export const EducationService = {
         }
     },
 
-    async startTest(educationMaterialId: number): Promise<ITResponse<TestsNamespace.ProdTest> & {savedAnswers?: TestsNamespace.AnswerType[]; time_end?: number}> {
+    async startTest(educationMaterialId: number): Promise<Responses.StartTestResponse> {
         try {
             const response = await api.post("/education/start-test", {}, {
                 params: { education_id: educationMaterialId }
@@ -98,7 +97,7 @@ export const EducationService = {
         }
     },
 
-    async sendHomework(educationMaterialId: number, content: TestsNamespace.AnswerType[] | string[]): Promise<IResponse & {result?: number}> {
+    async sendHomework(educationMaterialId: number, content: TestsNamespace.AnswerType[] | string[]): Promise<Responses.SendHomeworkResponse> {
         try {
             const response = await api.post("/education/send-homework", {
                 "model": JSON.stringify(content)
@@ -115,7 +114,7 @@ export const EducationService = {
         }
     },
 
-    async viewHomeworks(educationMaterialId: number, page: number): Promise<ITArrResponse<SubjectNamespace.IStudentHomeworkShortInfo> & {count_homework?: number, average_grade?: number}> {
+    async viewHomeworks(educationMaterialId: number, page: number): Promise<Responses.ViewHomeworksResponse> {
         try {
             const response = await api.get("/education/view-homeworks", {
                 params: { education_id: educationMaterialId, page }
@@ -132,7 +131,7 @@ export const EducationService = {
         }
     },
 
-    async viewHomework(gradeId: number): Promise<ITResponse<TestsNamespace.Question[] | string[]>> {
+    async viewHomework(gradeId: number): Promise<Responses.ViewHomeworkResponse> {
         try {
             const response = await api.post("/education/view-homework", {}, {
                 params: { grade_id: gradeId }

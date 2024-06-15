@@ -1,12 +1,12 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { IResponse, ITResponse, IUser } from "@/types/api.types";
+import { IResponse, ITResponse, IUser, Responses } from "@/types/api.types";
 
 export type EditProfileProps = {email?: string, password?: string, first_name?: string, last_name?: string, oldPassword?: string, avatar?: string};
 
 export const UserService = {
-    async getProfile(userId?: number): Promise<ITResponse<IUser>> {
+    async getProfile(userId?: number): Promise<Responses.GetProfileResponse> {
         try {
             const response = await api.get("/user/get", {
                 params: {
@@ -43,7 +43,7 @@ export const UserService = {
         }
     },
 
-    async findUsers({email, first_name, last_name, role, limit, page}: {email?: string, first_name?: string, last_name?: string, role: "TEACHER" | "STUDENT", limit: number, page: number}): Promise<ITResponse<IUser[]>> {
+    async findUsers({email, first_name, last_name, role, limit, page}: {email?: string, first_name?: string, last_name?: string, role: "TEACHER" | "STUDENT", limit: number, page: number}): Promise<Responses.FindUsersResponse> {
         try {
             const response = await api.get("/user/find-users", {
                 params: {

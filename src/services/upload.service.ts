@@ -69,8 +69,5 @@ export const UploadService = {
     },
     getImageURLByPath: (path: string): string => {
         return `${API_URL}/storage/download?path=${path}`;
-    },
-    getCertificate: (uid: string): string => {
-        return `${API_URL}/storage/download?path=certificates/${uid}.pdf`;
     }
 }

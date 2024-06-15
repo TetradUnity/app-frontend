@@ -5,36 +5,7 @@ import { useState } from "react";
 import { FileFilled, EyeFilled, DownloadOutlined } from "@ant-design/icons";
 
 import styles from "./subject/ResultForTeacher/styles.module.css";
-import { fileIsImage } from "@/utils/OtherUtils";
-
-const handleDownload = (fileUrl: string) => {
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-    var img = new Image();
-    img.src = fileUrl;
-    img.setAttribute('crossOrigin', '');
-
-    var array = fileUrl.split("/");
-    var fileName = array[array.length - 1];
-
-    img.onload = function() {
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        ctx.drawImage(img,
-            0, 0, img.naturalWidth, img.naturalHeight,
-            0, 0, canvas.width, canvas.height);
-
-        var dataUrl = canvas.toDataURL("image/png", 1);
-
-        var a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-};
+import { fileIsImage, handleDownload } from "@/utils/OtherUtils";
 
 type Props = {
     files: {

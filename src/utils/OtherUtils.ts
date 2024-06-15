@@ -37,3 +37,13 @@ export function dayjsTimeToMs(dayjs: Dayjs | null): number {
 
   return seconds * 1000;
 }
+
+export const handleDownload = (url: string) => {
+  console.log(url.split('/').pop()!)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = url.split('/').pop()!
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+};

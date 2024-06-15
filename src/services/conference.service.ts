@@ -2,7 +2,8 @@
 
 import { api, catchApiError } from "@/api";
 import {
-    IResponse
+    IResponse,
+    Responses
 } from "@/types/api.types";
 
 type ConferenceCreateParams = {
@@ -12,7 +13,7 @@ type ConferenceCreateParams = {
 }
 
 export const ConferenceService = {
-    async createConference(params : ConferenceCreateParams): Promise<IResponse & {id?: number}> {
+    async createConference(params : ConferenceCreateParams): Promise<Responses.CreateConferenceResponse> {
         try {
             const response = await api.post("/conference/create", params);
 
