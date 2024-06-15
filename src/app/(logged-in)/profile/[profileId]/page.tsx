@@ -1,5 +1,5 @@
 'use client'
-import {Avatar, Button, Empty, Flex, Image, message} from "antd";
+import {Avatar, Button, Empty, message} from "antd";
 import {ContainerOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import {useEffect, useState} from "react";
@@ -7,8 +7,11 @@ import styles from "./styles.module.css";
 import {useProfileStore} from "@/stores/profileStore";
 import {useQueryProfileStore} from "@/stores/queryProfileStore";
 import {CertificateService} from "@/services/certificate.service";
-import {UploadService} from "@/services/upload.service";
 import {ICertificate} from "@/types/api.types";
+import { handleDownload } from "@/utils/OtherUtils";
+import { DownloadOutlined } from "@ant-design/icons";
+import { UploadService, UploadType } from "@/services/upload.service";
+import { translateCertificatyType } from "@/utils/InternalizationUtils";
 
 function localizeRole(role: string) {
     switch (role) {
@@ -28,15 +31,16 @@ export default function ProfileHead() {
     const profile = useQueryProfileStore();
 
     const [certificatesVisible, setCertificatesVisible] = useState(false);
-    const [certificates, setCertificates] = useState([]);
+    const [certificates, setCertificates] = useState<ICertificate[]>([]);
+
+    const [msg, msgCtx] = message.useMessage();
 
     const fetchCertificates = () => {
         CertificateService.getCertificates(profile.id).then(response => {
             if (response.success) {
-                // @ts-ignore
-                setCertificates(response.data);
+                setCertificates(response.data!);
             } else {
-                message.error("Помилка завантаження сертифікатів");
+                msg.error("Помилка завантаження сертифікатів");
             }
         })
     }
@@ -75,11 +79,13 @@ export default function ProfileHead() {
                         </Link>
                     }
 
-                    <Button type="text" icon={<ContainerOutlined/>} onClick={toggleCertificates} style={{
-                        padding: "0 8px",
-                        display: "flex",
-                        alignItems: "center"
-                    }}>Сертифікати</Button>
+                    {profile.role == "STUDENT" &&
+                        <Button type="text" icon={<ContainerOutlined/>} onClick={toggleCertificates} style={{
+                            padding: "0 8px",
+                            display: "flex",
+                            alignItems: "center"
+                        }}>Сертифікати</Button>
+                    }
                 </div>
             </div>
             {certificatesVisible &&
@@ -100,18 +106,24 @@ export default function ProfileHead() {
                             display: "flex",
                             gap: 'var(--gap)',
                             alignItems: "center",
-                            justifyContent: "space-between"
+                            justifyContent: "space-between",
+                            width: "100%"
                         }}>
                             <div>
-                                <strong>{certificate.title}</strong>
-                                <p>{certificate.uid}</p>
+                                <strong style={{fontSize: 23}}>{certificate.title}</strong>
+                                <p>{translateCertificatyType(certificate.type)}</p>
                             </div>
-                            {/*TODO implement certificate view*/}
-                            <Image src={UploadService.getCertificate(certificate.uid)} width={64} height={64}/>
+
+                            <Button
+                                icon={<DownloadOutlined />}
+                                type="dashed"
+                                shape="circle"
+                                onClick={() => handleDownload(UploadService.getImageURL(UploadType.CERTIFICATES, certificate.uid))}
+                            />
                         </div>
                     )) : <Empty description="Сертифікати відсутні"/>}
-
                 </div>}
+                {msgCtx}
         </>
     );
 }

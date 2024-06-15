@@ -466,7 +466,7 @@ export const TestConstructor = React.forwardRef(function TestConstructor({passin
 
             return [
                 {
-                    time: dayjsTimeToMs(testDuration),
+                    time: testDuration ? dayjsTimeToMs(testDuration) : -1,
                     ...(passingGradeEnabled ? {passing_grade: passingGrade} : {})
                 },
                 ...data

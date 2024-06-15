@@ -1,10 +1,10 @@
 'use client'
 
 import { api, catchApiError } from "@/api";
-import { ITResponse } from "@/types/api.types";
+import { Responses } from "@/types/api.types";
 
 export const TagsService = {
-    async search(query: string): Promise<ITResponse<string[]>> {
+    async search(query: string): Promise<Responses.TagsSearchResponse> {
         try {
             const response = await api.get("/tag/find-tags-prefix", {
                 params: {

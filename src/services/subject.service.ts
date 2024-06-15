@@ -6,12 +6,13 @@ import {
     IStudentShortInfo,
     ITArrResponse,
     ITResponse,
+    Responses,
     SubjectNamespace
 } from "@/types/api.types";
 import { isAxiosError } from "axios";
 
 export const SubjectService = {
-    async getSubjects(): Promise<ITArrResponse<SubjectNamespace.ISubjectShort>> {
+    async getSubjects(): Promise<Responses.GetSubjectsResponse> {
         try {
             const response = await api.get("/subject/get-subjects");
 
@@ -24,7 +25,7 @@ export const SubjectService = {
         }
     },
 
-    async getSubject(subjectId: number): Promise<ITResponse<SubjectNamespace.ISubject>> {
+    async getSubject(subjectId: number): Promise<Responses.GetSubjectResponse> {
         try {
             const response = await api.get("/subject/get", {
                 params: { subjectId }
@@ -39,7 +40,7 @@ export const SubjectService = {
         }
     },
 
-    async getStudents(subjectId: number, page: number): Promise<ITArrResponse<IStudentShortInfo> & {count?: number}> {
+    async getStudents(subjectId: number, page: number): Promise<Responses.GetStudentsResponse> {
         try {
             const response = await api.get("/subject/get-students", {
                 params: { subject_id: subjectId, page }
@@ -55,7 +56,7 @@ export const SubjectService = {
         }
     },
 
-    async getAllStudents(subjectId: number): Promise<ITArrResponse<IStudentShortInfo>> {
+    async getAllStudents(subjectId: number): Promise<Responses.GetAllStudentsResponse> {
         try {
             const response = await api.get("/subject/get-all-students", {
                 params: { subject_id: subjectId }
@@ -70,12 +71,7 @@ export const SubjectService = {
         }
     },
 
-    async finishSubject(subject_id: number): Promise<IResponse & {
-        no_rate_task_id?: number,
-        no_rate_task_title?: string,
-        no_ended_task_id?: number,
-        no_ended_task_title?: string,
-    }> {
+    async finishSubject(subject_id: number): Promise<Responses.FinishSubjectResponse> {
         try {
             const response = await api.delete("/subject/finish-subject", {
                params: { subject_id }

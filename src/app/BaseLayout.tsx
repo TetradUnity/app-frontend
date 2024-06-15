@@ -1,5 +1,5 @@
 'use client'
-import {ConfigProvider, Layout, theme} from "antd";
+import {ConfigProvider, Layout, Spin, theme} from "antd";
 import Header from "@/components/Header";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 
@@ -12,9 +12,13 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useDeviceStore } from "@/stores/deviceStore";
 import { useShallow } from "zustand/react/shallow";
 import { Suspense, useEffect } from "react";
+import ProgressBarProvider from "@/providers/ProgressBarProvider";
+import { pdfjs } from "react-pdf";
 
 dayjs.locale('uk');
 dayjs.extend(relativeTime);
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function BaseLayout({
                                        children,
@@ -30,7 +34,7 @@ export default function BaseLayout({
 
         handleWindowSizeChange();
         window.addEventListener('resize', handleWindowSizeChange);
-        return () =>window.removeEventListener('resize', handleWindowSizeChange);
+        return () => window.removeEventListener('resize', handleWindowSizeChange);
     }, []);
 
     return (
@@ -62,18 +66,21 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                    <Suspense fallback={<></>}>
-                        <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
-                            <Header />
-                            <div style={{
-                                maxWidth:"1200px",
-                                margin: "0 auto",
-                                width: "100%",
-                                padding: "0 16px",
-                            }}>
-                                {children}
-                            </div>
-                        </Layout>
+                    <Suspense fallback={<Spin spinning fullscreen />}>
+                        <ProgressBarProvider>
+                            <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
+                                <Header />
+
+                                <div style={{
+                                    maxWidth:"1200px",
+                                    margin: "0 auto",
+                                    width: "100%",
+                                    padding: "0 16px",
+                                }}>
+                                    {children}
+                                </div>
+                            </Layout>
+                        </ProgressBarProvider>
                     </Suspense>
             </ConfigProvider>
         </AntdRegistry>

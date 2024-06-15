@@ -79,7 +79,7 @@ export const AuthService = {
     // chief teacher
     async register(email: string, first_name: string, last_name: string, password: string, role: string): Promise<IResponse> {
         try {
-            const response = await api.post("/authorization/create-admin", {
+            await api.post("/authorization/create-admin", {
                 email, first_name, last_name, password, role
             });
 
