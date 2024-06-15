@@ -83,7 +83,7 @@ export default function AppHeader() {
         {key: 'divider', type: 'divider'},
         {
             label: (
-                <Link href={`/profile/${profile.id}/subjects`} style={{display: "flex", alignItems: "center"}}>
+                <Link href={`/home`} style={{display: "flex", alignItems: "center"}}>
                     <BookOutlined/>
                     <div style={{paddingLeft: 8}}>Мої предмети</div>
                 </Link>

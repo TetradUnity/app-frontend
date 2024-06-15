@@ -325,7 +325,7 @@ export default function PassTestPage({isEducation}: Props) {
                         <h2>Навігація</h2>
                         <div className={styles.navigationButtons}>
                             {questions.map((question, i) =>
-                            <div className={styles.navBtnWrapper}>
+                            <div key={i} className={styles.navBtnWrapper}>
                                 <Button
                                     key={i}
                                     type={

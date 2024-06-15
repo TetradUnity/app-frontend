@@ -30,7 +30,7 @@ export default function Filters({withExam, setWithExam, teacherFirstName, setTea
                 <h4 style={{marginBottom: 5}}>Вчитель:</h4>
                 <div>
                     <Flex gap={38}>
-                        <p>Ім'я:</p>
+                        <p>Ім&apos;я:</p>
                         <Input
                             value={teacherFirstName}
                             onChange={e => setTeacherFirstName(e.target.value)}

@@ -69,7 +69,7 @@ export default function LandPage() {
                         </div>
                         <div className={styles.item}>
                             <VideoCameraOutlined className={styles.icon}/>
-                            <h3>Підтримка відеозв'язку</h3>
+                            <h3>Підтримка відеозв&apos;язку</h3>
                             <p>Легке надання посилань на відеоконференції.</p>
                         </div>
                         <div className={styles.item}>

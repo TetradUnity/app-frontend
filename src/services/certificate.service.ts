@@ -10,7 +10,7 @@ import {
 export const CertificateService = {
     async getCertificates(student_id: number): Promise<ITArrResponse<ICertificate[]>> {
         try {
-            const response = await api.get("/get-certificates", {
+            const response = await api.get("/certificate/get-certificates", {
                 params: {
                     student_id: student_id
                 }
