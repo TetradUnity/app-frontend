@@ -95,6 +95,7 @@ export default function SecuritySettings() {
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
                         gridTemplateRows: "auto auto",
+                        alignItems: "flex-end",
                         gap: "var(--gap-half)",
                         marginBottom: "var(--gap)",
                         width: "100%"
@@ -102,7 +103,7 @@ export default function SecuritySettings() {
                         <Form.Item label="Старий пароль">
                             <Input.Password onChange={e => setPassword(e.target.value)}/>
                         </Form.Item>
-                        <div></div>
+                        <div/>
                         <Form.Item label="Новий пароль">
                             <Input.Password onChange={e => setNewPassword(e.target.value)}/>
                         </Form.Item>

@@ -1,79 +1,47 @@
-.teacherLink {
-    width: max-content;
-    opacity: 0.7;
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-primary);
-}
-
-.teacherLink:hover {
-    text-decoration: underline;
-    color: var(--text-primary);
-}
-
-.subjectTitle {
-    width: max-content;
-    max-width: 100%;
-    font-size: 22px;
-    white-space: nowrap;
-    color: var(--text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.grid {
-    display: grid;
-    gap: var(--gap);
-    grid-template:
-        "sidebar search"
-        "sidebar content" 1fr / auto 1fr;
-}
-
-.filterDiv {
-    display: block;
-    position: sticky;
-    top: calc(56px + var(--gap));
-    background: var(--foreground);
-    border-radius: 8px;
-    padding: 12px 0;
-    width: max-content;
-    height: max-content;
-    z-index: 50;
-    grid-area: sidebar;
-}
-
-.filterBtn {
-    display: none;
-}
-
-.subjectTitle:hover {
-    text-decoration: underline;
-}
-
-.subjectList:not(:first-child) {
-    border-top: solid 1px #444;
-    border-radius: 0;
-}
-.subjectList {
+.container {
+    padding: 12px 16px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: var(--gap);
+    background: var(--foreground);
+    border-radius: 8px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    justify-content: center;
+}
+
+.info {
+    display: flex;
+    gap: var(--gap);
     align-items: center;
-    padding: 12px 16px;
 }
 
 @media screen and (max-width: 768px) {
-    .filterDiv {
-        display: none;
+    .container {
+        flex-direction: column;
     }
-    .grid {
-        grid-template:
-            "search"
-            "content" 1fr / 1fr;
+    .buttons {
+        flex-direction: row;
     }
-    .filterBtn {
-        display: flex;
+}
+
+@media screen and (max-width: 536px) {
+    .container {
+        padding: 8px 12px;
+    }
+    .buttons {
+        gap: var(--gap-half);
+    }
+    .info {
+        flex-direction: column;
+        justify-content: center;
     }
 }

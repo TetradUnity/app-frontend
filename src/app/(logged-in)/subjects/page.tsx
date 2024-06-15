@@ -288,6 +288,7 @@ export default function Subjects() {
                 setTagInputValue={setTagInputValue}
                 setTagOptions={setTagOptions}
                 setTagDropdownVisible={setTagDropdownVisible}
+                className={styles.filterBlock}
             />
             <Modal visible={filterModalVisible} onCancel={() => setFilterModalVisible(false)} footer={null} centered>
                 <Filters
@@ -316,6 +317,7 @@ export default function Subjects() {
                     setTagInputValue={setTagInputValue}
                     setTagOptions={setTagOptions}
                     setTagDropdownVisible={setTagDropdownVisible}
+                    className={styles.filterModal}
                     style={{position: "static", width: "100%", background: 'none'}}
                 />
             </Modal>

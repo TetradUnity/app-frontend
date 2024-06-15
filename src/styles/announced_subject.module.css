@@ -3,10 +3,7 @@
     --bottom-radius: 10px;
 
     background: var(--foreground);
-    border-top-left-radius: var(--radius);
-    border-top-right-radius: var(--radius);
-    border-bottom-left-radius: var(--bottom-radius);
-    border-bottom-right-radius: var(--bottom-radius);
+    border-radius: var(--radius) var(--radius) var(--bottom-radius) var(--bottom-radius);
 
     margin-bottom: 30px;
 }
@@ -18,11 +15,13 @@
 
 .banner img {
     width: 100%;
+    height: 100%;
     position: absolute;
     border-top-left-radius: var(--radius);
     border-top-right-radius: var(--radius);
     user-select: none;
     pointer-events: none;
+    object-fit: cover;
 }
 
 .banner h1, .banner a {
@@ -49,7 +48,7 @@
     padding: 25px;
 }
 .content.no_padding {
-    padding: 0px;
+    padding: 0;
 }
 
 .content section {
@@ -72,8 +71,26 @@
     font-style: italic;
 }
 
-@media only screen and (max-device-width: 768px) {
-    .content section h1 {
-        font-size: 20px;
+@media screen and (max-width: 768px) {
+    .banner h1 {
+        font-size: 1.5em;
+    }
+    .banner a {
+        font-size: 1em;
+    }
+    .banner {
+        height: 200px;
+    }
+}
+
+@media screen and (max-width: 536px) {
+    .banner h1 {
+        font-size: 1.2em;
+    }
+    .banner a {
+        font-size: 0.8em;
+    }
+    .banner {
+        height: 150px;
     }
 }

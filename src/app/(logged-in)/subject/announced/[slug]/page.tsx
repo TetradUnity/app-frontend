@@ -5,7 +5,7 @@ import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 import { ProfileOutlined, LinkOutlined, CheckOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { Button, Spin } from "antd";
+import {Button, Image, Spin} from "antd";
 
 import styles from "@/styles/announced_subject.module.css";
 import Link from "next/link";

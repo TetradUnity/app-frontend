@@ -1,206 +1,117 @@
 'use client'
-import {Button, Divider, Flex, Image, Input, Modal, Radio, RadioChangeEvent, Space} from "antd";
-import {useEffect, useState} from "react";
-import {useProfileStore} from "@/stores/profileStore";
-import {FilterOutlined, RightOutlined, SearchOutlined} from "@ant-design/icons";
+import {Avatar, Button, Empty, Flex, Image, message} from "antd";
+import {ContainerOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
+import {useEffect, useState} from "react";
 import styles from "./styles.module.css";
-import SubjectCard from "@/components/cards/SubjectCard";
+import {useProfileStore} from "@/stores/profileStore";
 import {useQueryProfileStore} from "@/stores/queryProfileStore";
-import { tempSubjects, tempTeachers } from "@/app/temporary/data";
+import {CertificateService} from "@/services/certificate.service";
+import {UploadService} from "@/services/upload.service";
+import {ICertificate} from "@/types/api.types";
 
-// @ts-ignore
-const OpenFilterModal = ({openFilterVisible, setOpenFilterVisible, view, setView, sort, setSort, sortOrder, setSortOrder}) => {
-    const onChangeSortOrder = (e: RadioChangeEvent) => {
-        setSortOrder(e.target.value)
-    };
-
-    const onChangeView = (e: RadioChangeEvent) => {
-        setView(e.target.value)
-    };
-
-    const onChangeSort = (e: RadioChangeEvent) => {
-        setSort(e.target.value)
-    };
-
-    return (
-        <Modal title="Фільтр"
-               visible={openFilterVisible}
-               onOk={() => setOpenFilterVisible(false)}
-               onCancel={() => setOpenFilterVisible(false)}
-               footer={null}
-               centered
-               >
-            <Radio.Group value={view} onChange={onChangeView} style={{margin: "8px 0", padding: "0 12px"}}>
-                <Space direction="vertical" size="small">
-                    <Radio value={"list"}>Список</Radio>
-                    <Radio value={"grid"}>Плитка</Radio>
-                </Space>
-            </Radio.Group>
-            <Divider style={{margin: 0}} plain orientation="left">Сортування</Divider>
-            <Radio.Group value={sort} onChange={onChangeSort} style={{margin: "8px 0", padding: "0 12px"}}>
-                <Space direction="vertical" size="small">
-                    <Radio value={"name"}>По назві</Radio>
-                    <Radio value={"enrollDate"}>По даті приєднання</Radio>
-                    <Radio value={"updateDate"}>По даті обновлення</Radio>
-                    <Radio value={"studentCount"}>По кількості студентів</Radio>
-                </Space>
-            </Radio.Group>
-            <Divider style={{margin: 0}}></Divider>
-            <Radio.Group value={sortOrder} onChange={onChangeSortOrder}
-                         style={{margin: "8px 0", padding: "0 12px"}}>
-                <Space direction="vertical" size="small">
-                    <Radio value={"asc"}>За зростанням</Radio>
-                    <Radio value={"desc"}>За спаданням</Radio>
-                </Space>
-            </Radio.Group>
-        </Modal>
-    )
+function localizeRole(role: string) {
+    switch (role) {
+        case "STUDENT":
+            return "Студент";
+        case "TEACHER":
+            return "Викладач";
+        case "CHIEF_TEACHER":
+            return "Головний вчитель";
+        default:
+            return role;
+    }
 }
 
+export default function ProfileHead() {
+    const myRole = useProfileStore(store => store.role);
+    const profile = useQueryProfileStore();
 
-export default function ProfileSubjects() {
-    const [sort, setSort] = useState("name");
-    const [view, setView] = useState("list");
-    const [sortOrder, setSortOrder] = useState("asc");
-    const [searchText, setSearchText] = useState("");
+    const [certificatesVisible, setCertificatesVisible] = useState(false);
+    const [certificates, setCertificates] = useState([]);
 
-    const [openFilterVisible, setOpenFilterVisible] = useState(false);
-
-    const profile = useProfileStore();
-
-    const profileQuery = useQueryProfileStore();
-    useEffect(() => {
-        document.title = `Профіль / ${profileQuery.first_name} ${profileQuery.last_name}`
-    }, [])
-
-    const openFilterModal = () => {
-        setOpenFilterVisible(true)
+    const fetchCertificates = () => {
+        CertificateService.getCertificates(profile.id).then(response => {
+            if (response.success) {
+                // @ts-ignore
+                setCertificates(response.data);
+            } else {
+                message.error("Помилка завантаження сертифікатів");
+            }
+        })
     }
 
-    const onChangeSortOrder = (e: RadioChangeEvent) => {
-        setSortOrder(e.target.value)
-    };
+    const toggleCertificates = () => {
+        if (!certificatesVisible) {
+            fetchCertificates();
+        }
+        setCertificatesVisible(!certificatesVisible);
+    }
 
-    const onChangeView = (e: RadioChangeEvent) => {
-        setView(e.target.value)
-    };
+    useEffect(() => {
+        document.title = `Профіль / ${profile.first_name} ${profile.last_name}`
+    }, []);
 
-    const onChangeSort = (e: RadioChangeEvent) => {
-        setSort(e.target.value)
-    };
     return (
-        <div className={styles.grid}>
-            <div className={styles.filterDiv}>
-                <Divider style={{margin: 0}} plain orientation="left">Вигляд</Divider>
-                <Radio.Group value={view} onChange={onChangeView} style={{margin: "8px 0", padding: "0 12px"}}>
-                    <Space direction="vertical" size="small">
-                        <Radio value={"list"}>Список</Radio>
-                        <Radio value={"grid"}>Плитка</Radio>
-                    </Space>
-                </Radio.Group>
-                <Divider style={{margin: 0}} plain orientation="left">Сортування</Divider>
-                <Radio.Group value={sort} onChange={onChangeSort} style={{margin: "8px 0", padding: "0 12px"}}>
-                    <Space direction="vertical" size="small">
-                        <Radio value={"name"}>По назві</Radio>
-                        <Radio value={"enrollDate"}>По даті приєднання</Radio>
-                        <Radio value={"updateDate"}>По даті обновлення</Radio>
-                        <Radio value={"studentCount"}>По кількості студентів</Radio>
-                    </Space>
-                </Radio.Group>
-                <Divider style={{margin: 0}}></Divider>
-                <Radio.Group value={sortOrder} onChange={onChangeSortOrder}
-                             style={{margin: "8px 0", padding: "0 12px"}}>
-                    <Space direction="vertical" size="small">
-                        <Radio value={"asc"}>За зростанням</Radio>
-                        <Radio value={"desc"}>За спаданням</Radio>
-                    </Space>
-                </Radio.Group>
-            </div>
+        <>
+            <div className={styles.container}>
+                <div className={styles.info}>
+                    <Avatar src={profile.avatar_url} shape="square" alt='avatar' size={128} icon={<UserOutlined/>}/>
+                    <div>
+                        <strong style={{fontSize: 24}}>{profile.first_name + " " + profile.last_name}</strong>
+                        <p style={{color: 'var(--text-secondary)'}}>{localizeRole(profile.role)}</p>
+                        {myRole === "TEACHER" || myRole === "CHIEF_TEACHER" || profile.isMe ?
+                            <p style={{color: 'var(--text-secondary)'}}>{profile.email}</p> : null}
+                    </div>
+                </div>
+                <div className={styles.buttons}>
+                    {profile.isMe &&
+                        <Link href="/profile/settings">
+                            <Button type="text" icon={<SettingOutlined/>} style={{
+                                padding: "0 8px",
+                                display: "flex",
+                                alignItems: "center"
+                            }}>Налаштування</Button>
+                        </Link>
+                    }
 
-            <Flex vertical gap='var(--gap)' style={{minWidth: 300}}>
+                    <Button type="text" icon={<ContainerOutlined/>} onClick={toggleCertificates} style={{
+                        padding: "0 8px",
+                        display: "flex",
+                        alignItems: "center"
+                    }}>Сертифікати</Button>
+                </div>
+            </div>
+            {certificatesVisible &&
                 <div style={{
                     display: "flex",
-                    gap: "var(--gap-half)",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    padding: '12px 16px',
+                    borderRadius: 8,
+                    backgroundColor: "var(--foreground)",
+                    justifyContent: "center",
+                    gap: 'var(--gap)',
+
                 }}>
-                    <Input placeholder="Фільтр по назві" prefix={<SearchOutlined/>}
-                           onChange={e => setSearchText(e.target.value)}
-                           style={{position: "relative", flexGrow: 1, gridArea: "search",}}></Input>
-                    <div className={styles.filterBtn}>
-                        <Button icon={<FilterOutlined/>} style={{width: "64px"}} onClick={openFilterModal}></Button>
-                    </div>
-
-                </div>
-                {/* todo when subjects will be in api */}
-                {view === "list" ?
-                    <div style={{
-                        background: "var(--foreground)",
-                        borderRadius: 8,
-                        gridArea: "content",
-                    }}>
-                        {tempSubjects.map(subject => (
-                            <div className={styles.subjectList} key={subject.id}>
-                                <Flex gap="var(--gap)" align="center" style={{minWidth: "200px"}}>
-                                    <Link href={"/subject/" + subject.id} style={{
-                                        maxWidth: "160px",
-                                        minWidth: "160px",
-                                    }}>
-                                        <Image src={subject.banner} alt="subject baner" preview={false} style={{
-                                            width: "100%",
-                                            height: "90px",
-                                            borderRadius: "8px",
-                                            objectFit: "cover",
-                                            objectPosition: "center",
-                                        }}/>
-                                    </Link>
-                                    <div style={{
-                                        display: "block",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        minWidth: "100px",
-                                        whiteSpace: "nowrap",
-                                    }}>
-                                        <Link href="/subject/id">
-                                            <h3 className={styles.subjectTitle}>{subject.title}</h3>
-                                        </Link>
-                                        <Link className={styles.teacherLink} href={"/profile/" + subject.teacher_id}>{
-                                            tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.first_name + " " +
-                                            tempTeachers.find(teacher => teacher.id === subject.teacher_id)?.last_name
-                                        }</Link>
-                                    </div>
-                                </Flex>
-                                <Link href="/subject/id" style={{marginRight: "16px", color: "#fff"}}>
-                                    <RightOutlined/>
-                                </Link>
+                    <h3>Сертифікати</h3>
+                    {certificates.length > 0 ? certificates.map((certificate: ICertificate, i) => (
+                        <div key={i} style={{
+                            display: "flex",
+                            gap: 'var(--gap)',
+                            alignItems: "center",
+                            justifyContent: "space-between"
+                        }}>
+                            <div>
+                                <strong>{certificate.title}</strong>
+                                <p>{certificate.uid}</p>
                             </div>
-                        ))
+                            {/*TODO implement certificate view*/}
+                            <Image src={UploadService.getCertificate(certificate.uid)} width={64} height={64}/>
+                        </div>
+                    )) : <Empty description="Сертифікати відсутні"/>}
 
-                        }
-                    </div> :
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                        gap: "var(--gap)",
-                        gridArea: "content",
-                        minWidth: 0,
-                    }}>
-                        {tempSubjects.map(subject => (
-                            //@ts-ignore
-                            <SubjectCard subject={subject} key={subject.id}/>
-                        ))}
-                    </div>}
-
-                <OpenFilterModal
-                    openFilterVisible={openFilterVisible}
-                    setOpenFilterVisible={setOpenFilterVisible}
-                    view={view}
-                    setView={setView}
-                    sort={sort}
-                    setSort={setSort}
-                    sortOrder={sortOrder}
-                    setSortOrder={setSortOrder}
-                />
-            </Flex>
-        </div>
-    )
+                </div>}
+        </>
+    );
 }

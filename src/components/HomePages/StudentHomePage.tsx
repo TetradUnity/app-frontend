@@ -4,8 +4,9 @@ import styles from "@/components/HomePages/styles.module.css";
 import {tempSubjects} from "@/temporary/data";
 import SubjectCard from "@/components/cards/SubjectCard";
 import Foreground from "@/components/Foreground";
-import { ISubjectShort } from "@/types/api.types";
+import { SubjectNamespace } from "@/types/api.types";
 import { Divider, Empty } from "antd";
+import ISubjectShort = SubjectNamespace.ISubjectShort;
 
 type mockType = {
     active: ISubjectShort[],
@@ -20,7 +21,8 @@ const subjects: mockType = {
             banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
             teacher_first_name: "Youra",
             teacher_last_name: "Tuzolog",
-            teacher_id: 0
+            teacher_id: 0,
+            info: 0
         }
     ],
     other: [
@@ -31,7 +33,8 @@ const subjects: mockType = {
             banner: "https://realkm.com/wp-content/uploads/2020/02/teacher-cartoon-board-chalkboard-class-person-1449505-pxhere.com_.jpg",
             teacher_first_name: "Youra",
             teacher_last_name: "Tuzolog",
-            teacher_id: 0
+            teacher_id: 0,
+            info: 0
         }
     ]
 }
