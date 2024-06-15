@@ -57,7 +57,7 @@ export default function LoginPage() {
 
     return (
         <Content>
-            <Flex style={{padding: 20}} justify="center" align="center">
+            <Flex justify="center" align="center">
                 <Form
                     variant="filled"
                     labelCol={{span: 7}}

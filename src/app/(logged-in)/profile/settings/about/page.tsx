@@ -208,15 +208,6 @@ export default function AccountSettingsPage() {
                     ></Input>
                 </div>
             </div>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--gap-half)",
-                marginBottom: "var(--gap)"
-            }}>
-                <span>Про себе</span>
-                <TextArea rows={4} value={"NOT IMPLEMENTED"}></TextArea>
-            </div>
 
             <Button loading={loading} disabled={loading} type="primary" style={{marginLeft: "auto"}} onClick={save}>Зберегти</Button>
 
