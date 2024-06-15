@@ -119,7 +119,11 @@
 }
 
 .studentDeleteButton {
+    margin-left: 13px;
+}
 
+.segmented {
+    margin: 15px 0 !important;
 }
 
 @media screen and (max-width: 536px) {

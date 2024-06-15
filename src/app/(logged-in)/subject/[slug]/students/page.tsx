@@ -3,7 +3,7 @@
 import { IStudentShortInfo } from "@/types/api.types";
 import styles from "../styles.module.css";
 import Link from "next/link";
-import { Avatar, Button, Divider, Spin, message } from "antd";
+import { Avatar, Button, Divider, Modal, Spin, message } from "antd";
 import {getUserAvatar} from "@/utils/OtherUtils";
 import { useEffect, useRef, useState } from "react";
 import { SubjectService } from "@/services/subject.service";
@@ -36,19 +36,19 @@ function StudentSlot({item, deleteStudent, blocked} : {item: IStudentShortInfo, 
                         : null
                     }
                 </div>
-
-                {role == "TEACHER" &&
-                    <Button
-                        danger
-                        disabled={blocked}
-                        onClick={deleteStudent}
-                        icon={<DeleteOutlined />}
-                        className={styles.studentDeleteButton}
-                        type="primary"
-                        shape="circle"
-                    />
-                }
             </Link>
+
+            {role == "TEACHER" &&
+                <Button
+                    danger
+                    disabled={blocked}
+                    onClick={deleteStudent}
+                    icon={<DeleteOutlined />}
+                    className={styles.studentDeleteButton}
+                    type="primary"
+                    shape="circle"
+                />
+            }
          </div>
     )
 }
@@ -65,6 +65,8 @@ export default function SubjectStudentsPage() {
 
     const [blocked, setBlocked] = useState(false);
 
+    const [modal, modalCtx] = Modal.useModal();
+
     const fetchRef = useRef({
         loading: false,
         page: 1,
@@ -72,19 +74,24 @@ export default function SubjectStudentsPage() {
     });
 
     const deleteStudent = (id: number) => {
-        setBlocked(true);
+        modal.confirm({
+            title: "Видалення учня",
+            content: <p>Ви впевнені?</p>,
+            onOk: async () => {
+                setBlocked(true);
 
-        SubjectService.removeStudent(parseInt(slug as string), id).then(resp => {
-            setBlocked(false);
-
-            if (!resp.success) {
-                msg.error("Щось пішло не так: " + translateRequestError(resp.error_code));
-                return;
+                const resp = await SubjectService.removeStudent(parseInt(slug as string), id)
+                setBlocked(false);
+    
+                if (!resp.success) {
+                    msg.error("Щось пішло не так: " + translateRequestError(resp.error_code));
+                    return;
+                }
+    
+                setStudents(prev => prev.filter(student => student.id != id));
+                setTotalStudents(prev => prev - 1);
+                msg.success("Успіх!");
             }
-
-            setStudents(prev => prev.filter(student => student.id != id));
-            setTotalStudents(prev => prev - 1);
-            msg.success("Успіх!");
         })
     }
 
@@ -138,6 +145,7 @@ export default function SubjectStudentsPage() {
                     {students.map((item, k) => <StudentSlot item={item} key={k} deleteStudent={deleteStudent.bind(null, item.id)} blocked={blocked} />)}
                 </>
             }
+            {modalCtx}
             {msgCtx}
         </>
     )

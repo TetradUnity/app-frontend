@@ -73,7 +73,7 @@ export const SubjectService = {
 
     async removeStudent(subjectId: number, studentId: number): Promise<IResponse> {
         try {
-            const response = await api.get("/subject/remove-student", {
+            const response = await api.delete("/subject/remove-student", {
                 params: { subject_id: subjectId, student_id: studentId }
             });
 

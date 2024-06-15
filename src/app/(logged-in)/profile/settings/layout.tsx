@@ -17,13 +17,13 @@ export default function ILayout({children,}: Readonly<{ children: React.ReactNod
     return (
         <div className={styles.container}>
             <div className={styles.sidebar}>
-                <Link className={styles.Link + " " + (selectedLink === "/about" ? styles.isActive : "")} href="about">
+                <Link className={styles.Link + " " + (selectedLink === "/about" ? styles.isActive : "")} href="/profile/settings/about">
                     <div className={styles.linkContent}>
                         <SolutionOutlined/>
                         Інформація
                     </div>
                 </Link>
-                <Link className={styles.Link + " " + (selectedLink === "/security" ? styles.isActive : "")} href="security">
+                <Link className={styles.Link + " " + (selectedLink === "/security" ? styles.isActive : "")} href="/profile/settings/security">
                     <div className={styles.linkContent}>
                         <LockOutlined/>
                         Безпека і вхід

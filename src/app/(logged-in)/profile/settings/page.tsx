@@ -6,7 +6,7 @@ import {useEffect} from "react";
 export default function Settings() {
     const router = useRouter();
 
-    document.title = "загрузка...";
+    document.title = "Завантаження...";
 
     useEffect(() => {
         router.push("/profile/settings/about")

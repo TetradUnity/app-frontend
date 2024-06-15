@@ -37,7 +37,7 @@ export default function CheckCertificatePage() {
             return;
         }
 
-        messageApi.error("Сертифікат є дійсним!");
+        messageApi.success("Сертифікат є дійсним!");
         window.open(UploadService.getImageURL(UploadType.CERTIFICATES, signature), '_blank')?.focus();
     }
     
