@@ -1,6 +1,6 @@
 'use client'
 
-import {Button, Flex, message} from "antd";
+import {Button, Flex, Image, message} from "antd";
 import {Content} from "antd/es/layout/layout";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -115,10 +115,24 @@ export default function LandPage() {
                         <p>Перегляньте курси та почніть використовувати нашу платформу вже сьогодні.</p>
                     </div>
                     <div style={{display:'flex', flexDirection:"column", marginTop: 50}}>
-                        <Link href="/subjects">
+                        <Link href="/subjects" style={{width:"max-content"}}>
                             <button className={styles.joinButton}>Переглянути Курси</button>
                         </Link>
                         <Link href={"/login"} className={styles.loginLink}>Уже маєте акаунт?</Link>
+                    </div>
+                </section>
+                <section className={styles.certificates}>
+                    <div className={styles.imageWrapper}>
+                        <Image src="imgs/landing/certificate-example.jpg" alt="Certificates" preview={false}/>
+                    </div>
+                    <div className={styles.certificatesDescription}>
+                    <div className={styles.certificatesText}>
+                        <h2>Система сертифікатів</h2>
+                        <p>У нас є система сертифікатів, при закінченні курсу вони будуть відображатися в профілі.</p>
+                    </div>
+                    <Link href="/check-certificate">
+                        <button className={styles.certificatesButton}>Провірити сертифікат</button>
+                    </Link>
                     </div>
                 </section>
 
