@@ -38,7 +38,7 @@ export default function CheckCertificatePage() {
         }
 
         messageApi.success("Сертифікат є дійсним!");
-        window.open(UploadService.getImageURL(UploadType.CERTIFICATES, signature), '_blank')?.focus();
+        window.open(UploadService.getImageURL(UploadType.CERTIFICATES, signature + ".pdf"), '_blank')?.focus();
     }
     
     return (

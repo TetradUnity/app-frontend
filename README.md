@@ -57,25 +57,4 @@ npm start
 * **Ant Design**: ми використали Ant Design, тому що він підтримує високу гнучкість і налаштування, що допомагає нам дотримуватись єдиного стилю в усьому додатку, та є досить привабливим для кінцевого користувача.
 
 ---
-## Залежності
-* **@aarkue/tiptap-math-extension**: ^1.2.2
-* **@ant-design/nextjs-registry**: ^1.0.0
-* **@tiptap/extensions**: Різні розширення для TipTap
-* **@types/katex**: ^0.16.7
-* **@types/lodash**: ^4.17.4
-* **antd**: ^5.16.5
-* **axios**: ^1.6.8
-* **dayjs**: ^1.11.11
-* **framer-motion**: ^11.2.10
-* **katex**: ^0.16.10
-* **lodash**: ^4.17.21
-* **next**: 14.2.3
-* **rc-tween-one**: ^3.0.6
-* **react**: ^18
-* **react-dom**: ^18
-* **react-infinite-scroll-component**: ^6.1.0
-* **zustand**: ^4.5.2
-* **next-nprogress-bar**: ^2.3.12
-
----
 Розробники: Богдан Ревенко та Данило Гук.

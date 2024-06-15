@@ -86,6 +86,7 @@ export default function ProfileHead() {
                     }}>Сертифікати</Button>}
                 </div>
             </div>
+
             {certificatesVisible &&
                 <div style={{
                     display: "flex",
@@ -116,7 +117,7 @@ export default function ProfileHead() {
                                 icon={<EyeOutlined />}
                                 type="dashed"
                                 shape="circle"
-                                onClick={() => window.open(UploadService.getImageURL(UploadType.CERTIFICATES, certificate.uid), "_blank")?.focus()}
+                                onClick={() => window.open(UploadService.getImageURL(UploadType.CERTIFICATES, certificate.uid + ".pdf"), "_blank")?.focus()}
                             />
                         </div>
                     )) : <Empty description="Сертифікати відсутні"/>}
