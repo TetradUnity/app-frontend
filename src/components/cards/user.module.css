@@ -1,0 +1,37 @@
+.Name {
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.Name:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+}
+
+.Card:hover {
+    box-shadow: 0 0 5px 1px #1e1e1e;
+}
+
+.Placeholder {
+    background: linear-gradient(270deg, var(--foreground-lighter), var(--foreground-lighter-2));
+    background-size: 400% 400%;
+    animation: AvatarGradientAnimation 1s ease infinite;
+}
+
+@keyframes AvatarGradientAnimation {
+    0% {
+        background-position: 0 50%
+    }
+    40% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0 50%
+    }
+}

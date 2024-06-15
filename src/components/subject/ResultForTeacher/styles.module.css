@@ -1,0 +1,68 @@
+.student_slot {
+    outline: none; border: none;
+    width: 100%;
+    padding: 13px;
+    text-align: left;
+    cursor: pointer;
+    background: var(--foreground-lighter-0_5);
+    color: white;
+    margin-top: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.student_slot > div {
+    flex: 1;
+}
+
+.ss_name {
+    display: block;
+    font-size: 20px;
+}
+.ss_dispatchtime {
+    display: block;
+    font-size: 15px;
+    color: rgb(220,220,220);
+}
+
+.divider, .evaluated, .unevaluated {
+    font-size: 17px;
+}
+
+.divider {
+    color: lightskyblue;
+}
+.evaluated {
+    color: aquamarine;
+}
+.unevaluated {
+    color: rgb(246, 104, 104);
+}
+
+.file_slot {
+    background: var(--foreground-lighter-0_5);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.file_slot > * {
+    display: inline-block;
+}
+
+.file_slot > div > * {
+    display: inline-block;
+}
+
+.file_slot > div > p {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 10px;
+}

@@ -1,0 +1,43 @@
+.filterBlock {
+    display: block;
+}
+
+.filterModal {
+    display: none;
+}
+
+.filterBtn {
+    display: none;
+    width: 64px;
+}
+
+.createBtnLong {
+    width: 100%;
+}
+
+.createBtnShort {
+    display: none;
+    width: 64px;
+}
+
+@media screen and (max-width: 768px) {
+    .filterBlock {
+        display: none;
+    }
+    .filterModal {
+        display: block;
+    }
+    .filterBtn {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .createBtnLong {
+        display: none;
+    }
+
+    .createBtnShort {
+        display: block;
+    }
+}

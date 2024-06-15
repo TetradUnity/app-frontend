@@ -1,0 +1,260 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main {
+    background: url("../../public/imgs/landing/header.jpg") no-repeat center center;
+    background-size: cover;
+    padding: 100px 20px;
+    text-align: center;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.main h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.main p {
+    font-size: 24px;
+}
+
+.about, .features, .advantages{
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.about {
+    background-color: var(--foreground-lighter);
+}
+
+
+.features {
+    background-color: var(--foreground-lighter-2);
+}
+
+.features h2, .advantages h2, .join h2, .about h2, .certificatesDescription h2{
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.features p, .advantages p, .join p, .about p, .certificatesDescription p{
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-secondary);
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 300px;
+    margin: auto;
+}
+
+.item h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.icon {
+    font-size: 48px;
+}
+
+.advantages {
+    padding: 50px 20px;
+    background: var(--foreground-lighter-1_5);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.join {
+    padding: 80px 70px;
+    background-color: var(--primary);
+}
+
+.joinText {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+
+.joinButton, .certificatesButton {
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    user-select: none;
+    outline: 0;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 8px 16px hsla(0, 0%, 100%, 0);
+    transform: translateY(0);
+    backface-visibility: hidden;
+    transition: transform .3s ease-in-out, background-color .3s ease-in-out, box-shadow .3s ease-in-out;
+
+}
+
+.joinButton {
+    background-color: #ffffff;
+    color: var(--primary);
+}
+
+.joinButton:hover, .certificatesButton:hover {
+    box-shadow: 0 8px 16px hsla(0, 0%, 0%, .2);
+    transform: translateY(-2px);
+    transition-duration: 60ms;
+}
+
+.loginLink {
+    color: #ffffffa9;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 20px;
+    width: max-content;
+}
+
+.loginLink:hover {
+    text-decoration: underline;
+    color: #ffffffff;
+}
+
+.certificates {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 100px 50px;
+    background-color: #323232;
+    gap: var(--gap);
+}
+
+.certificatesDescription {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.certificatesText {
+    text-align: right;
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+
+.certificatesButton {
+    background-color: var(--primary);
+    color: #ffffff;
+    min-width: 180px;
+}
+
+.imageWrapper {
+    width: 350px;
+    min-width: 350px;
+    height: max-content;
+    box-shadow: 0 8px 16px hsla(0, 0%, 0%, .3);
+}
+
+.footer {
+    background-color: var(--foreground-darker);
+    padding: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .main {
+        padding: 60px 20px;
+    }
+    .main h1 {
+        font-size: 36px;
+    }
+    .main p {
+        font-size: 20px;
+    }
+    .icon {
+        font-size: 36px;
+    }
+    .item {
+        width: 210px;
+    }
+    .certificates {
+        padding: 40px 50px;
+        flex-direction: column-reverse;
+    }
+    .certificatesDescription {
+        align-items: flex-start;
+    }
+    .certificatesText {
+        text-align: start;
+    }
+    .imageWrapper {
+        width: auto;
+        min-width: 0;
+    }
+}
+
+@media screen and (max-width: 536px) {
+    .main {
+        padding: 40px 20px;
+    }
+    .main h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .main p {
+        font-size: 18px;
+    }
+    .features h2, .advantages h2, .join h2, .about h2, .certificatesDescription h2{
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    .features p, .advantages p, .join p, .about p, .certificatesDescription p{
+        font-size: 16px;
+        margin: 0 auto;
+        color: var(--text-secondary);
+    }
+    .icon {
+        font-size: 24px;
+    }
+    .item {
+        width: 300px;
+    }
+    .item h3 {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    .item p {
+        font-size: 16px;
+    }
+    .about, .features, .advantages {
+        padding: 40px 10px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .join {
+        padding: 60px 30px;
+    }
+    .certificates {
+        padding: 20px 30px;
+    }
+    .item {
+        width: 250px;
+    }
+}

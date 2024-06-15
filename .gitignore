@@ -21,6 +21,9 @@
 .idea
 .idea/*
 *.pem
+.idea
+.idea/*
+.env.local
 
 # debug
 npm-debug.log*
@@ -28,7 +31,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+#.env*.local
 
 # vercel
 .vercel
@@ -36,3 +39,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.npmrc

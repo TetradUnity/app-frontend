@@ -1,0 +1,109 @@
+.slot {
+    --radius: 20px;
+    --bottom-radius: 10px;
+
+    background: var(--foreground);
+    border-radius: var(--radius) var(--radius) var(--bottom-radius) var(--bottom-radius);
+
+    margin-bottom: 30px;
+}
+
+.banner {
+    position: relative;
+    height: 300px;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    user-select: none;
+    pointer-events: none;
+    object-fit: cover;
+}
+
+.banner h1, .banner a {
+    position: absolute;
+    text-shadow: rgba(0,0,0,.7) 2px 0 10px;
+}
+
+.banner h1 {
+    bottom: 50px;
+    left: 20px;
+}
+
+.banner a {
+    bottom: 30px;
+    left: 22px;
+    color: white;
+    text-decoration: none;
+}
+.banner a:hover {
+    color: wheat;
+}
+
+.content {
+    padding: 25px;
+}
+.content.no_padding {
+    padding: 0;
+}
+
+.content section {
+    margin-bottom: 20px;
+    background-color: var(--foreground-lighter);
+    padding: 15px;
+    border-radius: 10px;
+
+    border: var(--foreground-lighter-2) solid 1px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+}
+
+.content section p {
+    color: rgb(230,230,230);
+}
+
+
+.modal_p {
+    color: rgb(210, 210, 210);
+    font-style: italic;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--gap);
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .banner h1 {
+        font-size: 1.5em;
+    }
+    .banner a {
+        font-size: 1em;
+    }
+    .banner {
+        height: 170px;
+    }
+}
+
+@media screen and (max-width: 536px) {
+    .banner h1 {
+        font-size: 1.2em;
+    }
+    .banner a {
+        font-size: 0.8em;
+    }
+    .banner {
+        height: 120px;
+    }
+    .content {
+        padding: 12px;
+    }
+    .buttons {
+        flex-direction: column;
+    }
+}

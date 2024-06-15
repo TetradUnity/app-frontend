@@ -1,0 +1,68 @@
+.ant-btn-dashed:not(:disabled):not(.ant-btn-disabled):hover {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: #4c4c4c !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.ant-btn-dashed:not(:disabled):not(.ant-btn-disabled) {
+    background: 0 !important;
+}
+
+.nav-button{
+    background: 0;
+}
+
+.nav-buttons{
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-half);
+}
+
+.nav-buttons-short{
+    display: none;
+    gap: var(--gap-half);
+}
+
+.logo-small{
+    display: none;
+}
+
+.header-grid{
+    max-width: 1220px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    margin: 0 auto;
+    padding: 0 10px;
+    height: 100%;
+}
+
+@media screen and (max-width: 768px){
+    .header-grid{
+        grid-template-columns: 1.5fr 2fr 1fr;
+    }
+    .nav-buttons{
+        display: none;
+    }
+    .nav-buttons-short{
+        display: flex;
+        gap: var(--gap);
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 536px){
+    .logo-big{
+        display: none;
+    }
+    .logo-small{
+        display: block;
+    }
+    .header-grid{
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .login-text{
+        display: none;
+    }
+}
