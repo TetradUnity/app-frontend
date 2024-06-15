@@ -11,6 +11,7 @@ import TextArea from "antd/es/input/TextArea";
 import ImgCropModal from "@/components/ImgCropModal";
 import { UploadService, UploadType } from "@/services/upload.service";
 import translateRequestError from "@/utils/ErrorUtils";
+import {getUserAvatar} from "@/utils/OtherUtils";
 
 export default function AccountSettingsPage() {
     const [modal, modalCtxHolder] = Modal.useModal();
@@ -165,8 +166,8 @@ export default function AccountSettingsPage() {
                             shape={"square"}
                             src={avatarURL}
                         ></Avatar>
-                        <Button disabled={avatarURL === ""} type="default" icon={<DeleteOutlined/>} onClick={() => {
-                            setAvatarURL("");
+                        <Button disabled={avatarURL?.startsWith("/imgs") || avatarURL === ""} type="default" icon={<DeleteOutlined/>} onClick={() => {
+                            setAvatarURL(getUserAvatar(undefined));
                             setFileList([]);
                         }} style={{
                             position: "absolute",
