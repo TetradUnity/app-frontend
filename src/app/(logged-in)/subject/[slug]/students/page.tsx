@@ -3,7 +3,7 @@
 import { IStudentShortInfo } from "@/types/api.types";
 import styles from "../styles.module.css";
 import Link from "next/link";
-import { Avatar, Divider, Spin, message } from "antd";
+import { Avatar, Button, Divider, Spin, message } from "antd";
 import {getUserAvatar} from "@/utils/OtherUtils";
 import { useEffect, useRef, useState } from "react";
 import { SubjectService } from "@/services/subject.service";
@@ -11,7 +11,13 @@ import { useParams } from "next/navigation";
 import translateRequestError from "@/utils/ErrorUtils";
 import { pluralize } from "@/utils/InternalizationUtils";
 
-function StudentSlot({item} : {item: IStudentShortInfo}) {
+import {DeleteOutlined} from "@ant-design/icons";
+import { useProfileStore } from "@/stores/profileStore";
+import { useShallow } from "zustand/react/shallow";
+
+function StudentSlot({item, deleteStudent, blocked} : {item: IStudentShortInfo, blocked: boolean, deleteStudent: () => void}) {
+    const role = useProfileStore(useShallow(state => state.role));
+
     return (
         <div className={styles.material_slot + " " + styles.student_slot}>
             <Link href={"/profile/" + item.id}>
@@ -22,6 +28,7 @@ function StudentSlot({item} : {item: IStudentShortInfo}) {
                     size="large"
                     alt="avatar"
                 />
+
                 <div>
                     <h2>{item.first_name} {item.last_name}</h2>
                     {(item.average_grade)
@@ -29,6 +36,18 @@ function StudentSlot({item} : {item: IStudentShortInfo}) {
                         : null
                     }
                 </div>
+
+                {role == "TEACHER" &&
+                    <Button
+                        danger
+                        disabled={blocked}
+                        onClick={deleteStudent}
+                        icon={<DeleteOutlined />}
+                        className={styles.studentDeleteButton}
+                        type="primary"
+                        shape="circle"
+                    />
+                }
             </Link>
          </div>
     )
@@ -44,11 +63,30 @@ export default function SubjectStudentsPage() {
 
     const [msg, msgCtx] = message.useMessage();
 
+    const [blocked, setBlocked] = useState(false);
+
     const fetchRef = useRef({
         loading: false,
         page: 1,
         isEnd: false
     });
+
+    const deleteStudent = (id: number) => {
+        setBlocked(true);
+
+        SubjectService.removeStudent(parseInt(slug as string), id).then(resp => {
+            setBlocked(false);
+
+            if (!resp.success) {
+                msg.error("Щось пішло не так: " + translateRequestError(resp.error_code));
+                return;
+            }
+
+            setStudents(prev => prev.filter(student => student.id != id));
+            setTotalStudents(prev => prev - 1);
+            msg.success("Успіх!");
+        })
+    }
 
     const fetch = async () => {
         if (fetchRef.current.isEnd) return;
@@ -97,7 +135,7 @@ export default function SubjectStudentsPage() {
 
                     <Divider className={styles.studentsDivider} />
 
-                    {students.map((item, k) => <StudentSlot item={item} key={k} />)}
+                    {students.map((item, k) => <StudentSlot item={item} key={k} deleteStudent={deleteStudent.bind(null, item.id)} blocked={blocked} />)}
                 </>
             }
             {msgCtx}

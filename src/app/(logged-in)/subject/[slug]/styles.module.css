@@ -118,6 +118,10 @@
 
 }
 
+.studentDeleteButton {
+
+}
+
 @media screen and (max-width: 536px) {
     .header_div {
         height: 130px;

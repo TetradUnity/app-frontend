@@ -13,12 +13,9 @@ import { useDeviceStore } from "@/stores/deviceStore";
 import { useShallow } from "zustand/react/shallow";
 import { Suspense, useEffect } from "react";
 import ProgressBarProvider from "@/providers/ProgressBarProvider";
-import { pdfjs } from "react-pdf";
 
 dayjs.locale('uk');
 dayjs.extend(relativeTime);
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function BaseLayout({
                                        children,

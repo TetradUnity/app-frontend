@@ -1,6 +1,6 @@
 'use client'
 import {Avatar, Button, Empty, message} from "antd";
-import {ContainerOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
+import {ContainerOutlined, SettingOutlined, UserOutlined, EyeOutlined} from "@ant-design/icons";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import styles from "./styles.module.css";
@@ -8,8 +8,6 @@ import {useProfileStore} from "@/stores/profileStore";
 import {useQueryProfileStore} from "@/stores/queryProfileStore";
 import {CertificateService} from "@/services/certificate.service";
 import {ICertificate} from "@/types/api.types";
-import { handleDownload } from "@/utils/OtherUtils";
-import { DownloadOutlined } from "@ant-design/icons";
 import { UploadService, UploadType } from "@/services/upload.service";
 import { translateCertificatyType } from "@/utils/InternalizationUtils";
 
@@ -115,10 +113,10 @@ export default function ProfileHead() {
                             </div>
 
                             <Button
-                                icon={<DownloadOutlined />}
+                                icon={<EyeOutlined />}
                                 type="dashed"
                                 shape="circle"
-                                onClick={() => handleDownload(UploadService.getImageURL(UploadType.CERTIFICATES, certificate.uid))}
+                                onClick={() => window.open(UploadService.getImageURL(UploadType.CERTIFICATES, certificate.uid), "_blank")?.focus()}
                             />
                         </div>
                     )) : <Empty description="Сертифікати відсутні"/>}

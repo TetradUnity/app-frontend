@@ -5,7 +5,7 @@ import { Content } from "antd/es/layout/layout";
 import React, { CSSProperties, useState } from "react";
 
 import { CertificateService } from "@/services/certificate.service";
-import CertificateModal from "@/components/modals/CertificateModal";
+import { UploadService, UploadType } from "@/services/upload.service";
 
 const formStyle: CSSProperties = {
     width: 400,
@@ -19,7 +19,6 @@ export default function CheckCertificatePage() {
     const [isLoading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [modalOpen, setModalOpen] = useState(false);
     const [signature, setSignature] = useState('');
 
     const onFormSubmitted = async () => {
@@ -38,7 +37,8 @@ export default function CheckCertificatePage() {
             return;
         }
 
-        setModalOpen(true);
+        messageApi.error("Сертифікат є дійсним!");
+        window.open(UploadService.getImageURL(UploadType.CERTIFICATES, signature), '_blank')?.focus();
     }
     
     return (
@@ -71,8 +71,6 @@ export default function CheckCertificatePage() {
                     </Form.Item>
                 </Form>
             </Flex>
-
-            <CertificateModal open={modalOpen} setOpen={setModalOpen} signature={signature} />
             
             {contextHolder}
         </Content>

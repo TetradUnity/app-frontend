@@ -1,11 +1,11 @@
 'use client';
 
 import { ICandidate, TestsNamespace } from "@/types/api.types";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Divider, Input, Modal, Radio, Space, Spin, Table, TableColumnsType, Tooltip } from "antd";
+import { Button, Divider, Modal, Spin, Table, TableColumnsType, Tooltip } from "antd";
 
 import styles from "@/styles/announced_subject.module.css";
 import "./fixANTD.css";
@@ -14,7 +14,6 @@ import { UploadService, UploadType } from "@/services/upload.service";
 import { AnnouncedSubjectService } from "@/services/announced_subject.service";
 import { formatTimeInSeconds } from "@/utils/TimeUtils";
 import translateRequestError from "@/utils/ErrorUtils";
-import Tiptap from "@/components/Tiptap";
 import TestResult from "@/components/TestResult";
 import { pluralize } from "@/utils/InternalizationUtils";
 
@@ -184,7 +183,6 @@ export default function AnnouncedSubject() {
         fetchRef.current.loading = true;
 
         AnnouncedSubjectService.getCandidates(subjectId, fetchRef.current.page).then(response => {
-
             if (!response.success) {
                 if (response.error_code == "not_found") {
                     setNotFound(true);
@@ -224,8 +222,9 @@ export default function AnnouncedSubject() {
                     });
                     return;
                 }
-
-                fetchCandidates();
+                
+                setCandidates(prev => prev ? prev.filter(candidate => candidate.id != id) : []);
+                setCandidatesCount(prev => prev - 1);
             }
         });
     }

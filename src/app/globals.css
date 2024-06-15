@@ -122,14 +122,6 @@ body {
     pointer-events: none;
 }
 
-.react-pdf__Document {
-    display: block;
-    margin: auto;
-    width: 840px;
-    height: 595px;
-    overflow: hidden;
-}
-
 @media only screen and (max-device-width: 768px) {
     .upload_outer p {
         font-size: 20px;

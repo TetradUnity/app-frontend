@@ -71,6 +71,21 @@ export const SubjectService = {
         }
     },
 
+    async removeStudent(subjectId: number, studentId: number): Promise<IResponse> {
+        try {
+            const response = await api.get("/subject/remove-student", {
+                params: { subject_id: subjectId, student_id: studentId }
+            });
+
+            return {
+                success: true,
+                data: response.data.students
+            }
+        } catch (error) {
+            return catchApiError(error);
+        }
+    },
+
     async finishSubject(subject_id: number): Promise<Responses.FinishSubjectResponse> {
         try {
             const response = await api.delete("/subject/finish-subject", {
