@@ -1,21 +1,21 @@
 'use client';
 
 import {IResponse, TestsNamespace} from "@/types/api.types";
-import { Button, Checkbox, Input, Modal, Radio, Space, Spin } from "antd";
-import { notFound, useParams } from "next/navigation";
+import {Button, Checkbox, Input, Modal, Radio, Space, Spin} from "antd";
+import {notFound, useParams} from "next/navigation";
 
 import styles from "./passtest.module.css";
 import React, {useEffect, useState} from "react";
 import Tiptap from "@/components/Tiptap";
 
-import { ClockCircleOutlined } from "@ant-design/icons";
-import { formatTimeInSeconds2 } from "@/utils/TimeUtils";
-import { useTestStore } from "@/stores/testStore";
-import { AnnouncedSubjectService } from "@/services/announced_subject.service";
+import {ClockCircleOutlined} from "@ant-design/icons";
+import {formatTimeInSeconds2} from "@/utils/TimeUtils";
+import {useTestStore} from "@/stores/testStore";
+import {AnnouncedSubjectService} from "@/services/announced_subject.service";
 
 import translateRequestError from "@/utils/ErrorUtils";
-import { pluralize } from "@/utils/InternalizationUtils";
-import { EducationService } from "@/services/education.service";
+import {pluralize} from "@/utils/InternalizationUtils";
+import {EducationService} from "@/services/education.service";
 
 // TODO: Content Security Policy
 
@@ -82,7 +82,7 @@ const Question = ({question, index}: QuestionRenderParams) => {
             }
 
             {question.type == "MULTI_ANSWER" &&
-                <MultiAnswersRender question={question} index={index} />
+                <MultiAnswersRender question={question} index={index}/>
             }
 
             {question.type == "TEXT" &&
@@ -92,7 +92,10 @@ const Question = ({question, index}: QuestionRenderParams) => {
     )
 };
 
-const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const Timer = ({timeEnd, setIsTimeUp}: {
+    timeEnd: number | undefined,
+    setIsTimeUp: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
     if (!timeEnd) {
         return null;
     }
@@ -102,7 +105,7 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
     useEffect(() => {
         let id = setInterval(() => {
             setSecondsLeft(Math.max(timeEnd - Date.now(), 0) / 1000);
-            
+
             if (Date.now() > timeEnd) {
                 setIsTimeUp(true);
                 clearInterval(id);
@@ -113,7 +116,7 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
     }, []);
 
     return (
-       (secondsLeft < 8 * 3600)
+        (secondsLeft < 8 * 3600)
             ? <div className={styles.clock}>
                 <ClockCircleOutlined style={{color: "#349feb"}}/>
                 <p>{formatTimeInSeconds2(secondsLeft)}</p>
@@ -125,7 +128,7 @@ const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp
 type Props = {
     isEducation: boolean
 }
-export default function PassTestPage({isEducation} : Props) {
+export default function PassTestPage({isEducation}: Props) {
     const params = useParams();
     let testUID = isEducation ? params.id : params.slug;
 
@@ -167,7 +170,7 @@ export default function PassTestPage({isEducation} : Props) {
             if (res.savedAnswers) {
                 testStore.setAnswers(res.savedAnswers);
             }
-            
+
             setIsLoaded(true);
         }
 
@@ -217,30 +220,30 @@ export default function PassTestPage({isEducation} : Props) {
     };
 
     const submit = () => {
-       if (isEducation) {
-        EducationService.sendHomework(parseInt(testUID as string), testStore.getAnswers()).then(resp => {
-            if (!resp.success) {
-                modal.error({
-                    title: "Помилка",
-                    content: <p>Закінчити тест не вдалося: {translateRequestError(resp.error_code)}</p>
-                })
-                return;
-            }
-            
-            const result = resp.result as number;
-            const isPassed = result > 0;
+        if (isEducation) {
+            EducationService.sendHomework(parseInt(testUID as string), testStore.getAnswers()).then(resp => {
+                if (!resp.success) {
+                    modal.error({
+                        title: "Помилка",
+                        content: <p>Закінчити тест не вдалося: {translateRequestError(resp.error_code)}</p>
+                    })
+                    return;
+                }
 
-            modal[isPassed ? "success" : "error"]({
-                title: isPassed ? "Успіх" : "Невдача",
-                content:
-                    <p>
-                        Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])}.
-                    </p>,
-                onOk: () => window.location.href = "/subject/" + params.slug + "/",
-                onCancel: () => window.location.href = "/subject/" + params.slug + "/"
+                const result = resp.result as number;
+                const isPassed = result > 0;
+
+                modal[isPassed ? "success" : "error"]({
+                    title: isPassed ? "Успіх" : "Невдача",
+                    content:
+                        <p>
+                            Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])}.
+                        </p>,
+                    onOk: () => window.location.href = "/subject/" + params.slug + "/",
+                    onCancel: () => window.location.href = "/subject/" + params.slug + "/"
+                })
             })
-        })
-       } else {
+        } else {
             AnnouncedSubjectService.finishExam(testUID as string, testStore.getAnswers()).then(resp => {
                 if (!resp.success) {
                     modal.error({
@@ -258,7 +261,8 @@ export default function PassTestPage({isEducation} : Props) {
                     title: isPassed ? "Успіх" : "Невдача",
                     content:
                         <p>
-                            Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний бал: {resp.passing_grade}).
+                            Ви набрали {pluralize(Math.round(result), ["бал", "бала", "балів"])} (прохідний
+                            бал: {resp.passing_grade}).
                             {isPassed
                                 ? " Ви здали екзамен! Відповіді надійдуть до вчителя. Слідкуйте за повідомлення в скринькі!"
                                 : " На жаль, ви не склали екзамен. Проте можете спробувати й інші наші курси!"}
@@ -267,7 +271,7 @@ export default function PassTestPage({isEducation} : Props) {
                     onCancel: () => window.location.href = "/subjects"
                 })
             })
-       }
+        }
     }
 
     useEffect(() => {
@@ -310,7 +314,7 @@ export default function PassTestPage({isEducation} : Props) {
 
     if (!isLoaded) {
         console.log("not loaded.")
-        return <Spin fullscreen spinning />;
+        return <Spin fullscreen spinning/>;
     }
 
     if (isNotFound) {
@@ -321,52 +325,313 @@ export default function PassTestPage({isEducation} : Props) {
         <>
             {!isTimeUp ?
                 <div className={styles.main}>
-                    <div id="test-navigation" style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 'var(--gap-half)',
-                        position: "sticky",
-                        top: "calc(56px + var(--gap))",
-                        background: 'var(--foreground)',
-                        borderRadius: 8,
-                        padding: "12px 16px",
-                        maxWidth: "300px",
-                        wordWrap: "break-word",
-                    }}>
-                        <h2>Навігація по тесту</h2>
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            marginBottom: 10,
-                            gap: 'var(--gap-half)',
-                            flexWrap: "wrap",
-                        }}>
+                    <div id="test-navigation" className={styles.navigation}>
+                        <h2>Навігація</h2>
+                        <div className={styles.navigationButtons}>
                             {questions.map((question, i) =>
+                                <div className={styles.navBtnWrapper}>
+                                    <Button
+                                        key={i}
+                                        type={selectedQuestion == i ? "primary" : "default"}
+                                        block
+                                        onClick={() => setSelectedQuestion(i)}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            borderRadius: 4,
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {i + 1}
+                                    </Button>
+                                </div>)}
+
+
+
+                            {questions.map((question, i) =>
+                                <div className={styles.navBtnWrapper}>
+                                    <Button
+                                        key={i}
+                                        type={selectedQuestion == i ? "primary" : "default"}
+                                        block
+                                        onClick={() => setSelectedQuestion(i)}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            borderRadius: 4,
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {i + 1}
+                                    </Button>
+                                </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
                                 <Button
                                     key={i}
                                     type={selectedQuestion == i ? "primary" : "default"}
                                     block
                                     onClick={() => setSelectedQuestion(i)}
                                     style={{
-                                        width: 30,
-                                        height: 40,
-                                        padding: 0,
+                                        width: "100%",
+                                        height: "100%",
                                         borderRadius: 4,
                                         display: "flex",
                                         justifyContent: "center",
                                         alignItems: "center",
-                                        fontSize: 16,
                                     }}
                                 >
                                     {i + 1}
-                                </Button>)}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}{questions.map((question, i) =>
+                            <div className={styles.navBtnWrapper}>
+                                <Button
+                                    key={i}
+                                    type={selectedQuestion == i ? "primary" : "default"}
+                                    block
+                                    onClick={() => setSelectedQuestion(i)}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        borderRadius: 4,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {i + 1}
+                                </Button>
+                            </div>)}
+
+
+
+
                         </div>
                     </div>
 
                     <div className={styles.content}>
                         <div className={styles.content_inner}>
                             <div className={styles.upRight}>
-                                <Timer timeEnd={timeEnd} setIsTimeUp={setIsTimeUp} />
+                                <Timer timeEnd={timeEnd} setIsTimeUp={setIsTimeUp}/>
                             </div>
 
                             <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>Питання
@@ -377,11 +642,10 @@ export default function PassTestPage({isEducation} : Props) {
 
                             <div className={styles.buttons}>
                                 <Button onClick={prevQuestion}
-                                        disabled={selectedQuestion == 0} style={{display: "block"}} type="primary">Попереднє
-                                    питання</Button>
+                                        disabled={selectedQuestion == 0} style={{display: "block"}} type="primary">Назад</Button>
                                 <Button onClick={nextQuestion}
                                         disabled={selectedQuestion == questions.length - 1} style={{display: "block"}}
-                                        type="primary">Наступне питання</Button>
+                                        type="primary">Вперед</Button>
                             </div>
 
                             {(selectedQuestion == questions.length - 1) &&
@@ -414,7 +678,8 @@ export default function PassTestPage({isEducation} : Props) {
                     <h1>Час вичерпано</h1>
                     {isEducation
                         ? <p>Відповіді, які ви встигли обрати, були передані вчителю.</p>
-                        : <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
+                        :
+                        <p>Відповіді, які ви встигли обрати, були передані вчителю. Слідкуйте за поштовою скринькою!</p>
                     }
                 </div>
             }
