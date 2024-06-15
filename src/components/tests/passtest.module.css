@@ -36,7 +36,6 @@
     font-size: 16px;
 }
 
-
 .divider {
     margin-left: 15px;
     width: 1px;
@@ -100,6 +99,7 @@
         height: 400px;
         overflow-y: auto;
     }
+    
     .navBtnWrapper {
         width: 100%;
         height: 30px;
@@ -132,6 +132,10 @@
     .upRight {
         right: 8px;
         top: 8px;
+    }
+
+    .content {
+        width: 100%;
     }
 }
 

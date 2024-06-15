@@ -1,8 +1,8 @@
 'use client';
 
 import { ICandidate, TestsNamespace } from "@/types/api.types";
-import { notFound, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { notFound, useParams, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Input, Modal, Radio, Space, Spin, Table, TableColumnsType, Tooltip } from "antd";
@@ -14,6 +14,7 @@ import { formatTimeInSeconds } from "@/utils/TimeUtils";
 import translateRequestError from "@/utils/ErrorUtils";
 import Tiptap from "@/components/Tiptap";
 import TestResult from "@/components/TestResult";
+import { pluralize } from "@/utils/InternalizationUtils";
 
 interface DataType {
     key: React.Key,
@@ -31,8 +32,12 @@ type CandidateInfoModalProps = {
 
 const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateInfoModalProps) => {
     useEffect(() => {
-        document.title = "Кандидат / " + candidate.first_name + " " + candidate.last_name;
-    }, [candidate]);
+        if (isOpened && candidate) {
+            document.title = "Кандидат / " + candidate.first_name + " " + candidate.last_name;
+        } else {
+            document.title = "Кандидати";
+        }
+    }, [isOpened, candidate]);
 
     if (!(candidate && questions)) {
         return null;
@@ -92,12 +97,18 @@ export default function AnnouncedSubject() {
     const [candidates, setCandidates] = useState<ICandidate[] | undefined>(undefined);
     const [selectedCandidate, setSelectedCandidate] = useState(0);
     const [candidateQuestions, setCandidateQuestions] = useState<TestsNamespace.CandidateQuestion[]>([]);
+    const [candidatesCount, setCandidatesCount] = useState(0);
+    const [candidatesAverageGrade, setCandidatesAverageGrade] = useState(0);
     const [hasExam, setHasExam] = useState(false);
     const [title, setTitle] = useState('');
     const [banner, setBanner] = useState('');
     const [isPageLoading, setIsPageLoading] = useState(false);
 
+    const [error, setError] = useState('');
+
     const [candidateModalVisible, setCandidateModalVisible] = useState(false);
+
+    const { replace } = useRouter();
 
     let tableColumns: TableColumnsType<DataType> = [
         {
@@ -123,7 +134,7 @@ export default function AnnouncedSubject() {
                                 shape="circle"
                                 danger
                                 icon={<DeleteOutlined />}
-                                style={{display: "inline-block", marginRight: 10}}
+                                style={{display: "inline-block", marginRight: 5}}
                                 onClick={() => rejectStudent(record.id, index)}
                             />
                         </Tooltip>
@@ -148,7 +159,16 @@ export default function AnnouncedSubject() {
         tableColumns = tableColumns.filter((_, i) => i != 1);
     }
     
+    const fetchRef = useRef({
+        loading: false,
+        page: 1,
+        isEnd: false
+    });
+
     const fetchCandidates = () => {
+        if (fetchRef.current.isEnd) return;
+        if (fetchRef.current.loading) return;
+
         setIsPageLoading(true);
 
         let subjectId = parseInt(slug as string);
@@ -158,19 +178,29 @@ export default function AnnouncedSubject() {
             return;
         }
 
-        AnnouncedSubjectService.getCandidates(subjectId).then(response => {
-            setIsLoaded(true);
-            setIsPageLoading(false);
+        fetchRef.current.loading = true;
+
+        AnnouncedSubjectService.getCandidates(subjectId, fetchRef.current.page).then(response => {
 
             if (!response.success) {
-                setNotFound(true);
+                if (response.error_code == "not_found") {
+                    setNotFound(true);
+                }
+                setError(response.error_code!);
                 return;
             }
 
-            setTitle(response.title as string);
-            setBanner(response.banner as string);
-            setHasExam(response.has_exam as boolean);
-            setCandidates(response.data);
+            setTitle(response.title!);
+            setBanner(response.banner!);
+            setHasExam(response.has_exam!);
+            setCandidatesCount(response.count_candidates!);
+            setCandidates(prev => prev ? [...prev, ...response.data!] : response.data!);
+            setCandidatesAverageGrade(Math.round(response.average_result!));
+            fetchRef.current.isEnd = response.data!.length == 0;
+            fetchRef.current.page += 1;
+            fetchRef.current.loading = false;
+            setIsLoaded(true);
+            setIsPageLoading(false);
         })
     }
 
@@ -258,15 +288,30 @@ export default function AnnouncedSubject() {
     }
 
     useEffect(() => {
-       fetchCandidates();
-    }, [])
+        fetchCandidates();
+
+        const handleScroll = () => {
+            if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) {
+                return;
+            }
+
+            fetchCandidates();
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    if (error) {
+        return <p style={{textAlign: "center", fontSize: 25}}>Трапилась помилки при завантаженні кандидатів: {error}</p>
+    }
 
     if (!(isLoaded && candidates)) {
-        return null;
+        return <Spin spinning style={{display: "block", margin: "auto"}} />;
     }
 
     if (isNotFound) {
-        notFound();
+        replace("/home");
     }
 
     return (
@@ -277,7 +322,8 @@ export default function AnnouncedSubject() {
             </div>
 
            <div className={styles.content}>
-                <h1>Кандидати</h1>
+                <h1>{pluralize(candidatesCount, ["кандидат", "кандидата", "кандидатів"])}</h1>
+                <p>Середній бал: {candidatesAverageGrade}</p>
                 <Divider />
 
                 <Table

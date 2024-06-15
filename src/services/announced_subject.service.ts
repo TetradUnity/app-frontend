@@ -105,7 +105,7 @@ export const AnnouncedSubjectService = {
             return catchApiError(e);
         }
     },
-    async register(subject_id: number, email: string, first_name?: string, last_name?: string): Promise<IResponse> {
+    async register(subject_id: number, email?: string, first_name?: string, last_name?: string): Promise<IResponse> {
         try {
             const response = await api.post("/subject/apply-subject", {
                 subject_id, email,
@@ -147,10 +147,10 @@ export const AnnouncedSubjectService = {
             return catchApiError(e);
         }
     },
-    async getCandidates(subjectId: number): Promise<ITArrResponse<ICandidate> & {title?: string, banner?: string, has_exam?: boolean}> {
+    async getCandidates(subjectId: number, page: number): Promise<ITArrResponse<ICandidate> & {title?: string, banner?: string, has_exam?: boolean, average_result?: number, count_candidates?: number}> {
         try {
             const response = await api.get("/subject/get-candidates", {
-               params: { subjectId }
+               params: { subjectId, page }
            });
 
            return {
@@ -158,7 +158,9 @@ export const AnnouncedSubjectService = {
                data: response.data.candidates,
                title: response.data.title,
                banner: response.data.banner,
-               has_exam: response.data.has_exam
+               has_exam: response.data.has_exam,
+               average_result: response.data.average_result,
+               count_candidates: response.data.count_candidates
            }
        } catch (e) {
            return catchApiError(e);

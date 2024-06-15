@@ -71,7 +71,7 @@ const TeacherSelector = function({setTeacherModalVisible} : any) {
         >
             <AutoComplete
                 options={options}
-                onSearch={debounce(async (text: string) => setOptions(await search(text)), 400)}
+                onSearch={debounce(async (text: string) => setOptions(await search(text)), 200)}
                 ref={autoComplete}
                 notFoundContent={
                     isFetching
@@ -396,8 +396,8 @@ export default function CreateSubjectPage() {
                     }
                 }
 
-                if (countCharactersInHTML(data.description) < 100) {
-                    err("Кількість символів в описі має бути як мінімум 100.");
+                if (countCharactersInHTML(data.description) < 50) {
+                    err("Кількість символів в описі має бути як мінімум 50.");
                     setLoading(false);
                     return;
                 }

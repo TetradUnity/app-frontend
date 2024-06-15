@@ -443,7 +443,7 @@ export default function SubjectCalendar() {
     }
 
     if (!slug && !subjects.length) {
-        return <p style={{ textAlign: "center", fontSize: 30 }}>Ви не є учасником жодного предмету</p>
+        return <p style={{ textAlign: "center", fontSize: 25 }}>Щоб переглядати календар, вам потрібно бути учасником принаймні одного предмета.</p>
     }
 
     const Cell = ({ year, month, day }: { year: number, month: number, day: number }) => {

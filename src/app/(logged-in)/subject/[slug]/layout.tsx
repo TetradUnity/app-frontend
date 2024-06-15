@@ -30,7 +30,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
     const store = useSubjectStore();
 
     const pathname = usePathname();
-    const { push } = useRouter();
+    const { push, replace } = useRouter();
 
     const subjectId = parseInt(slug as string);
 
@@ -69,7 +69,7 @@ export default function SubjectLayout({children} : {children?: React.ReactNode})
         return null;
     }
     if (subjectNotFound) {
-        notFound();
+        replace("/home");
     }
 
     const shouldShow = pathname.split("/").length != 5;

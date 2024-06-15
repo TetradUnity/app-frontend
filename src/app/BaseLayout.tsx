@@ -62,7 +62,7 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                    <Suspense fallback={<p>Не підтримується.</p>}>
+                    <Suspense fallback={<></>}>
                         <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
                             <Header />
                             <div style={{

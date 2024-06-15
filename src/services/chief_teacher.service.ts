@@ -7,7 +7,7 @@ export const ChiefTeacherService = {
     // users
     async findTeacherByEmail(emailFind: string, page?: number, limit?: number): Promise<ITArrResponse<ISearchUserResult>> {
         try {
-            const response = await api.get("/user/get_options", {
+            const response = await api.get("/user/find-users", {
                 params: {
                     email: emailFind,
                     role: "TEACHER",

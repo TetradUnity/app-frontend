@@ -48,7 +48,7 @@ export default function AnnouncedSubject() {
 
     const profileId = useProfileStore(useShallow(state => state.id));
     const role = useProfileStore(useShallow(state => state.role));
-    const email = useProfileStore(useShallow(state => state.email));
+    const userEmail = useProfileStore(useShallow(state => state.email));
 
     const [isNotFound, setNotFound] = useState(false);
 
@@ -56,7 +56,7 @@ export default function AnnouncedSubject() {
         document.title = "Предмет / " + info?.title || "Предмет не знайдено";
     }, [info])
 
-    const register = (email: string, first_name?: string, last_name?: string) => {
+    const register = (email?: string, first_name?: string, last_name?: string) => {
         if (!first_name) {
             first_name = undefined;
         }
@@ -73,13 +73,12 @@ export default function AnnouncedSubject() {
                 modal.error({
                     title: "Помилка.",
                     content: <p>{translateRequestError(response.error_code)}</p>,
+                    maskClosable: false,
                     onOk: () => {
-                        modalRef.current?.set(email, first_name, last_name);
-                        setModalVisible(true);
-                    },
-                    onCancel: () => {
-                        modalRef.current?.set(email, first_name, last_name);
-                        setModalVisible(true);
+                        if (role == "GUEST") {
+                            modalRef.current?.set(email!, first_name, last_name);
+                            setModalVisible(true);
+                        }
                     }
                 });
                 return;
@@ -98,11 +97,7 @@ export default function AnnouncedSubject() {
             return;
         }
 
-        if (!email) {
-            return;
-        }
-
-        register(email);
+        register();
     }
 
     useEffect(() => {
