@@ -1,6 +1,5 @@
 'use client'
 import UsersPage from "@/components/usersPage";
-import {tempTeachers} from "@/temporary/data";
 import {useEffect} from "react";
 
 export default function Teachers() {

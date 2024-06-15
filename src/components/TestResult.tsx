@@ -41,7 +41,7 @@ export default function TestResult({questions, slotColor} : TestResultProps) {
     return (
         <>
             {questions.map((question, i) => 
-                <div style={{background: slotColor || "var(--foreground-lighter-1_5)", padding: 20, marginTop: 10, borderRadius: 9}}>
+                <div key={i} style={{background: slotColor || "var(--foreground-lighter-1_5)", padding: 20, marginTop: 10, borderRadius: 9}}>
                     <h3 style={{marginBottom: 5, color: "rgb(200,200,200)"}}>
                         Питання №{i + 1}
                     </h3>
@@ -97,8 +97,9 @@ export default function TestResult({questions, slotColor} : TestResultProps) {
                                 }}
                                 value={question.your_answer[0]}
                             />
-                            : question.answers.map(answer => 
+                            : question.answers.map((answer, i) => 
                                 <Input
+                                    key={i}
                                     style={{
                                         color: "#34eb37"
                                     }}

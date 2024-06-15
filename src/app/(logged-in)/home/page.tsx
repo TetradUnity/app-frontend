@@ -69,10 +69,9 @@ export default function HomePage() {
             <Foreground>
             <h1 style={{marginBottom: 10}}>Активні предмети:</h1>
             {activeSubjects.length > 0
-                ?
-                <div className={styles.subject_container}>
-                        {activeSubjects.map(subject =>
-                            <SubjectCard subject={subject} />
+                ? <div className={styles.subject_container}>
+                        {activeSubjects.map(subject => 
+                            <SubjectCard key={subject.id} subject={subject} />
                         )}
                     </div>
                 : <Empty description="Порожньо." />
@@ -83,8 +82,8 @@ export default function HomePage() {
                 <Foreground>
                     <h1 style={{marginBottom: 10}}>Інші:</h1>
                     <div className={styles.subject_container}>
-                        {otherSubjects.map(subject =>
-                            <SubjectCard subject={subject} />
+                        {otherSubjects.map(subject => 
+                            <SubjectCard key={subject.id} subject={subject} />
                         )}
                     </div>
                 </Foreground>

@@ -20,9 +20,9 @@ type AnswerRef = {
     loadFromDraft: (draft: TestsNamespace.Answer) => void
 };
 
-const Answer = React.forwardRef((
+const Answer = React.forwardRef(function Answer(
     {deleteAnswer, uncheckAllAnswers, orderAnswer, openImageUploadModal}:
-    {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void}, ref) => {
+    {deleteAnswer: () => void, uncheckAllAnswers: () => void, orderAnswer: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void}, ref) {
     const [isCorrect, setIsCorrect] = useState(false);
     const editorRef = React.useRef<TiptapRef>();
 
@@ -90,9 +90,9 @@ const Answer = React.forwardRef((
     )
 })
 
-const TextAnswer = React.forwardRef((
+const TextAnswer = React.forwardRef(function TextAnswer(
     {deleteAnswer, orderAnswer}:
-    {deleteAnswer: () => void, orderAnswer: (up: boolean) => void}, ref) => {
+    {deleteAnswer: () => void, orderAnswer: (up: boolean) => void}, ref) {
     const [content, setContent] = useState("");
     
     useImperativeHandle(ref, () => ({
@@ -134,10 +134,10 @@ type QuestionRef = {
     loadFromDraft: (draft: TestsNamespace.Question) => void
 };
 
-const Question = React.forwardRef((
+const Question = React.forwardRef(function Question(
     {index, modal, deleteQuestion, orderQuestion, openImageUploadModal} :
     {index: number, modal: HookAPI, deleteQuestion: () => void, orderQuestion: (up: boolean) => void, openImageUploadModal: (cb: (url: string) => void) => void},
-ref) => {
+ref) {
     const questionTitleEditorRef = React.useRef<TiptapRef>();
     const [type, setType] = useState<TestsNamespace.Question["type"]>("ONE_ANSWER");
 
@@ -346,7 +346,7 @@ export type TestConstructorRef = {
     loadFromDraft: (draft: Drafts.Test) => void
 }
 
-export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingGradeEnabled?: boolean}, ref) => {
+export const TestConstructor = React.forwardRef(function TestConstructor({passingGradeEnabled}:{passingGradeEnabled?: boolean}, ref) {
     type question = {
         id: number,
         ref: React.RefObject<QuestionRef>
@@ -604,6 +604,7 @@ export const TestConstructor = React.forwardRef(({passingGradeEnabled}:{passingG
             
             {questions.map((item,i) =>
                 <Question
+                    key={i}
                     index={i}
                     ref={item.ref}
                     deleteQuestion={deleteQuestion.bind(null, item)}

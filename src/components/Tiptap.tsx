@@ -80,7 +80,7 @@ type ImageAttributes = {
     style?: string
 };
 
-const Tiptap = React.forwardRef((props : TiptapProps, ref) => {
+const Tiptap = React.forwardRef(function Tiptap(props : TiptapProps, ref) {
     let isEditable = props.editable;
     if (props.editable == null || props.editable == undefined) {
         isEditable = true;

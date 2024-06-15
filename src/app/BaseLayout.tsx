@@ -11,7 +11,7 @@ import "dayjs/locale/uk";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useDeviceStore } from "@/stores/deviceStore";
 import { useShallow } from "zustand/react/shallow";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 dayjs.locale('uk');
 dayjs.extend(relativeTime);
@@ -62,17 +62,19 @@ export default function BaseLayout({
                     },
                     hashed: false
                 }}>
-                <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
-                    <Header />
-                    <div style={{
-                        maxWidth:"1200px",
-                        margin: "0 auto",
-                        width: "100%",
-                        padding: "0 16px",
-                    }}>
-                        {children}
-                    </div>
-                </Layout>
+                    <Suspense fallback={<p>Не підтримується.</p>}>
+                        <Layout style={{minHeight: '100vh', display: "flex", flexFlow: "column", gap:'var(--gap)'}}>
+                            <Header />
+                            <div style={{
+                                maxWidth:"1200px",
+                                margin: "0 auto",
+                                width: "100%",
+                                padding: "0 16px",
+                            }}>
+                                {children}
+                            </div>
+                        </Layout>
+                    </Suspense>
             </ConfigProvider>
         </AntdRegistry>
     );

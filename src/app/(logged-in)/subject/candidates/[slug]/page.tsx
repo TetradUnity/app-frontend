@@ -30,13 +30,13 @@ type CandidateInfoModalProps = {
 };
 
 const CandidateInfoModal = ({isOpened, candidate, questions, close} : CandidateInfoModalProps) => {
-    if (!(candidate && questions)) {
-        return null;
-    }
-
     useEffect(() => {
         document.title = "Кандидат / " + candidate.first_name + " " + candidate.last_name;
     }, [candidate]);
+
+    if (!(candidate && questions)) {
+        return null;
+    }
 
     return (
         <Modal

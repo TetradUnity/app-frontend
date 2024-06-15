@@ -92,21 +92,15 @@ const Question = ({question, index}: QuestionRenderParams) => {
     )
 };
 
-const Timer = ({timeEnd, setIsTimeUp}: {
-    timeEnd: number | undefined,
-    setIsTimeUp: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
-    if (!timeEnd) {
-        return null;
-    }
-
+const Timer = ({timeEnd, setIsTimeUp}: {timeEnd: number | undefined, setIsTimeUp: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const [secondsLeft, setSecondsLeft] = useState(0);
 
     useEffect(() => {
         let id = setInterval(() => {
-            setSecondsLeft(Math.max(timeEnd - Date.now(), 0) / 1000);
-
-            if (Date.now() > timeEnd) {
+            let timeEndUnix = timeEnd || 0;
+            setSecondsLeft(Math.max(timeEndUnix - Date.now(), 0) / 1000);
+            
+            if (Date.now() > timeEndUnix) {
                 setIsTimeUp(true);
                 clearInterval(id);
             }
@@ -114,6 +108,10 @@ const Timer = ({timeEnd, setIsTimeUp}: {
 
         return () => clearInterval(id);
     }, []);
+
+    if (!timeEnd) {
+        return null;
+    }
 
     return (
         (secondsLeft < 8 * 3600)

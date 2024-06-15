@@ -1,8 +1,6 @@
 import { Divider } from "antd";
-import { CSSProperties } from "react";
 
 import styles from "../styles.module.css"
-import Tiptap from "@/components/Tiptap";
 
 export default function FaqTextFormattingPage() {
     return (
@@ -14,7 +12,7 @@ export default function FaqTextFormattingPage() {
             <section className={styles.section}>
               <h3>За допомогою кнопок:</h3>
               <p>
-                Виділіть текст, і над ним з'явиться меню, в якому будуть доступні такі опції, як:
+                Виділіть текст, і над ним з&apos;явиться меню, в якому будуть доступні такі опції, як:
                 зробити текст жирним/курсивом; закреслити/підкреслити текст;
                 зробити впорядкований/маркірований список (не всюди доступно), як на картинці нижче:
               </p>

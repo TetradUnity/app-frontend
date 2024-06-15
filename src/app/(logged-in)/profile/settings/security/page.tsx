@@ -120,7 +120,7 @@ export default function SecuritySettings() {
                         marginBottom: "var(--gap)"
                     }}>
                         <div>
-                            Якщо не пам'ятаєте пароль, можете скористуватися <Link href="/forgot-password" style={{
+                            Якщо не пам&apos;ятаєте пароль, можете скористуватися <Link href="/forgot-password" style={{
                             color: "#87BAFF",
                             textDecoration: "underline"
                         }}>скиданням

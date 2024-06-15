@@ -359,8 +359,12 @@ export default function SubjectCalendar() {
             }
 
             setSubjects(resp.data!);
-            setSelectedSubject(resp.data![0].id);
-            fetch(resp.data![0].id);
+            if (resp.data![0]) {
+                setSelectedSubject(resp.data![0].id);
+                fetch(resp.data![0].id);
+            } else {
+                setLoading(false);
+            }
         })
     }
 
@@ -436,6 +440,10 @@ export default function SubjectCalendar() {
 
     if (loading) {
         return <Spin style={{ display: "block", margin: "auto" }} spinning />
+    }
+
+    if (!slug && !subjects.length) {
+        return <p style={{ textAlign: "center", fontSize: 30 }}>Ви не є учасником жодного предмету</p>
     }
 
     const Cell = ({ year, month, day }: { year: number, month: number, day: number }) => {

@@ -10,11 +10,11 @@ export type AnnouncedSubjectRequestModalRef = {
     set: (email: string, firstName?: string, lastName?: string) => void
 }
 
-const AnnouncedSubjectRequestModal = React.forwardRef((
+const AnnouncedSubjectRequestModal = React.forwardRef(function AnnouncedSubjectRequestModal(
     {isOpen, close, callback}
     :
     {isOpen: boolean, close: () => void, callback: (email: string, first_name?: string, last_name?: string) => void}
-, ref) => {
+, ref) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -77,7 +77,7 @@ const AnnouncedSubjectRequestModal = React.forwardRef((
             {choose == "not_registered" &&
                 <>
                     <section style={sectionStyle}>
-                        <h4>Ім'я:</h4>
+                        <h4>Ім&apos;я:</h4>
                         <Input
                             value={firstName}
                             onChange={e => setFirstName(e.target.value)}

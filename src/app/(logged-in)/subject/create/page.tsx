@@ -182,7 +182,7 @@ type TagsSelectorRef = {
     setTags: (tags: string[]) => void
 }
 
-const TagsSelector = React.forwardRef(({modal} : {modal: HookAPI}, ref) => {
+const TagsSelector = React.forwardRef(function TagsSelector({modal} : {modal: HookAPI}, ref) {
     const [tags, setTags] = useState<string[]>([]);
     
     const [inputVisible, setInputVisible] = useState(false);
@@ -302,7 +302,6 @@ export default function CreateSubjectPage() {
     const { replace } = useRouter();
     if (role != "CHIEF_TEACHER") {
         replace("/");
-        return null;
     }
 
     const [form] = Form.useForm();

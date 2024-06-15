@@ -70,7 +70,7 @@ export const tempStudents : IUser[] = [
     }
 ]
 
-export const tempSubjects: TemporaryAnnoncedSubjectInfo[] = [
+export const tempSubjects = [
     {
         id: 1,
         title: "Математика",
