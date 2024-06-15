@@ -9,6 +9,12 @@
     gap: var(--gap);
 }
 
+.head {
+    display: flex;
+    gap: var(--gap);
+    align-items: center;
+}
+
 .ScrollToTopButton {
     position: fixed;
     bottom: 20px;
@@ -28,5 +34,9 @@
     .Header {
         flex-direction: column;
         gap: 8px;
+    }
+    .head {
+        justify-content: space-between;
+        width: 100%;
     }
 }

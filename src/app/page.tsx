@@ -123,7 +123,7 @@ export default function LandPage() {
                 </section>
                 <section className={styles.certificates}>
                     <div className={styles.imageWrapper}>
-                        <Image src="imgs/landing/certificate-example.jpg" alt="Certificates" preview={false}/>
+                        <Image src="imgs/landing/certificate-example.jpg" alt="Certificates" />
                     </div>
                     <div className={styles.certificatesDescription}>
                     <div className={styles.certificatesText}>

@@ -15,10 +15,12 @@
 .nav-buttons{
     display: flex;
     justify-content: center;
+    gap: var(--gap-half);
 }
 
 .nav-buttons-short{
     display: none;
+    gap: var(--gap-half);
 }
 
 .logo-small{
